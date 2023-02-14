@@ -81,6 +81,8 @@ logging_log_filetrans(cloud_init_t, cloud_log_t, { file })
 
 init_dbus_chat(cloud_init_t)
 
+snapper_dbus_chat(cloud_init_t)
+
 kernel_read_network_state(cloud_init_t)
 
 corenet_tcp_connect_http_port(cloud_init_t)
