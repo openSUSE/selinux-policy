@@ -1075,7 +1075,7 @@ interface(`cron_generic_log_filetrans_log_insights',`
 #
 interface(`cron_system_spool_entrypoint',`
 	gen_require(`
-		attribute system_cron_spool_t;
+		type system_cron_spool_t;
 	')
 	allow $1 system_cron_spool_t:file entrypoint;
 ')
