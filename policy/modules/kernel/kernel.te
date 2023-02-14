@@ -401,6 +401,10 @@ optional_policy(`
 ')
 
 optional_policy(`
+    entropyd_semaphore_filetrans(kernel_t)
+')
+
+optional_policy(`
     abrt_filetrans_named_content(kernel_t)
     abrt_dump_oops_domtrans(kernel_t)
 ')

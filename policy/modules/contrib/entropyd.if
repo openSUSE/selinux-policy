@@ -33,3 +33,22 @@ interface(`entropyd_admin',`
 	files_search_pids($1)
 	admin_pattern($1, entropyd_var_run_t)
 ')
+
+########################################
+## <summary>
+##	Transition kernel created semaphore to correct type
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+## <rolecap/>
+#
+interface(`entropyd_semaphore_filetrans',`
+	gen_require(`
+		type entropyd_tmpfs_t;
+	')
+
+	fs_tmpfs_filetrans($1, entropyd_tmpfs_t, file, "sem.haveged_sem")
+')
