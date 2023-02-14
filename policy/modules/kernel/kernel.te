@@ -393,6 +393,13 @@ ifdef(`distro_redhat',`
 	fs_rw_tmpfs_chr_files(kernel_t)
 ')
 
+# this is a temporary fix. This permission doesn't make a lot of sense, but
+# without a kernel change there's not much we can do about it. I don't want to
+# audit it due to the unknown impact (happens e.g. during firewall changes)
+optional_policy(`
+    modutils_execute_kmod_tmpfs_files(kernel_t)
+')
+
 optional_policy(`
     abrt_filetrans_named_content(kernel_t)
     abrt_dump_oops_domtrans(kernel_t)
@@ -418,6 +425,7 @@ optional_policy(`
 	init_dbus_chat(kernel_t)
 	init_sigchld(kernel_t)
 	init_dyntrans(kernel_t)
+	init_read_state(kernel_t)
 ')
 
 optional_policy(`
@@ -519,6 +527,7 @@ optional_policy(`
 ')
 
 optional_policy(`
+	xserver_read_xdm_state(kernel_t)
 	xserver_xdm_manage_spool(kernel_t)
 	xserver_filetrans_home_content(kernel_t)
 ')

@@ -525,3 +525,21 @@ interface(`modutils_dontaudit_kmod_tmpfs_getattr',`
 
     dontaudit $1 kmod_tmpfs_t:file { getattr };
 ')
+
+#######################################
+## <summary>
+## Execute accesses to tmp file type.
+## </summary>
+## <param name="domain">
+## <summary>
+## Domain allowed access.
+## </summary>
+## </param>
+#
+interface(`modutils_execute_kmod_tmpfs_files',`
+    gen_require(`
+        type kmod_tmpfs_t;
+    ')
+
+    allow $1 kmod_tmpfs_t:file { execute execute_no_trans };
+')
