@@ -260,6 +260,7 @@ sysnet_search_dhcp_state(NetworkManager_t)
 sysnet_manage_config(NetworkManager_t)
 sysnet_filetrans_named_content(NetworkManager_t)
 sysnet_filetrans_net_conf(NetworkManager_t)
+sysnet_watch_config(NetworkManager_t)
 
 systemd_login_watch_pid_dirs(NetworkManager_t)
 systemd_login_watch_session_dirs(NetworkManager_t)
@@ -276,6 +277,9 @@ userdom_read_home_certs(NetworkManager_t)
 userdom_read_user_home_content_files(NetworkManager_t)
 userdom_dgram_send(NetworkManager_t)
 
+hostname_exec(NetworkManager_t)
+networkmanager_systemctl(NetworkManager_t)
+
 tunable_policy(`use_nfs_home_dirs',`
     fs_read_nfs_files(NetworkManager_t)
 ')
@@ -285,11 +289,27 @@ tunable_policy(`use_samba_home_dirs',`
 ')
 
 optional_policy(`
+    ntp_manage_pid_files(NetworkManager_t)
+')
+
+optional_policy(`
+    nis_systemctl_ypbind(NetworkManager_t)
+')
+
+optional_policy(`
 	avahi_domtrans(NetworkManager_t)
 	avahi_kill(NetworkManager_t)
 	avahi_signal(NetworkManager_t)
 	avahi_signull(NetworkManager_t)
 	avahi_dbus_chat(NetworkManager_t)
+')
+
+optional_policy(`
+	packagekit_dbus_chat(NetworkManager_t)
+')
+
+optional_policy(`
+    networkmanager_dbus_chat(NetworkManager_t)
 ')
 
 optional_policy(`
@@ -420,6 +440,8 @@ optional_policy(`
 	nscd_kill(NetworkManager_t)
 	nscd_initrc_domtrans(NetworkManager_t)
 	nscd_systemctl(NetworkManager_t)
+	nscd_socket_use(NetworkManager_dispatcher_tlp_t)
+	nscd_socket_use(NetworkManager_dispatcher_custom_t)
 ')
 
 optional_policy(`
@@ -608,6 +630,7 @@ files_manage_etc_files(NetworkManager_dispatcher_console_t)
 
 init_status(NetworkManager_dispatcher_cloud_t)
 init_status(NetworkManager_dispatcher_ddclient_t)
+init_status(NetworkManager_dispatcher_custom_t)
 init_append_stream_sockets(networkmanager_dispatcher_plugin)
 init_ioctl_stream_sockets(networkmanager_dispatcher_plugin)
 init_stream_connect(networkmanager_dispatcher_plugin)
@@ -620,6 +643,10 @@ optional_policy(`
 	chronyd_domtrans_chronyc(NetworkManager_dispatcher_chronyc_t)
 	chronyd_manage_pid(NetworkManager_dispatcher_chronyc_t)
 	chronyd_pid_filetrans(NetworkManager_dispatcher_chronyc_t)
+')
+
+optional_policy(`
+	nscd_shm_use(NetworkManager_dispatcher_chronyc_t)
 ')
 
 optional_policy(`
