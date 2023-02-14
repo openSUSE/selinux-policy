@@ -1113,6 +1113,8 @@ init_stream_connect(systemd_sysctl_t)
 logging_send_syslog_msg(systemd_sysctl_t)
 
 systemd_read_efivarfs(systemd_sysctl_t)
+# kernel specific sysctl.conf may be in modules dir
+allow systemd_sysctl_t modules_object_t:dir search;
 
 #######################################
 #
