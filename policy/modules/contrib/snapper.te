@@ -18,6 +18,9 @@ files_config_file(snapperd_conf_t)
 type snapperd_data_t;
 files_type(snapperd_data_t)
 
+type snapperd_tmp_t;
+files_tmp_file(snapperd_tmp_t)
+
 ########################################
 #
 # snapperd local policy
@@ -42,6 +45,10 @@ manage_lnk_files_pattern(snapperd_t, snapperd_data_t, snapperd_data_t)
 allow snapperd_t snapperd_data_t:dir { relabelfrom relabelto mounton };
 allow snapperd_t snapperd_data_t:file relabelfrom;
 snapper_filetrans_named_content(snapperd_t)
+
+allow snapperd_t snapperd_tmp_t:file manage_file_perms;
+allow snapperd_t snapperd_tmp_t:dir manage_dir_perms;
+files_tmp_filetrans(snapperd_t, snapperd_tmp_t, { file dir })
 
 kernel_setsched(snapperd_t)
 
@@ -71,6 +78,14 @@ fs_unmount_xattr_fs(snapperd_t)
 storage_raw_read_fixed_disk(snapperd_t)
 
 auth_use_nsswitch(snapperd_t)
+
+optional_policy(`
+	packagekit_dbus_chat(snapperd_t)
+')
+
+optional_policy(`
+        rpm_dbus_chat(snapperd_t)
+')
 
 optional_policy(`
     cron_system_entry(snapperd_t, snapperd_exec_t)
