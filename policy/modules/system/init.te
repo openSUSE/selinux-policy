@@ -1330,7 +1330,7 @@ ifdef(`distro_redhat',`
 	')
 ')
 
-ifdef(`distro_suse',`
+ifdef(`distro_redhat',`
 	optional_policy(`
 		# set permissions on /tmp/.X11-unix
 		xserver_setattr_xdm_tmp_dirs(initrc_t)

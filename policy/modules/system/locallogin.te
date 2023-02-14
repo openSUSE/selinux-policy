@@ -274,7 +274,7 @@ ifdef(`enable_mls',`
 ')
 
 # suse and debian do not use pam with sulogin...
-ifdef(`distro_suse', `define(`sulogin_no_pam')')
+ifdef(`distro_redhat', `define(`sulogin_no_pam')')
 ifdef(`distro_debian', `define(`sulogin_no_pam')')
 
 allow sulogin_t self:capability sys_tty_config;
