@@ -49,6 +49,9 @@ init_system_domain(ntpd_t, ntpdate_exec_t)
 
 allow ntpd_t self:capability { chown dac_read_search  kill setgid setuid sys_time ipc_lock ipc_owner sys_chroot sys_nice sys_resource };
 dontaudit ntpd_t self:capability { net_admin sys_tty_config fsetid sys_nice };
+# remove once 1207577 is done
+allow ntpd_t self:capability dac_override;
+
 allow ntpd_t self:process { signal_perms getcap setcap setsched setrlimit };
 allow ntpd_t self:fifo_file rw_fifo_file_perms;
 allow ntpd_t self:shm create_shm_perms;
@@ -78,7 +81,8 @@ manage_files_pattern(ntpd_t, ntpd_tmpfs_t, ntpd_tmpfs_t)
 fs_tmpfs_filetrans(ntpd_t, ntpd_tmpfs_t, { dir file })
 
 manage_files_pattern(ntpd_t, ntpd_var_run_t, ntpd_var_run_t)
-files_pid_filetrans(ntpd_t, ntpd_var_run_t, file)
+manage_lnk_files_pattern(ntpd_t, ntpd_var_run_t, ntpd_var_run_t)
+files_pid_filetrans(ntpd_t, ntpd_var_run_t, { file dir lnk_file })
 
 can_exec(ntpd_t, ntpd_exec_t)
 can_exec(ntpd_t, ntpdate_exec_t)

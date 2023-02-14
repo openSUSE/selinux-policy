@@ -339,3 +339,23 @@ interface(`ntp_manage_log',`
         manage_lnk_files_pattern($1, ntpd_log_t, ntpd_log_t)
 ')
 
+########################################
+## <summary>
+##      Create, read, write, and delete
+##      ntp pid (lnk) files.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`ntp_manage_pid_files',`
+        gen_require(`
+                type ntpd_var_run_t;
+        ')
+
+        files_search_pids($1)
+        manage_files_pattern($1, ntpd_var_run_t, ntpd_var_run_t)
+        manage_lnk_files_pattern($1, ntpd_var_run_t, ntpd_var_run_t)
+')
