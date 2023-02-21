@@ -2490,8 +2490,27 @@ interface(`systemd_hwdb_manage_config',`
 	files_search_etc($1)
 	manage_files_pattern($1, systemd_hwdb_etc_t, systemd_hwdb_etc_t)
 	mmap_files_pattern($1, systemd_hwdb_etc_t, systemd_hwdb_etc_t)
-	allow $1 systemd_hwdb_etc_t:file {relabelfrom relabelto};
+	systemd_hwdb_relabel_etc_files($1)
 	files_etc_filetrans($1, systemd_hwdb_etc_t, file, "hwdb.bin")
+')
+
+########################################
+## <summary>
+##	Allow process to relabel hwdb config file.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+## <rolecap/>
+#
+interface(`systemd_hwdb_relabel_etc_files',`
+	gen_require(`
+		type systemd_hwdb_etc_t;
+	')
+
+	allow $1 systemd_hwdb_etc_t:file {relabelfrom relabelto};
 ')
 
 ########################################
