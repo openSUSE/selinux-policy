@@ -491,6 +491,8 @@ optional_policy(`
 	auth_dontaudit_getattr_shadow(kernel_t)
 
 	sysnet_read_config(kernel_t)
+	sysnet_relabelfrom_net_conf(kernel_t)
+	sysnet_relabelto_net_conf(kernel_t)
 
 	rpc_udp_rw_nfs_sockets(kernel_t)
 
