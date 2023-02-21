@@ -401,6 +401,10 @@ optional_policy(`
 ')
 
 optional_policy(`
+    systemd_hwdb_relabel_etc_files(kernel_t)
+')
+
+optional_policy(`
     entropyd_semaphore_filetrans(kernel_t)
 ')
 
