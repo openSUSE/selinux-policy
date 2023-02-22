@@ -358,6 +358,9 @@ role system_r types kernel_generic_helper_t;
 corecmd_bin_entry_type(kernel_generic_helper_t)
 corecmd_bin_domtrans(kernel_t, kernel_generic_helper_t)
 
+files_relabel_etc_files_basic(kernel_t)
+files_relabel_etc_lnk_files_basic(kernel_t)
+
 domain_use_all_fds(kernel_t)
 domain_signal_all_domains(kernel_t)
 domain_search_all_domains_state(kernel_t)
