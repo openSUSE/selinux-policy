@@ -358,6 +358,9 @@ role system_r types kernel_generic_helper_t;
 corecmd_bin_entry_type(kernel_generic_helper_t)
 corecmd_bin_domtrans(kernel_t, kernel_generic_helper_t)
 
+files_relabel_etc_files_basic(kernel_t)
+files_relabel_etc_lnk_files_basic(kernel_t)
+
 domain_use_all_fds(kernel_t)
 domain_signal_all_domains(kernel_t)
 domain_search_all_domains_state(kernel_t)
@@ -398,6 +401,10 @@ ifdef(`distro_redhat',`
 # audit it due to the unknown impact (happens e.g. during firewall changes)
 optional_policy(`
     modutils_execute_kmod_tmpfs_files(kernel_t)
+')
+
+optional_policy(`
+    systemd_hwdb_relabel_etc_files(kernel_t)
 ')
 
 optional_policy(`
@@ -487,6 +494,8 @@ optional_policy(`
 	auth_dontaudit_getattr_shadow(kernel_t)
 
 	sysnet_read_config(kernel_t)
+	sysnet_relabelfrom_net_conf(kernel_t)
+	sysnet_relabelto_net_conf(kernel_t)
 
 	rpc_udp_rw_nfs_sockets(kernel_t)
 

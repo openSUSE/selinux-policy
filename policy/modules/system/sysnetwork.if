@@ -383,7 +383,7 @@ interface(`sysnet_relabelfrom_net_conf',`
                 type net_conf_t;
         ')
 
-        allow $1 net_conf_t:file relabelfrom;
+        allow $1 net_conf_t:{ file lnk_file } relabelfrom;
 ')
 
 ######################################
@@ -402,7 +402,7 @@ interface(`sysnet_relabelto_net_conf',`
                 type net_conf_t;
         ')
 
-        allow $1 net_conf_t:file relabelto;
+        allow $1 net_conf_t:{ file lnk_file } relabelto;
 ')
 
 #######################################

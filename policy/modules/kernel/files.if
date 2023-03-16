@@ -2263,6 +2263,44 @@ interface(`files_relabel_config_files',`
 	relabel_files_pattern($1, configfile, configfile)
 ')
 
+#######################################
+## <summary>
+##     Relabel etc files. Less broad interface than files_relabel_config_files
+## </summary>
+## <param name="domain">
+##     <summary>
+##     Domain allowed access.
+##     </summary>
+## </param>
+##
+#
+interface(`files_relabel_etc_files_basic',`
+       gen_require(`
+               type etc_t;
+       ')
+
+       allow $1 etc_t:file { relabelfrom relabelto };
+')
+
+#######################################
+## <summary>
+##     Relabel etc lnk files
+## </summary>
+## <param name="domain">
+##     <summary>
+##     Domain allowed access.
+##     </summary>
+## </param>
+##
+#
+interface(`files_relabel_etc_lnk_files_basic',`
+       gen_require(`
+               type etc_t;
+       ')
+
+       allow $1 etc_t:lnk_file { relabelfrom relabelto };
+')
+
 ########################################
 ## <summary>
 ##	Mount a filesystem on all mount points.
