@@ -1,6 +1,9 @@
 /etc/rsyncd\.conf	--	gen_context(system_u:object_r:rsync_etc_t, s0)
 
-/usr/bin/rsync		--	gen_context(system_u:object_r:rsync_exec_t,s0)
+# we only want to confine the rsync server for now. Otherwise client workloads
+# transition to rsync_t and fail
+#/usr/bin/rsync                --      gen_context(system_u:object_r:rsync_exec_t,s0)
+/usr/sbin/rsyncd       --      gen_context(system_u:object_r:rsync_exec_t,s0)
 
 /var/log/rsync.*		gen_context(system_u:object_r:rsync_log_t,s0)
 
