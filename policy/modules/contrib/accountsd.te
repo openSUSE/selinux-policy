@@ -85,11 +85,19 @@ optional_policy(`
 ')
 
 optional_policy(`
+	gnome_initial_setup_read_state(accountsd_t)
+')
+
+optional_policy(`
 	policykit_dbus_chat(accountsd_t)
 ')
 
 optional_policy(`
 	realmd_dbus_chat(accountsd_t)
+')
+
+optional_policy(`
+	systemd_read_generic_unit_lnk_files(accountsd_t)
 ')
 
 optional_policy(`
