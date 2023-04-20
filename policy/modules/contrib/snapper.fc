@@ -7,12 +7,13 @@
 
 /var/log/snapper\.log.* --  gen_context(system_u:object_r:snapperd_log_t,s0)
 
-/mnt/(.*/)?\.snapshots(/.*)?   		gen_context(system_u:object_r:snapperd_data_t,s0)
-/\.snapshots(/.*)?   			gen_context(system_u:object_r:snapperd_data_t,s0)
-/usr/\.snapshots(/.*)?   		gen_context(system_u:object_r:snapperd_data_t,s0)
-/var/\.snapshots(/.*)?   		gen_context(system_u:object_r:snapperd_data_t,s0)
-/etc/\.snapshots(/.*)?   		gen_context(system_u:object_r:snapperd_data_t,s0)
-HOME_ROOT/(.*/)?\.snapshots(/.*)?   	gen_context(system_u:object_r:snapperd_data_t,s0)
+/mnt/(.*/)?\.snapshots(/.*)?   gen_context(system_u:object_r:snapperd_data_t,s0)
+/\.snapshots(/.*)?   gen_context(system_u:object_r:snapperd_data_t,s0)
+/usr/\.snapshots(/.*)?   gen_context(system_u:object_r:snapperd_data_t,s0)
+/var/\.snapshots(/.*)?   gen_context(system_u:object_r:snapperd_data_t,s0)
+/etc/\.snapshots(/.*)?   gen_context(system_u:object_r:snapperd_data_t,s0)
+/home/\.snapshots(/.*)?   gen_context(system_u:object_r:snapperd_data_t,s0)
+HOME_ROOT/(.*/)?\.snapshots(/.*)?   gen_context(system_u:object_r:snapperd_data_t,s0)
 
 # ensure that the snapshots itself aren't relabled
 /mnt/(.*/)?\.snapshots/[^/]*/snapshot(/.*)?   		<<none>>
@@ -20,4 +21,5 @@ HOME_ROOT/(.*/)?\.snapshots(/.*)?   	gen_context(system_u:object_r:snapperd_data
 /usr/\.snapshots/[^/]*/snapshot(/.*)?   		<<none>>
 /var/\.snapshots/[^/]*/snapshot(/.*)?   		<<none>>
 /etc/\.snapshots/[^/]*/snapshot(/.*)?   		<<none>>
+/home/\.snapshots/[^/]*/snapshot(/.*)?   		<<none>>
 HOME_ROOT/(.*/)?\.snapshots/[^/]*/snapshot(/.*)?   	<<none>>

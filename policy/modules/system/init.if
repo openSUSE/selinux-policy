@@ -1187,6 +1187,32 @@ interface(`init_domtrans_script',`
 
 ########################################
 ## <summary>
+##	Execute init scripts with a domain transition
+##	and allow the specified role the init script type
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed to transition.
+##	</summary>
+## </param>
+## <param name="role">
+##	<summary>
+##	Role allowed access.
+##	</summary>
+## </param>
+## <rolecap/>
+#
+interface(`init_run_script',`
+	gen_require(`
+		type initrc_t;
+	')
+
+	init_domtrans_script($1)
+	role $2 types initrc_t;
+')
+
+########################################
+## <summary>
 ##	Execute a file in a bin directory
 ##	in the initrc_t domain 
 ## </summary>
@@ -2617,6 +2643,42 @@ interface(`init_watch_pid_dir',`
     ')
 
     allow $1 init_var_run_t:dir watch_dir_perms;
+')
+
+########################################
+## <summary>
+##      Get the attributes of block nodes in the /run/systemd directory.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`init_getattr_pid_blk_file',`
+        gen_require(`
+                type init_var_run_t;
+        ')
+
+        allow $1 init_var_run_t:blk_file getattr;
+')
+
+########################################
+## <summary>
+##      Get the attributes of character device nodes in the /run/systemd directory.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`init_getattr_pid_chr_file',`
+        gen_require(`
+                type init_var_run_t;
+        ')
+
+        allow $1 init_var_run_t:chr_file getattr;
 ')
 
 #######################################

@@ -606,6 +606,7 @@ manage_files_pattern(NetworkManager_dispatcher_console_t, NetworkManager_dispatc
 
 read_files_pattern(NetworkManager_dispatcher_dnssec_t, NetworkManager_etc_t, NetworkManager_etc_rw_t)
 
+kernel_read_proc_files(networkmanager_dispatcher_plugin)
 kernel_request_load_module(NetworkManager_dispatcher_ddclient_t)
 
 auth_read_passwd(networkmanager_dispatcher_plugin)
@@ -720,6 +721,7 @@ optional_policy(`
 ')
 
 optional_policy(`
+	tlp_create_pid_dirs(NetworkManager_dispatcher_tlp_t)
 	tlp_manage_pid_files(NetworkManager_dispatcher_tlp_t)
 	tlp_filetrans_named_content(NetworkManager_dispatcher_tlp_t)
 ')

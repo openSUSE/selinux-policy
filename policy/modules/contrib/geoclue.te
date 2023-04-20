@@ -37,6 +37,7 @@ allow geoclue_t geoclue_tmp_t:file { execute map };
 
 kernel_read_system_state(geoclue_t)
 kernel_read_network_state(geoclue_t)
+kernel_read_net_sysctls(geoclue_t)
 
 auth_read_passwd(geoclue_t)
 
@@ -47,6 +48,8 @@ corenet_tcp_connect_nmea_port(geoclue_t)
 corecmd_exec_bin(geoclue_t)
 
 dev_read_urand(geoclue_t)
+
+files_watch_etc_dirs(geoclue_t)
 
 fs_getattr_cgroup(geoclue_t)
 fs_getattr_xattr_fs(geoclue_t)
