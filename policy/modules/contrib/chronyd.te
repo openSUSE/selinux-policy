@@ -261,4 +261,5 @@ optional_policy(`
 
 optional_policy(`
 	term_use_generic_ptys(chronyc_t)
+	term_use_unallocated_ttys(chronyc_t)
 ')
