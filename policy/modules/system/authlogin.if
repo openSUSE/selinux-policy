@@ -1006,7 +1006,6 @@ interface(`auth_rw_lastlog',`
 
 	logging_search_logs($1)
 
-	manage_dirs_pattern($1, lastlog_t, lastlog_t)
 	manage_files_pattern($1, lastlog_t, lastlog_t)
 ')
 
