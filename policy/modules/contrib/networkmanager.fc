@@ -24,6 +24,7 @@
 /usr/lib/NetworkManager/dispatcher\.d/04-iscsi	--	gen_context(system_u:object_r:NetworkManager_dispatcher_iscsid_script_t,s0)
 /usr/lib/NetworkManager/dispatcher\.d/10-sendmail	--	gen_context(system_u:object_r:NetworkManager_dispatcher_sendmail_script_t,s0)
 /usr/lib/NetworkManager/dispatcher\.d/11-dhclient	--	gen_context(system_u:object_r:NetworkManager_dispatcher_dhclient_script_t,s0)
+/usr/lib/NetworkManager/dispatcher\.d/20-chrony	--	gen_context(system_u:object_r:NetworkManager_dispatcher_chronyc_script_t,s0)
 /usr/lib/NetworkManager/dispatcher\.d/20-chrony-dhcp	--	gen_context(system_u:object_r:NetworkManager_dispatcher_chronyc_script_t,s0)
 /usr/lib/NetworkManager/dispatcher\.d/20-chrony-onoffline	--	gen_context(system_u:object_r:NetworkManager_dispatcher_chronyc_script_t,s0)
 /usr/lib/NetworkManager/dispatcher\.d/30-winbind	--	gen_context(system_u:object_r:NetworkManager_dispatcher_winbind_script_t,s0)
@@ -37,6 +38,9 @@
 
 /usr/libexec/nm-dispatcher --	gen_context(system_u:object_r:NetworkManager_dispatcher_exec_t,s0)
 /usr/libexec/nm-priv-helper  -- gen_context(system_u:object_r:NetworkManager_priv_helper_exec_t,s0)
+# bsc#1206355
+/usr/lib/nm-dispatcher --	gen_context(system_u:object_r:NetworkManager_dispatcher_exec_t,s0)
+/usr/lib/nm-priv-helper  -- gen_context(system_u:object_r:NetworkManager_priv_helper_exec_t,s0)
 
 /usr/bin/NetworkManager	--	gen_context(system_u:object_r:NetworkManager_exec_t,s0)
 /usr/bin/wpa_cli	--	gen_context(system_u:object_r:wpa_cli_exec_t,s0)

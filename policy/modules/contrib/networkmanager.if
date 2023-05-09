@@ -132,6 +132,24 @@ interface(`networkmanager_initrc_domtrans',`
         init_labeled_script_domtrans($1, NetworkManager_initrc_exec_t)
 ')
 
+#######################################
+## <summary>
+##      Allow reading of NetworkManager link files
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed to read the links
+##      </summary>
+## </param>
+#
+interface(`networkmanager_initrc_read_lnk_files',`
+        gen_require(`
+                type NetworkManager_initrc_exec_t;
+        ')
+
+	read_lnk_files_pattern($1, NetworkManager_initrc_exec_t, NetworkManager_initrc_exec_t)
+')
+
 ########################################
 ## <summary>
 ##	Execute NetworkManager server in the NetworkManager domain.
