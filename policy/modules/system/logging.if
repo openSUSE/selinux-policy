@@ -1789,3 +1789,22 @@ interface(`logging_dgram_send',`
 
 	allow $1 syslogd_t:unix_dgram_socket sendto;
 ')
+
+########################################
+## <summary>
+##	Accept a message to syslogd over a unix domain
+##	datagram socket.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`logging_dgram_accept',`
+	gen_require(`
+		type syslogd_t;
+	')
+
+	allow $1 syslogd_t:unix_dgram_socket accept;
+')
