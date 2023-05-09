@@ -682,7 +682,7 @@ ifdef(`distro_gentoo',`
 	term_dontaudit_setattr_unallocated_ttys(syslogd_t)
 ')
 
-ifdef(`distro_suse',`
+ifdef(`distro_redhat',`
 	# suse creates a /dev/log under /var/lib/stunnel for chrooted stunnel
 	files_var_lib_filetrans(syslogd_t, devlog_t, sock_file)
 ')

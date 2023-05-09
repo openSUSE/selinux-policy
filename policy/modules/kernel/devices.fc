@@ -148,7 +148,7 @@
 /dev/usb.+		-c	gen_context(system_u:object_r:usb_device_t,s0)
 /dev/usblp.*		-c	gen_context(system_u:object_r:printer_device_t,s0)
 /dev/usbmon.+		-c	gen_context(system_u:object_r:usbmon_device_t,s0)
-ifdef(`distro_suse', `
+ifdef(`distro_redhat', `
 /dev/usbscanner		-c	gen_context(system_u:object_r:scanner_device_t,s0)
 ')
 /dev/vmci       -c  gen_context(system_u:object_r:vmci_device_t,s0)

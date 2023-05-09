@@ -22,7 +22,7 @@ ifdef(`distro_redhat',`
 /[^/]+			--	gen_context(system_u:object_r:etc_runtime_t,s0)
 ')
 
-ifdef(`distro_suse',`
+ifdef(`distro_redhat',`
 /success		--	gen_context(system_u:object_r:etc_runtime_t,s0)
 ')
 
@@ -92,7 +92,7 @@ ifdef(`distro_gentoo', `
 /etc/env\.d/.*		--	gen_context(system_u:object_r:etc_runtime_t,s0)
 ')
 
-ifdef(`distro_suse',`
+ifdef(`distro_redhat',`
 /etc/defkeymap\.map	--	gen_context(system_u:object_r:etc_runtime_t,s0)
 /etc/rc\.d/init\.d/\.depend.* -- gen_context(system_u:object_r:etc_runtime_t,s0)
 ')

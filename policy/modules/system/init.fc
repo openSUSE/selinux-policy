@@ -92,7 +92,7 @@ ifdef(`distro_gentoo', `
 /var/run/svscan\.pid	--	gen_context(system_u:object_r:initrc_var_run_t,s0)
 ')
 
-ifdef(`distro_suse', `
+ifdef(`distro_redhat', `
 /var/run/bootsplashctl	-p	gen_context(system_u:object_r:initrc_var_run_t,s0)
 /var/run/keymap		--	gen_context(system_u:object_r:initrc_var_run_t,s0)
 /var/run/numlock-on	--	gen_context(system_u:object_r:initrc_var_run_t,s0)

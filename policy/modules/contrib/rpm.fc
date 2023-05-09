@@ -80,7 +80,7 @@ ifdef(`distro_redhat', `
 /var/run/PackageKit(/.*)?		gen_context(system_u:object_r:rpm_var_run_t,s0)
 
 # SuSE
-ifdef(`distro_suse', `
+ifdef(`distro_redhat', `
 /usr/bin/online_update		--	gen_context(system_u:object_r:rpm_exec_t,s0)
 /sbin/yast2			--	gen_context(system_u:object_r:rpm_exec_t,s0)
 /var/lib/YaST2(/.*)?			gen_context(system_u:object_r:rpm_var_lib_t,s0)

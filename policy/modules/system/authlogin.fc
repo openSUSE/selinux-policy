@@ -31,7 +31,7 @@ HOME_DIR/\.google_authenticator~		gen_context(system_u:object_r:auth_home_t,s0)
 /sbin/unix_chkpwd	--	gen_context(system_u:object_r:chkpwd_exec_t,s0)
 /sbin/unix_update	--	gen_context(system_u:object_r:updpwd_exec_t,s0)
 /sbin/unix_verify	--	gen_context(system_u:object_r:chkpwd_exec_t,s0)
-ifdef(`distro_suse', `
+ifdef(`distro_redhat', `
 /sbin/unix2_chkpwd	--	gen_context(system_u:object_r:chkpwd_exec_t,s0)
 ')
 

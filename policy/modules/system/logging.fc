@@ -46,7 +46,7 @@
 /var/lib/r?syslog(/.*)?		gen_context(system_u:object_r:syslogd_var_lib_t,mls_systemhigh)
 /var/lib/syslog-ng.persist --	gen_context(system_u:object_r:syslogd_var_lib_t,s0)
 
-ifdef(`distro_suse', `
+ifdef(`distro_redhat', `
 /var/lib/stunnel/dev/log -s	gen_context(system_u:object_r:devlog_t,s0)
 ')
 

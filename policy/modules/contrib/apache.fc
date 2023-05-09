@@ -74,7 +74,7 @@ HOME_DIR/((www)|(web)|(public_html))(/.*)?/logs(/.*)?	gen_context(system_u:objec
 /usr/sbin/suexec		--	gen_context(system_u:object_r:httpd_suexec_exec_t,s0)
 /usr/sbin/thttpd        -- gen_context(system_u:object_r:httpd_exec_t,s0)
 
-ifdef(`distro_suse', `
+ifdef(`distro_redhat', `
 /usr/sbin/httpd2-.*		--	gen_context(system_u:object_r:httpd_exec_t,s0)
 ')
 
