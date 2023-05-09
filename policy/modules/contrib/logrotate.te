@@ -104,6 +104,7 @@ files_var_lib_filetrans(logrotate_t, logrotate_var_lib_t, file)
 
 kernel_read_system_state(logrotate_t)
 kernel_read_kernel_sysctls(logrotate_t)
+files_manage_mounttab(logrotate_t)
 
 dev_read_urand(logrotate_t)
 dev_read_sysfs(logrotate_t)
