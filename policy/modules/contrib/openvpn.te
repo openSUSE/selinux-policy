@@ -28,6 +28,14 @@ gen_tunable(openvpn_enable_homedirs, false)
 ## </desc>
 gen_tunable(openvpn_can_network_connect, true)
 
+## <desc>
+##	<p>
+##	Determine whether openvpn can
+##	change sysctl values (e.g. rp_filter)
+##	</p>
+## </desc>
+gen_tunable(openvpn_allow_changing_sysctls, false)
+
 attribute_role openvpn_roles;
 
 type openvpn_t;
@@ -176,6 +184,10 @@ userdom_attach_admin_tun_iface(openvpn_t)
 userdom_read_inherited_user_tmp_files(openvpn_t)
 userdom_read_inherited_user_home_content_files(openvpn_t)
 
+tunable_policy(`openvpn_allow_changing_sysctls',`
+        kernel_rw_net_sysctls(openvpn_t)
+')
+
 tunable_policy(`openvpn_enable_homedirs',`
 	userdom_search_user_home_dirs(openvpn_t)
 ')
@@ -192,6 +204,10 @@ tunable_policy(`openvpn_can_network_connect',`
 	corenet_sendrecv_all_client_packets(openvpn_t)
 	corenet_tcp_connect_all_ports(openvpn_t)
 	corenet_tcp_sendrecv_all_ports(openvpn_t)
+')
+
+optional_policy(`
+	firewalld_dbus_chat(openvpn_t)
 ')
 
 optional_policy(`
