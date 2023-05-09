@@ -507,3 +507,21 @@ interface(`modules_filetrans_named_content',`
 	#files_kernel_modules_filetrans($1, modules_dep_t, file, "modules.symbols")
 	#files_kernel_modules_filetrans($1, modules_dep_t, file, "modules.symbols.bin")
 ')
+
+#######################################
+## <summary>
+## Don't audit accesses to tmp file type.
+## </summary>
+## <param name="domain">
+## <summary>
+## Domain allowed access.
+## </summary>
+## </param>
+#
+interface(`modutils_dontaudit_kmod_tmpfs_getattr',`
+    gen_require(`
+        type kmod_tmpfs_t;
+    ')
+
+    dontaudit $1 kmod_tmpfs_t:file { getattr };
+')
