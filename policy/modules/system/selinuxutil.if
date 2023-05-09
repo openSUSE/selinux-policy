@@ -795,6 +795,8 @@ interface(`seutil_dontaudit_read_config',`
 
 	dontaudit $1 selinux_config_t:dir search_dir_perms;
 	dontaudit $1 selinux_config_t:file read_file_perms;
+	# /etc/selinux/config was a link to /etc/sysconfig/selinux-policy, ignore read attemps
+	dontaudit $1 selinux_config_t:lnk_file read_lnk_file_perms;
 ')
 
 ########################################
