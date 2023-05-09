@@ -684,3 +684,22 @@ template(`networkmanager_dispatcher_plugin_template',`
 
 	domtrans_pattern(NetworkManager_dispatcher_t, NetworkManager_dispatcher_$1_script_t, NetworkManager_dispatcher_$1_t)
 ')
+
+########################################
+## <summary>
+##      Send a message to NetworkManager_dispatcher_custom
+##      over a unix domain datagram socket.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`networkmanager_dispatcher_custom_dgram_send',`
+        gen_require(`
+                type NetworkManager_dispatcher_custom_t;
+        ')
+
+        allow $1 NetworkManager_dispatcher_custom_t:unix_dgram_socket sendto;
+')
