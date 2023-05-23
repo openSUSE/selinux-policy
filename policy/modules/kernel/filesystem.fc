@@ -36,3 +36,5 @@ HOME_DIR/\.Private(/.*)?	gen_context(system_u:object_r:ecryptfs_t,s0)
 
 /var/run/shm		-d	gen_context(system_u:object_r:tmpfs_t,s0)
 /var/run/shm/.*			<<none>>
+
+/var/lib/overlay/.*            <<none>>
