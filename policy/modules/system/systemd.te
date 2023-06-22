@@ -228,6 +228,10 @@ files_pid_file(systemd_userdbd_runtime_t)
 
 systemd_domain_template(systemd_sleep)
 
+systemd_domain_template(systemd_pstore)
+type systemd_pstore_var_lib_t;
+files_type(systemd_pstore_var_lib_t)
+
 #######################################
 #
 # Systemd_logind local policy
@@ -465,6 +469,7 @@ manage_lnk_files_pattern(systemd_machined_t, systemd_machined_var_lib_t, systemd
 init_var_lib_filetrans(systemd_machined_t, systemd_machined_var_lib_t, dir, "machines")
 
 fs_read_nsfs_files(systemd_machined_t)
+fs_write_cgroup_files(systemd_machined_t)
 
 kernel_dgram_send(systemd_machined_t)
 # This is a bug, but need for now.
@@ -1024,6 +1029,7 @@ dev_read_sysfs(systemd_timedated_t)
 files_watch_var_run_path(systemd_timedated_t)
 
 fs_getattr_xattr_fs(systemd_timedated_t)
+fs_write_cgroup_files(systemd_timedated_t)
 
 init_dbus_chat(systemd_timedated_t)
 init_status(systemd_timedated_t)
@@ -1265,6 +1271,8 @@ files_watch_root_dirs(systemd_resolved_t)
 files_watch_tmpfs_dirs(systemd_resolved_t)
 files_watch_var_run_dirs(systemd_resolved_t)
 
+fs_write_cgroup_files(systemd_resolved_t)
+
 init_watch_pid_dir(systemd_resolved_t)
 
 sysnet_manage_config(systemd_resolved_t)
@@ -1372,6 +1380,7 @@ systemd_read_efivarfs(systemd_modules_load_t)
 
 allow systemd_bootchart_t self:capability sys_admin;
 allow systemd_bootchart_t self:capability2 wake_alarm;
+allow systemd_bootchart_t self:cap_userns sys_ptrace;
 allow systemd_bootchart_t self:unix_dgram_socket create_socket_perms;
 
 kernel_dgram_send(systemd_bootchart_t)
@@ -1492,6 +1501,8 @@ init_named_pid_filetrans(systemd_userdbd_t, systemd_userdbd_runtime_t, dir, "use
 
 kernel_dgram_send(systemd_userdbd_t)
 
+fs_write_cgroup_files(systemd_userdbd_t)
+
 auth_read_shadow(systemd_userdbd_t)
 auth_use_nsswitch(systemd_userdbd_t)
 
@@ -1515,6 +1526,8 @@ dontaudit systemd_sleep_t self:capability sys_ptrace;
 # systemd-sleep needs the permission to change sleep state
 allow systemd_sleep_t self:lockdown integrity;
 
+allow systemd_sleep_t systemd_unit_file_t:service { start stop };
+
 kernel_dgram_send(systemd_sleep_t)
 
 corecmd_exec_bin(systemd_sleep_t)
@@ -1525,6 +1538,8 @@ dev_rw_sysfs(systemd_sleep_t)
 dev_write_kmsg(systemd_sleep_t)
 
 fstools_rw_swap_files(systemd_sleep_t)
+
+init_search_var_lib_dirs(systemd_sleep_t)
 
 # systemd-sleep needs to getattr swap partitions
 storage_getattr_fixed_disk_dev(systemd_sleep_t)
@@ -1546,5 +1561,24 @@ optional_policy(`
 ')
 
 optional_policy(`
+	udev_read_pid_files(systemd_sleep_t)
+')
+
+optional_policy(`
 	unconfined_server_domtrans(systemd_sleep_t)
 ')
+
+########################################
+#
+# systemd_pstore local policy
+#
+
+manage_files_pattern(systemd_pstore_t, systemd_pstore_var_lib_t, systemd_pstore_var_lib_t)
+
+kernel_dgram_send(systemd_pstore_t)
+
+fs_delete_pstore_files(systemd_pstore_t)
+fs_list_pstore(systemd_pstore_t)
+fs_read_pstore_files(systemd_pstore_t)
+
+init_search_var_lib_dirs(systemd_pstore_t)

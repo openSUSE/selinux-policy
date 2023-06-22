@@ -75,7 +75,7 @@ files_tmpfs_file(rpm_script_tmpfs_t)
 #
 
 allow rpm_t self:capability2 block_suspend;
-allow rpm_t self:capability { audit_write chown dac_read_search dac_override fowner setfcap fsetid ipc_lock setgid setuid sys_chroot sys_nice sys_tty_config mknod };
+allow rpm_t self:capability { audit_write chown dac_read_search dac_override fowner setfcap fsetid ipc_lock setgid setuid sys_admin sys_chroot sys_nice sys_tty_config mknod };
 allow rpm_t self:process ~{ ptrace setcurrent setexec setfscreate setrlimit execstack execheap };
 allow rpm_t self:process { getattr setexec setfscreate setrlimit };
 allow rpm_t self:fd use;
@@ -261,6 +261,7 @@ optional_policy(`
 #
 
 can_exec(rpmdb_t, rpm_exec_t)
+can_exec(rpmdb_t, rpmdb_exec_t)
 
 manage_dirs_pattern(rpmdb_t, rpm_var_lib_t, rpm_var_lib_t)
 manage_files_pattern(rpmdb_t, rpm_var_lib_t, rpm_var_lib_t)
