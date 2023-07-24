@@ -132,9 +132,13 @@ optional_policy(`
 ')
 
 optional_policy(`
-	iptables_manage_var_lib_files(firewalld_t)
+	ica_rw_map_tmpfs_files(firewalld_t)
+')
+
+optional_policy(`
 	iptables_domtrans(firewalld_t)
 	iptables_read_var_run(firewalld_t)
+	iptables_manage_var_lib_files(firewalld_t)
 ')
 
 optional_policy(`

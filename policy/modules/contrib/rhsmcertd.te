@@ -70,7 +70,7 @@ manage_files_pattern(rhsmcertd_t, rhsmcertd_var_lib_t, rhsmcertd_var_lib_t)
 
 manage_dirs_pattern(rhsmcertd_t, rhsmcertd_var_run_t, rhsmcertd_var_run_t)
 manage_files_pattern(rhsmcertd_t, rhsmcertd_var_run_t, rhsmcertd_var_run_t)
-files_pid_filetrans(rhsmcertd_t, rhsmcertd_var_run_t, { file dir })
+files_pid_filetrans(rhsmcertd_t, rhsmcertd_var_run_t, { file dir sock_file })
 
 manage_dirs_pattern(rhsmcertd_t, cloud_what_var_cache_t, cloud_what_var_cache_t)
 manage_files_pattern(rhsmcertd_t, cloud_what_var_cache_t, cloud_what_var_cache_t)
@@ -80,6 +80,7 @@ kernel_read_net_sysctls(rhsmcertd_t)
 kernel_read_state(rhsmcertd_t)
 kernel_read_system_state(rhsmcertd_t)
 kernel_read_sysctl(rhsmcertd_t)
+kernel_request_load_module(rhsmcertd_t)
 kernel_signull(rhsmcertd_t)
 
 corenet_tcp_bind_generic_node(rhsmcertd_t)
@@ -130,6 +131,7 @@ miscfiles_relabel_generic_cert(rhsmcertd_t)
 nis_use_ypbind(rhsmcertd_t)
 
 sysnet_dns_name_resolve(rhsmcertd_t)
+sysnet_exec_ifconfig(rhsmcertd_t)
 
 ifdef(`hide_broken_symptoms',`
     exec_files_pattern(rhsmcertd_t, rhsmcertd_tmp_t, rhsmcertd_tmp_t)

@@ -411,6 +411,7 @@ optional_policy(`
 # System local policy
 #
 
+allow system_munin_plugin_t self:netlink_generic_socket create_socket_perms;
 allow system_munin_plugin_t self:udp_socket create_socket_perms;
 
 rw_files_pattern(system_munin_plugin_t, munin_var_lib_t, munin_var_lib_t)
@@ -440,6 +441,10 @@ optional_policy(`
 	bind_exec(system_munin_plugin_t)
 	bind_read_config(system_munin_plugin_t)
 	bind_read_pid_files(system_munin_plugin_t)
+')
+
+optional_policy(`
+	miscfiles_read_generic_certs(services_munin_plugin_t)
 ')
 
 optional_policy(`

@@ -241,6 +241,7 @@ allow nfsd_t self:capability { dac_read_search dac_override sys_admin sys_chroot
 allow nfsd_t self:process { setcap };
 
 allow nfsd_t exports_t:file read_file_perms;
+allow nfsd_t exports_t:dir list_dir_perms;
 
 manage_dirs_pattern(nfsd_t, nfsd_tmp_t, nfsd_tmp_t)
 manage_files_pattern(nfsd_t, nfsd_tmp_t, nfsd_tmp_t)
@@ -457,7 +458,7 @@ kernel_setattr_key(nfsidmap_t)
 sysnet_read_config(nfsidmap_t)
 
 optional_policy(`
-	auth_read_passwd_file(nfsidmap_t)
+	auth_read_passwd(nfsidmap_t)
 ')
 
 optional_policy(`
@@ -467,4 +468,8 @@ optional_policy(`
 optional_policy(`
 	# /etc/request-key.d/id_resolver.conf
 	keyutils_request_domtrans_to(nfsidmap_t, nfsidmap_exec_t)
+')
+
+optional_policy(`
+	systemd_userdbd_runtime_read_symlinks(nfsidmap_t)
 ')
