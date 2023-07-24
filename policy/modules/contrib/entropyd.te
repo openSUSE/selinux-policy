@@ -56,6 +56,7 @@ fs_getattr_all_fs(entropyd_t)
 fs_search_auto_mountpoints(entropyd_t)
 # not great, but necessary for now since I can't get sem.haveged_sem to have a proper label
 fs_rw_tmpfs_files(entropyd_t)
+fs_manage_tmpfs_dirs(entropyd_t)
 
 domain_use_interactive_fds(entropyd_t)
 
