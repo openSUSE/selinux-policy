@@ -71,6 +71,7 @@ HOME_DIR/\.dmrc.*	--	gen_context(system_u:object_r:xdm_home_t,s0)
 /etc/X11/[wxg]dm/Xsession --	gen_context(system_u:object_r:xsession_exec_t,s0)
 /etc/X11/wdm(/.*)?		gen_context(system_u:object_r:xdm_rw_etc_t,s0)
 /etc/X11/wdm/Xsetup.*	--	gen_context(system_u:object_r:xsession_exec_t,s0)
+/etc/X11/xdm/Xsetup	--	gen_context(system_u:object_r:xsession_exec_t,s0)
 /etc/X11/wdm/Xstartup.*	--	gen_context(system_u:object_r:xsession_exec_t,s0)
 /etc/X11/Xsession[^/]*	--	gen_context(system_u:object_r:xsession_exec_t,s0)
 
@@ -102,6 +103,7 @@ HOME_DIR/\.dmrc.*	--	gen_context(system_u:object_r:xdm_home_t,s0)
 
 /usr/bin/sddm         	--	gen_context(system_u:object_r:xdm_exec_t,s0)
 /usr/bin/sddm-greeter  	--	gen_context(system_u:object_r:xdm_exec_t,s0)
+/usr/lib/sddm/sddm-helper  	--	gen_context(system_u:object_r:xdm_exec_t,s0)
 /usr/bin/gpe-dm		--	gen_context(system_u:object_r:xdm_exec_t,s0)
 /usr/bin/iceauth	--	gen_context(system_u:object_r:iceauth_exec_t,s0)
 /usr/bin/razor-lightdm-.*    --  gen_context(system_u:object_r:xdm_exec_t,s0)
@@ -136,6 +138,7 @@ HOME_DIR/\.dmrc.*	--	gen_context(system_u:object_r:xdm_home_t,s0)
 /usr/X11R6/lib/X11/xkb	-d	gen_context(system_u:object_r:xkb_var_lib_t,s0)
 /usr/X11R6/lib/X11/xkb/.* --	gen_context(system_u:object_r:xkb_var_lib_t,s0)
 
+/usr/lib/X11/display-manager 	-- 	gen_context(system_u:object_r:xdm_exec_t,s0)
 ifndef(`distro_debian',`
 /usr/var/[xgkw]dm(/.*)?		gen_context(system_u:object_r:xserver_log_t,s0)
 ')
