@@ -2,6 +2,25 @@
 
 ########################################
 ## <summary>
+##	Allow management of iptables_var_lib_t files
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed to mange files
+##	</summary>
+## </param>
+#
+interface(`iptables_manage_var_lib_files',`
+	gen_require(`
+		type iptables_var_lib_t;
+	')
+
+	manage_dirs_pattern($1, iptables_var_lib_t, iptables_var_lib_t)
+	manage_files_pattern($1, iptables_var_lib_t, iptables_var_lib_t)
+')
+
+########################################
+## <summary>
 ##	Execute iptables in the iptables domain.
 ## </summary>
 ## <param name="domain">

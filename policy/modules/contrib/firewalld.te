@@ -129,6 +129,7 @@ optional_policy(`
 ')
 
 optional_policy(`
+	iptables_manage_var_lib_files(firewalld_t)
 	iptables_domtrans(firewalld_t)
 	iptables_read_var_run(firewalld_t)
 ')
