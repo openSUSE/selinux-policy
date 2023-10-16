@@ -140,6 +140,14 @@ systemd_exec_systemctl(chronyd_t)
 userdom_dgram_send(chronyd_t)
 
 optional_policy(`
+	networkmanager_read_pid_files(chronyd_t)
+')
+
+optional_policy(`
+	wicked_read_pid_files(chronyd_t)
+')
+
+optional_policy(`
     cron_dgram_send(chronyd_t)
 ')
 
