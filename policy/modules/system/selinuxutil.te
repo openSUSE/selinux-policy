@@ -238,6 +238,10 @@ ifdef(`hide_broken_symptoms',`
 ')
 
 optional_policy(`
+	packagekit_read_write_fifo(load_policy_t)
+')
+
+optional_policy(`
 	portage_dontaudit_use_fds(load_policy_t)
 ')
 
@@ -616,6 +620,10 @@ allow setfiles_t file_context_t:file map;
 
 logging_send_audit_msgs(setfiles_t)
 logging_send_syslog_msg(setfiles_t)
+
+optional_policy(`
+	packagekit_read_write_fifo(setfiles_t)
+')
 
 optional_policy(`
     cloudform_dontaudit_write_cloud_log(setfiles_t)
