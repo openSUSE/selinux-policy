@@ -1402,6 +1402,12 @@ fstools_rw_swap_files(systemd_sleep_t)
 # systemd-sleep needs to getattr swap partitions
 storage_getattr_fixed_disk_dev(systemd_sleep_t)
 
+#######################################
+#
+# Allow systemd to watch certificate dir for ca-certificates
+# 
+watch_dirs_pattern(init_t,cert_t,cert_t)
+
 optional_policy(`
 	sysstat_domtrans(systemd_sleep_t)
 ')
