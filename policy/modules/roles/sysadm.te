@@ -295,10 +295,6 @@ optional_policy(`
 ')
 
 optional_policy(`
-	hadoop_role(sysadm_r, sysadm_t)
-')
-
-optional_policy(`
     iotop_run(sysadm_t, sysadm_r)
 ')
 
