@@ -28,6 +28,7 @@ gen_tunable(sslh_can_bind_any_port, false)
 type sslh_t;
 type sslh_exec_t;
 init_daemon_domain(sslh_t, sslh_exec_t)
+init_nnp_daemon_domain(sslh_t)
 
 type sslh_config_t;
 files_config_file(sslh_config_t)
@@ -89,6 +90,7 @@ corenet_tcp_sendrecv_jabber_client_port(sslh_t)
 tunable_policy(`sslh_can_connect_any_port',`
     # allow sslh to connect to any port
     corenet_tcp_sendrecv_all_ports(sslh_t) 
+    corenet_tcp_connect_all_ports(sslh_t)
     corenet_tcp_connect_all_ports(sslh_t)
 ')
 
