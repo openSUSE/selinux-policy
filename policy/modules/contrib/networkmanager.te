@@ -243,6 +243,9 @@ userdom_read_home_certs(NetworkManager_t)
 userdom_read_user_home_content_files(NetworkManager_t)
 userdom_dgram_send(NetworkManager_t)
 
+hostname_exec(NetworkManager_t)
+networkmanager_systemctl(NetworkManager_t)
+
 tunable_policy(`use_nfs_home_dirs',`
     fs_read_nfs_files(NetworkManager_t)
 ')
@@ -257,6 +260,14 @@ optional_policy(`
 	avahi_signal(NetworkManager_t)
 	avahi_signull(NetworkManager_t)
 	avahi_dbus_chat(NetworkManager_t)
+')
+
+optional_policy(`
+	packagekit_dbus_chat(NetworkManager_t)
+')
+
+optional_policy(`
+    networkmanager_dbus_chat(NetworkManager_t)
 ')
 
 optional_policy(`
