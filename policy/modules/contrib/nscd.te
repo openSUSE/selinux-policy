@@ -130,6 +130,14 @@ userdom_dontaudit_use_unpriv_user_fds(nscd_t)
 userdom_dontaudit_search_user_home_dirs(nscd_t)
 
 optional_policy(`
+	networkmanager_read_pid_files(nscd_t)
+')
+
+optional_policy(`
+	wicked_read_pid_files(nscd_t)
+')
+
+optional_policy(`
 	accountsd_dontaudit_rw_fifo_file(nscd_t)
 ')
 
