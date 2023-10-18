@@ -447,6 +447,14 @@ logging_send_syslog_msg(postfix_map_t)
 
 userdom_use_inherited_user_ptys(postfix_map_t)
 
+corecmd_exec_bin(postfix_map_t)
+allow postfix_map_t postfix_map_exec_t:file execute_no_trans;
+init_ioctl_stream_sockets(postfix_map_t)
+
+optional_policy(`
+	mta_read_aliases(postfix_map_t)
+')
+
 optional_policy(`
 	locallogin_dontaudit_use_fds(postfix_map_t)
 ')
@@ -685,6 +693,14 @@ corenet_tcp_bind_generic_node(postfix_smtp_t)
 corenet_tcp_connect_spamd_port(postfix_master_t)
 
 files_search_all_mountpoints(postfix_smtp_t)
+
+optional_policy(`
+    networkmanager_read_pid_files(postfix_smtp_t)
+')
+
+optional_policy(`
+    wicked_read_pid_files(postfix_smtp_t)
+')
 
 optional_policy(`
 	cyrus_stream_connect(postfix_smtp_t)
