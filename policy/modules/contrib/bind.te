@@ -77,6 +77,7 @@ role ndc_roles types ndc_t;
 allow named_t self:capability { chown dac_read_search dac_override fowner kill net_admin net_raw setgid setuid sys_chroot sys_nice sys_resource };
 dontaudit named_t self:capability sys_tty_config;
 allow named_t self:capability2 block_suspend;
+allow named_t self:io_uring sqpoll;
 allow named_t self:process { setsched getcap setcap setrlimit signal_perms };
 allow named_t self:fifo_file rw_fifo_file_perms;
 allow named_t self:unix_stream_socket { accept connectto listen };
@@ -115,6 +116,7 @@ read_files_pattern(named_t, named_zone_t, named_zone_t)
 read_lnk_files_pattern(named_t, named_zone_t, named_zone_t)
 allow named_t named_zone_t:file map;
 
+kernel_io_uring_use(named_t)
 kernel_read_kernel_sysctls(named_t)
 kernel_read_system_state(named_t)
 kernel_read_network_state(named_t)
@@ -263,6 +265,7 @@ optional_policy(`
 
 allow ndc_t self:capability { dac_read_search  net_admin };
 allow ndc_t self:capability2 block_suspend;
+allow ndc_t self:io_uring sqpoll;
 allow ndc_t self:process { fork signal_perms };
 dontaudit ndc_t self:process setsched;
 allow ndc_t self:fifo_file rw_fifo_file_perms;
@@ -278,6 +281,7 @@ allow ndc_t named_conf_t:lnk_file read_lnk_file_perms;
 
 allow ndc_t named_zone_t:dir search_dir_perms;
 
+kernel_io_uring_use(ndc_t)
 kernel_read_system_state(ndc_t)
 kernel_read_kernel_sysctls(ndc_t)
 

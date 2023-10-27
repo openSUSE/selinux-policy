@@ -51,6 +51,7 @@ allow snapperd_t snapperd_tmp_t:dir manage_dir_perms;
 files_tmp_filetrans(snapperd_t, snapperd_tmp_t, { file dir })
 
 kernel_setsched(snapperd_t)
+kernel_stream_connect(snapperd_t)
 
 domain_read_all_domains_state(snapperd_t)
 

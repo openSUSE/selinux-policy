@@ -29,6 +29,39 @@ template(`systemd_domain_template',`
 
 ######################################
 ## <summary>
+##  Creates types and rules for 
+##  systemd generators.
+## </summary>
+## <param name="prefix">
+##  <summary>
+##  Prefix for the domain.
+##  </summary>
+## </param>
+#
+template(`systemd_generator_template',`
+	gen_require(`
+		attribute systemd_generator;
+	')
+
+	type $1_t, systemd_generator;
+	type $1_exec_t;
+	init_daemon_domain($1_t, $1_exec_t)
+	init_nnp_daemon_domain($1_t)
+
+	kernel_read_system_state($1_t)
+	
+	dev_write_kmsg($1_t)
+
+	auth_use_nsswitch($1_t)
+	selinux_get_enforce_mode($1_t)
+
+	systemd_manage_unit_dirs($1_t)
+	systemd_create_unit_file_dirs($1_t)
+	systemd_create_unit_file_lnk($1_t)
+')
+
+######################################
+## <summary>
 ##      Create a domain for processes which are started 
 ##      exuting systemctl.
 ## </summary>
@@ -2038,6 +2071,44 @@ interface(`systemd_status_power_services',`
 
 	systemd_exec_systemctl($1)
 	allow $1 power_unit_file_t:service status;
+')
+
+########################################
+## <summary>
+##	Start vconsole unit.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`systemd_start_vconsole_services',`
+	gen_require(`
+		type systemd_vconsole_unit_file_t;
+	')
+
+	systemd_exec_systemctl($1)
+	allow $1 systemd_vconsole_unit_file_t:service start;
+')
+
+########################################
+## <summary>
+##	Status vconsole unit.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`systemd_status_vconsole_services',`
+	gen_require(`
+		type systemd_vconsole_unit_file_t;
+	')
+
+	systemd_exec_systemctl($1)
+	allow $1 systemd_vconsole_unit_file_t:service status;
 ')
 
 #######################################

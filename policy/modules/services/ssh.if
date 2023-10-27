@@ -406,6 +406,7 @@ template(`ssh_role_template',`
 	# allow ps to show ssh
 	ps_process_pattern($3, $1_ssh_agent_t)
 
+	can_exec($1_ssh_agent_t, ssh_agent_exec_t)
 	domtrans_pattern($3, ssh_agent_exec_t, $1_ssh_agent_t)
 
 	kernel_read_system_state($1_ssh_agent_t)
@@ -906,6 +907,25 @@ interface(`ssh_manage_home_files',`
 
 	manage_files_pattern($1, ssh_home_t, ssh_home_t)
 	userdom_search_user_home_dirs($1)
+')
+
+########################################
+## <summary>
+##      Create ssh home directory.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`ssh_create_home_dirs',`
+        gen_require(`
+                type ssh_home_t;
+        ')
+
+        allow $1 ssh_home_t:dir create_dir_perms;
+        setattr_dirs_pattern($1, ssh_home_t, ssh_home_t)
 ')
 
 #######################################

@@ -594,7 +594,6 @@ interface(`userdom_exec_user_tmp_files',`
 
 	allow $1 user_tmp_t:file entrypoint;
 	exec_files_pattern($1, user_tmp_t, user_tmp_t)
-	dontaudit $1 user_tmp_t:sock_file execute;
 	files_search_tmp($1)
 ')
 
@@ -1525,6 +1524,7 @@ tunable_policy(`deny_bluetooth',`',`
 
 	storage_rw_fuse($1_t)
 
+	files_getattr_non_security_dirs($1_t)
 	files_exec_usr_files($1_t)
    # cjp: why?
 	files_read_kernel_symbol_table($1_t)
@@ -3069,8 +3069,7 @@ interface(`userdom_exec_user_home_content_files',`
 
 	files_search_home($1)
 	exec_files_pattern($1, { user_home_dir_t user_home_type }, user_home_type)
-	dontaudit $1 user_home_type:sock_file execute;
-	')
+')
 
 ########################################
 ## <summary>
