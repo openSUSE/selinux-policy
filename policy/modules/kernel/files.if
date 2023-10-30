@@ -636,6 +636,24 @@ interface(`files_dontaudit_getattr_all_dirs',`
 
 ########################################
 ## <summary>
+##	Get attributes of all non-security directories.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_getattr_non_security_dirs',`
+	gen_require(`
+		attribute non_security_file_type;
+	')
+
+	allow $1 non_security_file_type:dir getattr_dir_perms;
+')
+
+########################################
+## <summary>
 ##	List all non-security directories.
 ## </summary>
 ## <param name="domain">
@@ -1623,6 +1641,25 @@ interface(`files_dontaudit_read_all_sockets',`
 
 ########################################
 ## <summary>
+##	Do not audit attempts to execute
+##	any named socket.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain to not audit.
+##	</summary>
+## </param>
+#
+interface(`files_dontaudit_execute_all_sockets',`
+	gen_require(`
+		attribute file_type;
+	')
+
+	dontaudit $1 file_type:sock_file execute;
+')
+
+########################################
+## <summary>
 ##	Do not audit attempts to read
 ##	of all security file types.
 ## </summary>
@@ -1728,8 +1765,12 @@ interface(`files_relabel_all_files',`
 	relabel_chr_files_pattern($1, { file_type $2 }, { file_type $2 })
 
 	# satisfy the assertions:
-	seutil_relabelto_bin_policy($1)
-    auth_relabelto_shadow($1)
+	optional_policy(`
+		seutil_relabelto_bin_policy($1)
+	')
+	optional_policy(`
+		auth_relabelto_shadow($1)
+	')
 ')
 
 ########################################
@@ -1796,6 +1837,44 @@ interface(`files_manage_all_files',`
 		auth_reader_shadow($1)
 		auth_writer_shadow($1)
 	')
+')
+
+########################################
+## <summary>
+##	Manage all block device files on the filesystem.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+## <rolecap/>
+#
+interface(`files_manage_all_blk_files',`
+	gen_require(`
+		attribute file_type;
+	')
+
+	manage_blk_files_pattern($1, file_type, file_type)
+')
+
+########################################
+## <summary>
+##	Manage all character device files on the filesystem.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+## <rolecap/>
+#
+interface(`files_manage_all_chr_files',`
+	gen_require(`
+		attribute file_type;
+	')
+
+	manage_chr_files_pattern($1, file_type, file_type)
 ')
 
 ########################################
@@ -1899,6 +1978,24 @@ interface(`files_dontaudit_map_all_dirs',`
 	')
 
 	dontaudit $1 file_type:dir map;
+')
+
+########################################
+## <summary>
+##	Read all lnk_files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_read_all_lnk_files',`
+	gen_require(`
+		attribute file_type;
+	')
+
+	allow $1 file_type:lnk_file read_lnk_file_perms;
 ')
 
 ########################################
@@ -2012,6 +2109,25 @@ interface(`files_remount_all_file_type_fs',`
 	')
 
 	allow $1 file_type:filesystem remount;
+')
+
+########################################
+## <summary>
+##	Get attributes of all non-authentication related
+##	directories.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_getattr_non_auth_dirs',`
+	gen_require(`
+		attribute non_auth_file_type;
+	')
+
+	allow $1 non_auth_file_type:dir getattr_dir_perms;
 ')
 
 ########################################
@@ -4001,6 +4117,24 @@ interface(`files_read_etc_files',`
 	read_files_pattern($1, etc_t, etc_t)
 	read_lnk_files_pattern($1, etc_t, etc_t)
 	files_read_etc_runtime_files($1)
+')
+
+########################################
+## <summary>
+##	Map generic files in /etc.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access
+##	</summary>
+## </param>
+#
+interface(`files_map_etc_files',`
+	gen_require(`
+		type etc_t;
+	')
+
+	allow $1 etc_t:file map;
 ')
 
 ########################################
@@ -6085,6 +6219,24 @@ interface(`files_manage_system_db_files',`
 
 ######################################
 ## <summary>
+##	Watch manageable system db dirs.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_watch_system_db_dirs',`
+	gen_require(`
+		type system_db_t;
+	')
+
+	allow $1 system_db_t:dir watch_dir_perms;
+')
+
+######################################
+## <summary>
 ##	Watch manageable system db files in /var/db.
 ## </summary>
 ## <param name="domain">
@@ -7472,6 +7624,24 @@ interface(`files_watch_usr_files',`
 	')
 
 	allow $1 usr_t:file watch_file_perms;
+')
+
+########################################
+## <summary>
+##	Watch generic lnk_files in /usr.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_watch_usr_lnk_files',`
+	gen_require(`
+		type usr_t;
+	')
+
+	allow $1 usr_t:file watch_lnk_file_perms;
 ')
 
 ########################################

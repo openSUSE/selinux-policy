@@ -21,6 +21,13 @@ gen_tunable(sssd_access_kernel_keys, false)
 ## </desc>
 gen_tunable(sssd_connect_all_unreserved_ports, false)
 
+## <desc>
+## <p>
+##	Allow sssd use usb devices
+## </p>
+## </desc>
+gen_tunable(sssd_use_usb, false)
+
 type sssd_t;
 type sssd_exec_t;
 init_daemon_domain(sssd_t, sssd_exec_t)
@@ -61,6 +68,7 @@ role system_r types sssd_selinux_manager_t;
 allow sssd_t self:capability { dac_override ipc_lock chown dac_read_search  kill net_admin sys_nice fowner setgid setuid sys_admin sys_resource };
 allow sssd_t self:process { setfscreate setsched sigkill signal getsched setrlimit setpgid setcap};
 allow sssd_t self:fifo_file rw_fifo_file_perms;
+allow sssd_t self:io_uring sqpoll;
 allow sssd_t self:key manage_key_perms;
 allow sssd_t self:unix_stream_socket { create_stream_socket_perms connectto };
 
@@ -68,6 +76,7 @@ allow sssd_t self:unix_stream_socket { create_stream_socket_perms connectto };
 allow sssd_t sssd_exec_t:file execute_no_trans;
 
 read_files_pattern(sssd_t, sssd_conf_t, sssd_conf_t)
+read_lnk_files_pattern(sssd_t, sssd_conf_t, sssd_conf_t)
 list_dirs_pattern(sssd_t, sssd_conf_t, sssd_conf_t)
 
 manage_dirs_pattern(sssd_t, sssd_public_t, sssd_public_t)
@@ -181,6 +190,16 @@ tunable_policy(`sssd_connect_all_unreserved_ports',`
 	corenet_tcp_connect_all_unreserved_ports(sssd_t)
 ')
 
+tunable_policy(`sssd_use_usb',`
+	dev_rw_generic_usb_dev(sssd_t)
+')
+
+optional_policy(`
+	tunable_policy(`sssd_use_usb',`
+		ipa_domtrans_otpd(sssd_t)
+	')
+')
+
 optional_policy(`
 	accountsd_read_fifo_file(sssd_t)
 ')
@@ -220,6 +239,10 @@ optional_policy(`
 
 optional_policy(`
 	ica_rw_map_tmpfs_files(sssd_t)
+')
+
+optional_policy(`
+	ipa_sigkill_otpd(sssd_t)
 ')
 
 optional_policy(`

@@ -234,6 +234,10 @@ sid file gen_context(system_u:object_r:unlabeled_t,s0)
 typealias unlabeled_t alias file_t;
 neverallow * unlabeled_t:file entrypoint;
 
+# anon_inode types
+type userfaultfd_t;
+type io_uring_t;
+
 # These initial sids are no longer used, and can be removed:
 sid any_socket		gen_context(system_u:object_r:unlabeled_t,mls_systemhigh)
 sid file_labels		gen_context(system_u:object_r:unlabeled_t,s0)
@@ -366,13 +370,26 @@ files_relabel_etc_files_basic(kernel_t)
 files_relabel_etc_lnk_files_basic(kernel_t)
 allow kernel_generic_helper_t kernel_t:fifo_file read_inherited_fifo_file_perms;
 
+# Enable running `/usr/bin/env [u]mount ...` to support ZFS automounting.
+# See the module/os/linux/zfs/zfs_ctldir.c file in
+# https://github.com/openzfs/zfs/ for the usermode helper calls.
+optional_policy(`
+	mount_domtrans(kernel_generic_helper_t)
+')
+
 domain_use_all_fds(kernel_t)
 domain_signal_all_domains(kernel_t)
 domain_search_all_domains_state(kernel_t)
 domain_connect_all_stream_sockets(kernel_t)
 domain_rw_all_sockets(kernel_t)
+# Needed for overlayfs mounter checks
+# (see: https://bugzilla.redhat.com/show_bug.cgi?id=2215454)
+domain_obj_id_change_exemption(kernel_t)
 
 files_manage_all_files(kernel_t)
+files_manage_all_blk_files(kernel_t)
+files_manage_all_chr_files(kernel_t)
+files_relabel_all_files(kernel_t)
 # The 'execute' permission on lower inodes is checked against the mounter
 # cred by overlayfs, so we need to grant it to allow overlay mounts created
 # during early boot to work.

@@ -42,6 +42,27 @@ ifndef(`ipa_stream_connect_otpd',`
 
 ########################################
 ## <summary>
+##	Send sigkill to ipa-otpd.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+#
+ifndef(`ipa_sigkill_otpd',`
+	interface(`ipa_sigkill_otpd',`
+		gen_require(`
+			type ipa_otpd_t;
+		')
+
+		allow $1 ipa_otpd_t:process sigkill;
+	')
+')
+
+########################################
+## <summary>
 ##	Connect to ipa-ods-exporter over a unix stream socket.
 ## </summary>
 ## <param name="domain">
@@ -359,6 +380,27 @@ ifndef(`ipa_custodia_domtrans',`
 
 		corecmd_search_bin($1)
 		domtrans_pattern($1, ipa_custodia_exec_t, ipa_custodia_t)
+	')
+')
+
+######################################
+## <summary>
+##	Execute ipa-pki-retrieve-key in the caller domain.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+ifndef(`ipa_pki_retrieve_key_exec',`
+	interface(`ipa_pki_retrieve_key_exec',`
+		gen_require(`
+			type ipa_pki_retrieve_key_exec_t;
+		')
+
+		corecmd_search_bin($1)
+		can_exec($1, ipa_pki_retrieve_key_exec_t)
 	')
 ')
 

@@ -43,6 +43,7 @@ allow udev_t self:capability2 { block_suspend wake_alarm };
 dontaudit udev_t self:capability sys_tty_config;
 allow udev_t self:process ~{ ptrace setcurrent setexec setfscreate setrlimit execmem execstack execheap };
 allow udev_t self:process { execmem setfscreate };
+allow udev_t self:system module_load;
 allow udev_t self:fd use;
 allow udev_t self:fifo_file rw_fifo_file_perms;
 allow udev_t self:sock_file read_sock_file_perms;
@@ -141,6 +142,7 @@ files_search_mnt(udev_t)
 files_list_tmp(udev_t)
 
 fs_getattr_all_fs(udev_t)
+fs_search_all(udev_t)
 fs_list_auto_mountpoints(udev_t)
 fs_list_hugetlbfs(udev_t)
 fs_read_cgroup_files(udev_t)
@@ -200,6 +202,10 @@ sysnet_manage_config(udev_t)
 systemd_login_read_pid_files(udev_t)
 systemd_getattr_unit_files(udev_t)
 systemd_domtrans_sysctl(udev_t)
+systemd_hwdb_mmap_config(udev_t)
+systemd_hwdb_read_config(udev_t)
+systemd_start_vconsole_services(udev_t)
+systemd_status_vconsole_services(udev_t)
 
 userdom_dontaudit_search_user_home_content(udev_t)
 userdom_rw_inherited_user_tmp_pipes(udev_t)

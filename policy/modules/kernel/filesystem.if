@@ -6231,6 +6231,25 @@ interface(`fs_manage_tmpfs_sockets',`
 
 ########################################
 ## <summary>
+##	Write to socket files on tmpfs filesystems.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`fs_write_tmpfs_socket_files',`
+	gen_require(`
+		type tmpfs_t;
+	')
+
+	write_sock_files_pattern($1, tmpfs_t, tmpfs_t)
+	fs_search_tmpfs($1)
+')
+
+########################################
+## <summary>
 ##	Read and write, create and delete character
 ##	nodes on tmpfs filesystems.
 ## </summary>
@@ -6320,6 +6339,24 @@ interface(`fs_read_xenfs_files',`
 	')
 
 	allow $1 xenfs_t:file read_file_perms;
+')
+
+########################################
+## <summary>
+##	Map files on a XENFS filesystem.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`fs_map_xenfs_files',`
+	gen_require(`
+		type xenfs_t;
+	')
+
+	allow $1 xenfs_t:file map;
 ')
 
 ########################################
@@ -6966,6 +7003,25 @@ interface(`fs_read_efivarfs_files',`
         ')
 
         read_files_pattern($1, efivarfs_t, efivarfs_t)
+')
+
+#######################################
+## <summary>
+##	Read and write files in efivarfs
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+## <rolecap/>
+#
+interface(`fs_rw_efivarfs_files',`
+	gen_require(`
+		type efivarfs_t;
+	')
+
+	rw_files_pattern($1, efivarfs_t, efivarfs_t)
 ')
 
 #######################################

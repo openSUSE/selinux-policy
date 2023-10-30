@@ -36,7 +36,7 @@ files_tmp_file(nsd_tmp_t)
 # NSD Local policy
 #
 
-allow nsd_t self:capability { chown dac_read_search  dac_override kill setgid setuid net_admin };
+allow nsd_t self:capability { chown dac_read_search dac_override fowner fsetid kill setgid setuid net_admin };
 dontaudit nsd_t self:capability sys_tty_config;
 allow nsd_t self:process signal_perms;
 allow nsd_t self:tcp_socket create_stream_socket_perms;
@@ -137,6 +137,8 @@ ps_process_pattern(nsd_crond_t, nsd_t)
 
 manage_files_pattern(nsd_crond_t, nsd_zone_t, nsd_zone_t)
 filetrans_pattern(nsd_crond_t, nsd_conf_t, nsd_zone_t, file)
+
+stream_connect_pattern(nsd_crond_t, nsd_var_run_t, nsd_var_run_t, nsd_t)
 
 can_exec(nsd_crond_t, nsd_exec_t)
 

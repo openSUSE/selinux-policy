@@ -257,6 +257,7 @@ kernel_dontaudit_getattr_core_if(nfsd_t)
 kernel_dontaudit_setsched(nfsd_t)
 kernel_request_load_module(nfsd_t)
 kernel_mounton_proc(nfsd_t)
+kernel_read_net_sysctls(nfsd_t)
 kernel_rw_rpc_sysctls_dirs(nfsd_t)
 kernel_create_rpc_sysctls(nfsd_t)
 kernel_rw_fs_sysctls(nfsd_t)
@@ -471,5 +472,6 @@ optional_policy(`
 ')
 
 optional_policy(`
-	systemd_userdbd_runtime_read_symlinks(nfsidmap_t)
+	systemd_machined_stream_connect(nfsidmap_t)
+	systemd_userdbd_stream_connect(nfsidmap_t)
 ')
