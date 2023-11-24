@@ -1883,6 +1883,8 @@ kernel_rw_net_sysctls(virtnetworkd_t)
 
 corenet_rw_tun_tap_dev(virtnetworkd_t)
 
+corecmd_exec_bin(virtnetworkd_t)
+
 dev_rw_sysfs(virtnetworkd_t)
 
 sysnet_read_config(virtnetworkd_t)
