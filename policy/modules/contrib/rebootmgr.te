@@ -29,6 +29,8 @@ systemd_start_power_services(rebootmgr_t)
 
 systemd_dbus_chat_logind(rebootmgr_t)
 
+kernel_read_system_state(rebootmgr_t)
+
 unconfined_dbus_chat(rebootmgr_t)
 
 optional_policy(`
