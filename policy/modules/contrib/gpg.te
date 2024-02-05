@@ -197,6 +197,10 @@ optional_policy(`
 ')
 
 optional_policy(`
+	rpm_manage_cache(gpg_t)
+')
+
+optional_policy(`
 	spamassassin_read_spamd_tmp_files(gpg_t)
 ')
 

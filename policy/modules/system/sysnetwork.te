@@ -64,6 +64,7 @@ allow dhcpc_t self:capability { dac_read_search fsetid net_admin net_raw net_bin
 dontaudit dhcpc_t self:capability sys_admin;
 # for access("/etc/bashrc", X_OK) on Red Hat
 dontaudit dhcpc_t self:capability { dac_read_search sys_module };
+allow dhcpc_t self:capability2 bpf;
 allow dhcpc_t self:process { getsched setsched getcap setcap setfscreate setrlimit signal_perms };
 allow dhcpc_t self:cap_userns { net_bind_service };
 
@@ -309,7 +310,9 @@ optional_policy(`
 # Ifconfig local policy
 #
 
+allow ifconfig_t self:bpf { prog_load prog_run };
 allow ifconfig_t self:capability { net_raw net_admin sys_admin sys_tty_config };
+allow ifconfig_t self:capability2 { bpf perfmon };
 allow ifconfig_t self:process ~{ ptrace setcurrent setexec setfscreate setrlimit execmem execheap execstack };
 allow ifconfig_t self:fd use;
 allow ifconfig_t self:fifo_file rw_fifo_file_perms;
@@ -385,6 +388,8 @@ files_read_etc_files(ifconfig_t)
 files_read_etc_runtime_files(ifconfig_t)
 files_read_usr_files(ifconfig_t)
 
+fs_manage_cgroup_dirs(ifconfig_t)
+fs_rw_cgroup_files(ifconfig_t)
 fs_getattr_xattr_fs(ifconfig_t)
 fs_unmount_xattr_fs(ifconfig_t)
 fs_search_auto_mountpoints(ifconfig_t)
@@ -393,6 +398,7 @@ fs_mount_nsfs(ifconfig_t)
 fs_unmount_nsfs(ifconfig_t)
 
 selinux_dontaudit_getattr_fs(ifconfig_t)
+selinux_compute_create_context(ifconfig_t)
 
 term_dontaudit_use_console(ifconfig_t)
 term_dontaudit_use_all_ttys(ifconfig_t)
@@ -427,6 +433,14 @@ ifdef(`distro_ubuntu',`
 	optional_policy(`
 		unconfined_domain(ifconfig_t)
 	')
+')
+
+optional_policy(`
+	apache_domtrans(ifconfig_t)
+')
+
+optional_policy(`
+	bind_domtrans(ifconfig_t)
 ')
 
 optional_policy(`
@@ -486,6 +500,10 @@ optional_policy(`
 
 optional_policy(`
 	ppp_use_fds(ifconfig_t)
+')
+
+optional_policy(`
+	ssh_domtrans(ifconfig_t)
 ')
 
 optional_policy(`
