@@ -1151,6 +1151,25 @@ interface(`files_read_non_security_files',`
 
 ########################################
 ## <summary>
+##	Read all non-security socket files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+## <rolecap/>
+#
+interface(`files_read_non_security_sock_files',`
+	gen_require(`
+		attribute non_security_file_type;
+	')
+
+	read_sock_files_pattern($1, non_security_file_type, non_security_file_type)
+')
+
+########################################
+## <summary>
 ##	Map all non-security files.
 ## </summary>
 ## <param name="domain">
@@ -7641,7 +7660,7 @@ interface(`files_watch_usr_lnk_files',`
 		type usr_t;
 	')
 
-	allow $1 usr_t:file watch_lnk_file_perms;
+	allow $1 usr_t:lnk_file watch_lnk_file_perms;
 ')
 
 ########################################

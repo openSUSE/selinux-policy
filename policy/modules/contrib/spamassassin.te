@@ -610,6 +610,7 @@ allow spamd_update_t self:fifo_file manage_fifo_file_perms;
 allow spamd_update_t self:unix_dgram_socket create_socket_perms;
 allow spamd_update_t self:unix_stream_socket create_stream_socket_perms;
 allow spamd_update_t self:capability { dac_read_search dac_override };
+allow spamd_update_t self:cap_userns sys_ptrace;
 
 manage_dirs_pattern(spamd_update_t, spamd_tmp_t, spamd_tmp_t)
 manage_files_pattern(spamd_update_t, spamd_tmp_t, spamd_tmp_t)
@@ -638,6 +639,7 @@ corenet_tcp_connect_http_port(spamd_update_t)
 corecmd_exec_bin(spamd_update_t)
 corecmd_exec_shell(spamd_update_t)
 
+dev_read_sysfs(spamd_update_t)
 dev_read_urand(spamd_update_t)
 
 domain_use_interactive_fds(spamd_update_t)

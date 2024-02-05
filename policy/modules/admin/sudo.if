@@ -101,6 +101,11 @@ template(`sudo_role_template',`
 	')
 
 	optional_policy(`
+		netutils_domtrans($1_sudo_t)
+		netutils_run_traceroute($1_sudo_t, $2)
+	')
+
+	optional_policy(`
 		systemd_domtrans_systemctl($1_sudo_t, $3)
 		systemd_systemctl_entrypoint($3)
 	')

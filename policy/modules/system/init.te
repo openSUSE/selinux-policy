@@ -175,8 +175,10 @@ ifdef(`enable_mls',`
 allow init_t self:capability ~{ audit_control audit_write sys_module };
 allow init_t self:capability2 ~{ mac_admin mac_override };
 allow init_t self:cap_userns all_cap_userns_perms;
+allow init_t self:netlink_netfilter_socket create_socket_perms;
 allow init_t self:tcp_socket { listen accept };
 allow init_t self:packet_socket create_socket_perms;
+allow init_t self:vsock_socket create_socket_perms;
 allow init_t self:key manage_key_perms;
 allow init_t self:bpf { map_create map_read map_write prog_load prog_run };
 domain_dyntrans_type(init_t)
@@ -332,6 +334,7 @@ files_mounton_etc(init_t)
 files_create_default_dir(init_t)
 files_remount_rootfs(init_t)
 files_create_var_dirs(init_t)
+files_read_non_security_sock_files(init_t)
 files_watch_non_security_dirs(init_t)
 files_watch_non_security_files(init_t)
 files_watch_non_security_lnk_files(init_t)

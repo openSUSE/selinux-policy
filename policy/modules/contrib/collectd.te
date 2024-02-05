@@ -80,6 +80,7 @@ corecmd_exec_bin(collectd_t)
 
 corenet_udp_bind_generic_node(collectd_t)
 corenet_udp_bind_collectd_port(collectd_t)
+corenet_udp_bind_statsd_port(collectd_t)
 corenet_tcp_connect_lmtp_port(collectd_t)
 corenet_tcp_bind_bacula_port(collectd_t)
 
@@ -99,6 +100,8 @@ fs_getattr_all_dirs(collectd_t)
 init_read_utmp(collectd_t)
 
 logging_send_syslog_msg(collectd_t)
+
+storage_raw_read_fixed_disk_blk_device(collectd_t)
 
 sysnet_dns_name_resolve(collectd_t)
 
@@ -134,6 +137,10 @@ optional_policy(`
 
 optional_policy(`
     snmp_read_snmp_var_lib_dirs(collectd_t)
+')
+
+optional_policy(`
+	udev_read_pid_files(collectd_t)
 ')
 
 optional_policy(`

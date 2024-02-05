@@ -152,6 +152,7 @@
 ifdef(`distro_redhat', `
 /dev/usbscanner		-c	gen_context(system_u:object_r:scanner_device_t,s0)
 ')
+/dev/vas		-c	gen_context(system_u:object_r:vas_device_t,s0)
 /dev/vmci       -c  gen_context(system_u:object_r:vmci_device_t,s0)
 /dev/vsock       -c  gen_context(system_u:object_r:vsock_device_t,s0)
 /dev/vhci       -c  gen_context(system_u:object_r:vhost_device_t,s0)
@@ -205,6 +206,7 @@ ifdef(`distro_redhat', `
 /dev/input/mice		-c	gen_context(system_u:object_r:mouse_device_t,s0)
 /dev/input/js.*		-c	gen_context(system_u:object_r:mouse_device_t,s0)
 /dev/input/uinput	-c	gen_context(system_u:object_r:event_device_t,s0)
+/dev/iommu		-c	gen_context(system_u:object_r:iommu_device_t,s0)
 
 /dev/mapper/control	-c	gen_context(system_u:object_r:lvm_control_t,s0)
 

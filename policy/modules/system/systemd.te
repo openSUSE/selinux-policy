@@ -251,12 +251,6 @@ files_type(systemd_pstore_var_lib_t)
 allow systemd_logind_t self:capability { chown kill dac_read_search dac_override fowner sys_tty_config sys_admin };
 allow systemd_logind_t self:capability2 block_suspend;
 
-# systemd-logind reads state from /sys/power, which changes output based on
-# whether hibernations is available, which tries to take the lockdown state
-# into account. So the permission is somewhat unnecessary (systemd-logind
-# doesn't actually try to change anything), but it's better to allow it so that
-# systemd-logind sees the right system state.
-allow systemd_logind_t self:lockdown integrity;
 allow systemd_logind_t self:process getcap;
 allow systemd_logind_t self:netlink_kobject_uevent_socket create_socket_perms;
 allow systemd_logind_t self:unix_dgram_socket create_socket_perms;
@@ -515,6 +509,7 @@ optional_policy(`
 	dbus_connect_system_bus(systemd_machined_t)
 	dbus_system_bus_client(systemd_machined_t)
 	dbus_watch_pid_dir_path(systemd_machined_t)
+	dbus_watch_pid_sock_files(systemd_machined_t)
 ')
 
 optional_policy(`
@@ -567,6 +562,7 @@ allow init_t systemd_networkd_t:netlink_route_socket create_netlink_socket_perms
 
 manage_files_pattern(systemd_networkd_t, systemd_networkd_var_run_t, systemd_networkd_var_run_t)
 manage_lnk_files_pattern(systemd_networkd_t, systemd_networkd_var_run_t, systemd_networkd_var_run_t)
+manage_sock_files_pattern(systemd_networkd_t, systemd_networkd_var_run_t, systemd_networkd_var_run_t)
 manage_dirs_pattern(systemd_networkd_t, systemd_networkd_var_run_t, systemd_networkd_var_run_t)
 
 kernel_dgram_send(systemd_networkd_t)
@@ -605,6 +601,7 @@ optional_policy(`
     dbus_system_bus_client(systemd_networkd_t)
     dbus_connect_system_bus(systemd_networkd_t)
 	dbus_watch_pid_dir_path(systemd_networkd_t)
+	dbus_watch_pid_sock_files(systemd_networkd_t)
     dbus_read_pid_files(systemd_networkd_t)
     dbus_read_pid_sock_files(systemd_networkd_t)
     systemd_dbus_chat_logind(systemd_networkd_t)
@@ -943,6 +940,7 @@ optional_policy(`
         dbus_system_bus_client(systemd_hostnamed_t)
         dbus_connect_system_bus(systemd_hostnamed_t)
 	dbus_watch_pid_dir_path(systemd_hostnamed_t)
+	dbus_watch_pid_sock_files(systemd_hostnamed_t)
 
 	optional_policy(`
 		init_dbus_chat_script(systemd_hostnamed_t)
@@ -1201,6 +1199,8 @@ optional_policy(`
 #
 # systemd_hwdb domain
 #
+dontaudit systemd_hwdb_t self:capability dac_override;
+
 manage_files_pattern(systemd_hwdb_t, systemd_hwdb_etc_t, systemd_hwdb_etc_t)
 allow systemd_hwdb_t systemd_hwdb_etc_t:file {relabelfrom relabelto};
 files_etc_filetrans(systemd_hwdb_t, systemd_hwdb_etc_t, file)
@@ -1601,8 +1601,6 @@ allow systemd_sleep_t self:capability { linux_immutable sys_resource };
 # systemd-sleep needs to set timer for suspend-then-hibernate
 allow systemd_sleep_t self:capability2 wake_alarm;
 dontaudit systemd_sleep_t self:capability sys_ptrace;
-# systemd-sleep needs the permission to change sleep state
-allow systemd_sleep_t self:lockdown integrity;
 
 allow systemd_sleep_t systemd_unit_file_t:service { start stop };
 
@@ -1615,6 +1613,8 @@ dev_create_sysfs_files(systemd_sleep_t)
 dev_rw_sysfs(systemd_sleep_t)
 dev_write_kmsg(systemd_sleep_t)
 
+fs_create_efivarfs_files(systemd_sleep_t)
+fs_setattr_efivarfs_files(systemd_sleep_t)
 fs_rw_efivarfs_files(systemd_sleep_t)
 
 fstools_rw_swap_files(systemd_sleep_t)
@@ -1630,6 +1630,10 @@ storage_getattr_removable_dev(systemd_sleep_t)
 # Allow systemd to watch certificate dir for ca-certificates
 # 
 watch_dirs_pattern(init_t,cert_t,cert_t)
+
+optional_policy(`
+	logging_dgram_send(systemd_sleep_t)
+')
 
 optional_policy(`
 	sysstat_domtrans(systemd_sleep_t)
