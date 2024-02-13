@@ -24,6 +24,9 @@ init_script_file(entropyd_initrc_exec_t)
 type entropyd_var_run_t;
 files_pid_file(entropyd_var_run_t)
 
+type entropyd_tmpfs_t;
+files_tmpfs_file(entropyd_tmpfs_t)
+
 ########################################
 #
 # Local policy
@@ -36,6 +39,10 @@ allow entropyd_t self:process signal_perms;
 manage_files_pattern(entropyd_t, entropyd_var_run_t, entropyd_var_run_t)
 files_pid_filetrans(entropyd_t, entropyd_var_run_t, file)
 
+manage_dirs_pattern(entropyd_t, entropyd_tmpfs_t, entropyd_tmpfs_t)
+manage_files_pattern(entropyd_t, entropyd_tmpfs_t, entropyd_tmpfs_t)
+fs_tmpfs_filetrans(entropyd_t, entropyd_tmpfs_t, { file })
+
 kernel_read_system_state(entropyd_t)
 kernel_rw_kernel_sysctl(entropyd_t)
 
@@ -47,6 +54,9 @@ dev_write_rand(entropyd_t)
 
 fs_getattr_all_fs(entropyd_t)
 fs_search_auto_mountpoints(entropyd_t)
+# not great, but necessary for now since I can't get sem.haveged_sem to have a proper label
+fs_rw_tmpfs_files(entropyd_t)
+fs_manage_tmpfs_dirs(entropyd_t)
 
 domain_use_interactive_fds(entropyd_t)
 
