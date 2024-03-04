@@ -391,6 +391,7 @@ optional_policy(`
 
 optional_policy(`
 	ica_rw_map_tmpfs_files(sshd_t)
+	ica_rw_map_tmpfs_files(ssh_keygen_t)
 ')
 
 optional_policy(`
@@ -639,6 +640,7 @@ allow sshd_t sshd_net_t:process signal;
 allow sshd_net_t self:process setrlimit;
 
 dev_rw_crypto(sshd_net_t)
+dev_rw_crypto(ssh_keygen_t)
 
 init_ioctl_stream_sockets(sshd_net_t)
 init_rw_tcp_sockets(sshd_net_t)
