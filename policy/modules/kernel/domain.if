@@ -1925,3 +1925,21 @@ interface(`domain_rw_perf_event_all_domains',`
 
 	allow $1 domain:perf_event rw_inherited_perf_event_perms;
 ')
+
+########################################
+## <summary>
+##	Allow all domains to execute type without domain transition
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`domain_can_exec',`
+	gen_require(`
+		attribute domain;
+	')
+
+	can_exec(domain, $1)
+')
