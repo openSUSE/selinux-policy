@@ -2,4 +2,5 @@ policy_module(libalternatives, 0.0.1)
 
 # All processes should be able to execute libalternatives /bin/alts in the caller domain
 type alts_exec_t;
+files_type(alts_exec_t)
 domain_can_exec(alts_exec_t)
