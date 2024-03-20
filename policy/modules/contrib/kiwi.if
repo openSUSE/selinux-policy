@@ -1,0 +1,29 @@
+## <summary>Policy for kiwi.</summary>
+
+#########################################
+## <summary>
+##      Execute kiwi in the kiwi unconfined domain. This way kiwi can be used
+##      without setting the system to permissive
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed to transition.
+##      </summary>
+## </param>
+## <param name="role">
+##      <summary>
+##      Role allowed to transition.
+##      </summary>
+## </param>
+#
+
+interface(`kiwi_domtrans',`
+        gen_require(`
+                type kiwi_t, kiwi_exec_t;
+		attribute_role kiwi_roles;
+        ')
+
+        corecmd_search_bin($1)
+        domtrans_pattern($1, kiwi_exec_t, kiwi_t)
+        roleattribute $2 kiwi_roles;
+')
