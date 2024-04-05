@@ -107,8 +107,6 @@ ifdef(`distro_debian',`
 
 /run/netns	-d 		gen_context(system_u:object_r:ifconfig_var_run_t,s0)
 /run/netns/[^/]+       	<<none>>
-/run/netns	-d 		gen_context(system_u:object_r:ifconfig_var_run_t,s0)
-/run/netns/[^/]+       	<<none>>
 
 /etc/firestarter/firestarter\.sh gen_context(system_u:object_r:dhcpc_helper_exec_t,s0)
 
