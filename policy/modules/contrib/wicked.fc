@@ -35,7 +35,7 @@
 #/var/lib/wicd(/.*)?			gen_context(system_u:object_r:wicked_var_lib_t,s0)
 #/var/log/wicd.*				--	gen_context(system_u:object_r:wicked_log_t,s0)
 
-/var/run/wicked(/.*)?		gen_context(system_u:object_r:wicked_var_run_t,s0)
+/run/wicked(/.*)?		gen_context(system_u:object_r:wicked_var_run_t,s0)
 
 #/etc/dbus-1
 #/etc/dbus-1/system.d
