@@ -7961,6 +7961,24 @@ interface(`files_read_var_files',`
 
 ########################################
 ## <summary>
+##	Map and read files in the /var directory.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_map_read_var_files',`
+	gen_require(`
+		type var_t;
+	')
+
+	mmap_read_files_pattern($1, var_t, var_t)
+')
+
+########################################
+## <summary>
 ##	Append files in the /var directory.
 ## </summary>
 ## <param name="domain">
@@ -10092,7 +10110,7 @@ interface(`files_dontaudit_getattr_tmpfs_files',`
 		attribute tmpfsfile;
 	')
 
-	allow $1 tmpfsfile:file getattr;
+	dontaudit $1 tmpfsfile:file getattr;
 ')
 
 ########################################
@@ -10589,7 +10607,7 @@ interface(`files_dontaudit_mounton_modules_object',`
 		type modules_object_t;
 	')
 
-	allow $1 modules_object_t:dir mounton;
+	dontaudit $1 modules_object_t:dir mounton;
 ')
 
 ########################################

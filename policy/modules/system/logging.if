@@ -1225,6 +1225,42 @@ interface(`logging_manage_all_logs',`
 
 #######################################
 ## <summary>
+##	Watch all log directories.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`logging_watch_all_log_dirs',`
+	gen_require(`
+		attribute logfile;
+	')
+
+	allow $1 logfile:dir { search_dir_perms watch_dir_perms };
+')
+
+#######################################
+## <summary>
+##	Watch all log files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`logging_watch_all_log_files',`
+	gen_require(`
+		attribute logfile;
+	')
+
+	allow $1 logfile:file watch_file_perms;
+')
+
+#######################################
+## <summary>
 ##	Watch all directories in the path for log directories.
 ## </summary>
 ## <param name="domain">
@@ -1806,6 +1842,24 @@ interface(`logging_dgram_send',`
 	')
 
 	allow $1 syslogd_t:unix_dgram_socket sendto;
+')
+
+#######################################
+## <summary>
+##	Use file descriptors from syslogd.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`logging_fd_use',`
+	gen_require(`
+		type syslogd_t;
+	')
+
+	allow $1 syslogd_t:fd use;
 ')
 
 ########################################
