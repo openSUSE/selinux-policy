@@ -81,6 +81,7 @@ corecmd_exec_bin(firewalld_t)
 corecmd_exec_shell(firewalld_t)
 
 dev_read_urand(firewalld_t)
+dev_read_rand(firewalld_t)
 dev_read_sysfs(firewalld_t)
 dev_rw_crypto(firewalld_t)
 
@@ -109,6 +110,10 @@ sysnet_relabelto_net_conf(firewalld_t)
 
 userdom_dontaudit_create_admin_dir(firewalld_t)
 userdom_dontaudit_manage_admin_dir(firewalld_t)
+
+optional_policy(`
+	ica_rw_map_tmpfs_files(firewalld_t)
+')
 
 optional_policy(`
 	dbus_system_domain(firewalld_t, firewalld_exec_t)
