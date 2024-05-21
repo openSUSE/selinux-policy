@@ -54,6 +54,7 @@ HOME_DIR/\.dmrc.*	--	gen_context(system_u:object_r:xdm_home_t,s0)
 
 /etc/X11/xorg\.conf\.d(/.*)?	gen_context(system_u:object_r:xserver_etc_t,s0)
 /etc/[mg]dm(/.*)?		  	gen_context(system_u:object_r:xdm_etc_t,s0)
+/etc/sysconfig/displaymanager	--	gen_context(system_u:object_r:xdm_etc_t,s0)
 /etc/[mg]dm/Init(/.*)?	  	gen_context(system_u:object_r:xdm_unconfined_exec_t,s0)
 /etc/[mg]dm/PostLogin(/.*)?  	gen_context(system_u:object_r:xdm_unconfined_exec_t,s0)
 /etc/[mg]dm/PostSession(/.*)?  	gen_context(system_u:object_r:xdm_unconfined_exec_t,s0)
