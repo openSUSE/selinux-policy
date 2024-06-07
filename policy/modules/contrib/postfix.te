@@ -642,13 +642,13 @@ manage_files_pattern(postfix_qmgr_t, postfix_spool_t, postfix_spool_t)
 manage_lnk_files_pattern(postfix_qmgr_t, postfix_spool_t, postfix_spool_t)
 files_spool_filetrans(postfix_qmgr_t, postfix_spool_t, dir)
 
-allow postfix_qmgr_t postfix_spool_bounce_t:dir list_dir_perms;
-allow postfix_qmgr_t postfix_spool_bounce_t:file read_file_perms;
-allow postfix_qmgr_t postfix_spool_bounce_t:lnk_file read_lnk_file_perms;
-
 manage_files_pattern(postfix_qmgr_t, postfix_spool_maildrop_t, postfix_spool_maildrop_t)
 manage_dirs_pattern(postfix_qmgr_t, postfix_spool_maildrop_t, postfix_spool_maildrop_t)
 allow postfix_qmgr_t postfix_spool_maildrop_t:lnk_file read_lnk_file_perms;
+
+manage_dirs_pattern(postfix_qmgr_t, postfix_spool_bounce_t, postfix_spool_bounce_t)
+manage_files_pattern(postfix_qmgr_t, postfix_spool_bounce_t, postfix_spool_bounce_t)
+manage_lnk_files_pattern(postfix_qmgr_t, postfix_spool_bounce_t, postfix_spool_bounce_t)
 
 corecmd_exec_bin(postfix_qmgr_t)
 
@@ -769,6 +769,10 @@ optional_policy(`
 optional_policy(`
 	milter_stream_connect_all(postfix_smtpd_t)
 	spamassassin_read_pid_files(postfix_smtpd_t)
+')
+
+optional_policy(`
+	mta_map_aliases(postfix_smtpd_t)
 ')
 
 optional_policy(`

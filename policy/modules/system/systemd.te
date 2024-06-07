@@ -35,6 +35,9 @@ read_files_pattern(systemd_read_efivarfs_type, init_var_run_t, init_var_run_t)
 systemd_domain_template(systemd_logger)
 systemd_domain_template(systemd_logind)
 
+type systemd_conf_t;
+files_config_file(systemd_conf_t)
+
 # /run/systemd/sessions
 type systemd_logind_sessions_t;
 files_pid_file(systemd_logind_sessions_t)
@@ -185,24 +188,43 @@ files_type(systemd_timedated_var_lib_t)
 
 systemd_domain_template(systemd_sysctl)
 
-#domain for gpt-auto-generator
-systemd_domain_template(systemd_gpt_generator)
 
+### domains and file types for systemd generators
+# bless-boot-generator
+systemd_generator_template(systemd_bless_boot_generator)
+# cryptsetup-generator
+systemd_generator_template(systemd_cryptsetup_generator)
+# debug-generator
+systemd_generator_template(systemd_debug_generator)
+# fstab-generator
+systemd_generator_template(systemd_fstab_generator)
+# getty-generator
+systemd_generator_template(systemd_getty_generator)
+# gpt-generator
+systemd_generator_template(systemd_gpt_generator)
+# rc-local-generator
+systemd_generator_template(systemd_rc_local_generator)
+# ssh-generator
+systemd_generator_template(systemd_ssh_generator)
+# sysv-generator
+systemd_generator_template(systemd_sysv_generator)
+# tpm2-generator
+systemd_generator_template(systemd_tpm2_generator)
+# zram-generator
+systemd_generator_template(systemd_zram_generator)
+type systemd_zram_generator_conf_t;
+files_type(systemd_zram_generator_conf_t)
+allow systemd_zram_generator_t systemd_zram_generator_conf_t:file read_file_perms;
+# domain for a generic generator
+systemd_generator_template(systemd_generic_generator)
+
+
+### systemd-network-generator service
 systemd_domain_template(systemd_network_generator)
 
-type systemd_gpt_generator_unit_file_t;
-systemd_unit_file(systemd_gpt_generator_unit_file_t)
 
-#domain for fstab-generator
-systemd_generator_template(systemd_fstab_generator)
+### domains and types for systemd-machined
 
-#domain for rc-local-generator
-systemd_generator_template(systemd_rc_local_generator)
-
-#domain for sysv-generator
-systemd_generator_template(systemd_sysv_generator)
-
-#domain for systemd-machined
 systemd_domain_template(systemd_machined)
 
 type systemd_machined_unit_file_t;
@@ -241,6 +263,13 @@ systemd_domain_template(systemd_sleep)
 systemd_domain_template(systemd_pstore)
 type systemd_pstore_var_lib_t;
 files_type(systemd_pstore_var_lib_t)
+
+systemd_domain_template(systemd_nsresourced)
+
+type systemd_nsresourced_runtime_t;
+files_pid_file(systemd_nsresourced_runtime_t)
+
+systemd_domain_template(systemd_mountfsd)
 
 #######################################
 #
@@ -466,6 +495,7 @@ manage_dirs_pattern(systemd_machined_t, systemd_machined_var_run_t, systemd_mach
 manage_files_pattern(systemd_machined_t, systemd_machined_var_run_t, systemd_machined_var_run_t)
 manage_lnk_files_pattern(systemd_machined_t, systemd_machined_var_run_t, systemd_machined_var_run_t)
 init_pid_filetrans(systemd_machined_t, systemd_machined_var_run_t, dir, "machines")
+init_pid_filetrans(systemd_machined_t, systemd_machined_var_run_t, dir, "machine")
 
 manage_dirs_pattern(systemd_machined_t, systemd_machined_var_lib_t, systemd_machined_var_lib_t)
 manage_files_pattern(systemd_machined_t, systemd_machined_var_lib_t, systemd_machined_var_lib_t)
@@ -683,6 +713,8 @@ allow systemd_tmpfiles_t self:capability { chown dac_read_search dac_override fs
 allow systemd_tmpfiles_t self:process { setrlimit setfscreate };
 
 allow systemd_tmpfiles_t self:unix_dgram_socket create_socket_perms;
+
+allow systemd_tmpfiles_t systemd_nsresourced_t:unix_stream_socket connectto;
 
 kernel_read_network_state(systemd_tmpfiles_t)
 kernel_request_load_module(systemd_tmpfiles_t)
@@ -927,6 +959,7 @@ kernel_dgram_send(systemd_hostnamed_t)
 kernel_read_xen_state(systemd_hostnamed_t)
 kernel_read_sysctl(systemd_hostnamed_t)
 
+dev_read_vsock(systemd_hostnamed_t)
 dev_write_kmsg(systemd_hostnamed_t)
 dev_read_sysfs(systemd_hostnamed_t)
 
@@ -1125,6 +1158,10 @@ optional_policy(`
 ')
 
 optional_policy(`
+	timemaster_service_status(systemd_timedated_t)
+')
+
+optional_policy(`
 	xserver_manage_config(systemd_timedated_t)
     xserver_read_state_xdm(systemd_timedated_t)
 ')
@@ -1214,24 +1251,54 @@ files_etc_filetrans(systemd_hwdb_t, systemd_hwdb_etc_t, file)
 
 systemd_read_efivarfs(systemd_hwdb_t)
 
+kernel_dgram_send(systemd_hwdb_t)
+
 ########################################
 #
-# Common rules for systemd generators
+# Rules for systemd generators
 #
+
+### Common rules for systemd generators
 allow systemd_generator self:unix_dgram_socket { create_socket_perms sendto };
 
-kernel_dgram_send(systemd_generator)
+dev_write_kmsg(systemd_generator)
+fs_getattr_cgroup(systemd_generator)
+fs_search_cgroup_dirs(systemd_generator)
+kernel_read_proc_files(systemd_generator)
 
-fs_getattr_all_fs(systemd_generator)
-fs_search_all(systemd_generator)
+### Rules for individual systemd generator domains
 
-logging_stream_connect_syslog(systemd_generator)
+### bless-boot generator
+fs_read_efivarfs_files(systemd_bless_boot_generator_t)
 
-#######################################
-#
-# systemd_gpt_generator domain
-#
+### cryptsetup generator
+allow systemd_cryptsetup_generator_t self:process setfscreate;
 
+init_read_state(systemd_cryptsetup_generator_t)
+
+### fstab generator
+allow systemd_fstab_generator_t self:capability { dac_override dac_read_search };
+allow systemd_fstab_generator_t self:process setfscreate;
+
+create_lnk_files_pattern(systemd_fstab_generator_t, systemd_unit_file_type, systemd_unit_file_type)
+
+dev_write_sysfs_dirs(systemd_fstab_generator_t)
+
+files_read_all_mountpoint_symlinks(systemd_fstab_generator_t)
+files_search_all_mountpoints(systemd_fstab_generator_t)
+
+fs_getattr_dos_dirs(systemd_fstab_generator_t)
+
+optional_policy(`
+	fstools_exec(systemd_fstab_generator_t)
+')
+
+### getty generator
+allow systemd_getty_generator_t self:process setfscreate;
+dev_read_sysfs(systemd_getty_generator_t)
+term_open_unallocated_ttys(systemd_getty_generator_t)
+
+### gpt generator
 allow systemd_gpt_generator_t self:capability sys_rawio;
 dontaudit systemd_gpt_generator_t self:capability sys_admin;
 allow systemd_gpt_generator_t self:netlink_kobject_uevent_socket create_socket_perms;
@@ -1246,9 +1313,8 @@ files_list_tmp(systemd_gpt_generator_t)
 files_list_usr(systemd_gpt_generator_t)
 files_list_var(systemd_gpt_generator_t)
 
+fs_getattr_xattr_fs(systemd_gpt_generator_t)
 fs_mount_tmpfs(systemd_gpt_generator_t)
-
-fstools_exec(systemd_gpt_generator_t)
 
 mls_file_read_to_clearance(systemd_gpt_generator_t)
 mls_file_write_to_clearance(systemd_gpt_generator_t)
@@ -1256,11 +1322,11 @@ mls_file_write_to_clearance(systemd_gpt_generator_t)
 storage_raw_rw_fixed_disk(systemd_gpt_generator_t)
 storage_raw_read_removable_device(systemd_gpt_generator_t)
 
-allow systemd_gpt_generator_t systemd_gpt_generator_unit_file_t:file manage_file_perms;
 systemd_read_efivarfs(systemd_gpt_generator_t)
-systemd_unit_file_filetrans(systemd_gpt_generator_t, systemd_gpt_generator_unit_file_t, file)
-systemd_create_unit_file_dirs(systemd_gpt_generator_t)
-systemd_create_unit_file_lnk(systemd_gpt_generator_t)
+
+optional_policy(`
+	fstools_exec(systemd_gpt_generator_t)
+')
 
 kernel_dgram_send(systemd_gpt_generator_t)
 
@@ -1268,36 +1334,53 @@ optional_policy(`
 	udev_read_pid_files(systemd_gpt_generator_t)
 ')
 
-#######################################
-#
-# systemd_fstab_generator_t 
-#
-allow systemd_fstab_generator_t self:capability dac_override;
-dev_write_sysfs_dirs(systemd_fstab_generator_t)
-
-files_read_etc_files(systemd_fstab_generator_t)
-files_read_all_lnk_files(systemd_fstab_generator_t)
-files_search_all(systemd_fstab_generator_t)
-
-fstools_exec(systemd_fstab_generator_t)
-
-systemd_manage_all_unit_files(systemd_fstab_generator_t)
-
-#######################################
-#
-# systemd_rc_local_generator_t 
-#
+### systemd rc_local generator
+allow systemd_rc_local_generator_t self:process setfscreate;
 
 init_exec_script_files(systemd_rc_local_generator_t)
 
-#######################################
-#
-# systemd_sysv_generator_t 
-#
+### ssh generator
+allow systemd_ssh_generator_t self:process setfscreate;
+allow systemd_ssh_generator_t self:vsock_socket create;
+allow systemd_ssh_generator_t vsock_device_t:chr_file { read_chr_file_perms };
 
+dev_read_sysfs(systemd_ssh_generator_t)
+
+optional_policy(`
+	ssh_domtrans(systemd_ssh_generator_t)
+	ssh_getattr_unit_file(systemd_ssh_generator_t)
+')
+
+### sysv generator
+allow systemd_sysv_generator_t self:process setfscreate;
 init_read_script_files(systemd_sysv_generator_t)
 
-systemd_manage_all_unit_files(systemd_sysv_generator_t)
+### tpm2 generator
+allow systemd_tpm2_generator_t self:process setfscreate;
+dev_list_sysfs(systemd_tpm2_generator_t)
+
+### zram generator
+allow systemd_zram_generator_t systemd_fstab_generator_unit_file_t:file write_file_perms;
+dev_create_sysfs_files(systemd_zram_generator_t)
+dev_rw_sysfs(systemd_zram_generator_t)
+permissive systemd_zram_generator_t;
+
+# for systemd-detect-virt - needs to be confined
+corecmd_exec_bin(systemd_zram_generator_t)
+dev_read_sysfs(systemd_zram_generator_t)
+storage_getattr_fixed_disk_dev(systemd_zram_generator_t)
+
+optional_policy(`
+	fstools_domtrans(systemd_zram_generator_t)
+')
+
+optional_policy(`
+	modutils_domtrans_kmod(systemd_zram_generator_t)
+')
+
+### a generic generator
+permissive systemd_generic_generator_t;
+
 
 #######################################
 #
@@ -1313,6 +1396,7 @@ sysnet_manage_config_dirs(systemd_network_generator_t)
 optional_policy(`
 	logging_send_syslog_msg(systemd_network_generator_t)
 ')
+
 
 #######################################
 #
@@ -1392,6 +1476,10 @@ optional_policy(`
 allow systemd_domain self:process { setfscreate signal_perms };
 allow systemd_domain self:unix_dgram_socket { create_socket_perms sendto };
 dontaudit systemd_domain self:capability net_admin;
+
+list_dirs_pattern(systemd_domain, systemd_conf_t, systemd_conf_t)
+read_files_pattern(systemd_domain, systemd_conf_t, systemd_conf_t)
+read_lnk_files_pattern(systemd_domain, systemd_conf_t, systemd_conf_t)
 
 dev_read_urand(systemd_domain)
 
@@ -1534,6 +1622,7 @@ manage_sock_files_pattern(systemd_importd_t, systemd_importd_var_run_t, systemd_
 init_pid_filetrans(systemd_importd_t, systemd_importd_var_run_t, dir)
 
 manage_files_pattern(systemd_importd_t, systemd_machined_var_run_t, systemd_machined_var_run_t)
+manage_sock_files_pattern(systemd_importd_t, systemd_machined_var_run_t, systemd_machined_var_run_t)
 init_named_pid_filetrans(systemd_importd_t, systemd_machined_var_run_t, file, "machines.lock")
 
 manage_dirs_pattern(systemd_importd_t, systemd_importd_tmp_t, systemd_importd_tmp_t)
@@ -1579,6 +1668,8 @@ optional_policy(`
 #
 allow systemd_userdbd_t self:capability { dac_read_search sys_resource };
 
+allow systemd_userdbd_t systemd_nsresourced_t:unix_stream_socket connectto;
+
 manage_dirs_pattern(systemd_userdbd_t, systemd_userdbd_runtime_t, systemd_userdbd_runtime_t)
 manage_files_pattern(systemd_userdbd_t, systemd_userdbd_runtime_t, systemd_userdbd_runtime_t)
 manage_sock_files_pattern(systemd_userdbd_t, systemd_userdbd_runtime_t, systemd_userdbd_runtime_t)
@@ -1604,7 +1695,8 @@ systemd_read_efivarfs(systemd_userdbd_t)
 # systemd_sleep local policy
 #
 
-allow systemd_sleep_t self:capability { linux_immutable sys_resource };
+# systemd-sleep wants cap_sys_admin to check btrfs swapfile offset (https://github.com/systemd/systemd/pull/29382)
+allow systemd_sleep_t self:capability { linux_immutable sys_resource sys_admin };
 # systemd-sleep needs to set timer for suspend-then-hibernate
 allow systemd_sleep_t self:capability2 wake_alarm;
 dontaudit systemd_sleep_t self:capability sys_ptrace;
@@ -1628,9 +1720,9 @@ fstools_rw_swap_files(systemd_sleep_t)
 
 init_search_var_lib_dirs(systemd_sleep_t)
 
-# systemd-sleep needs to getattr swap partitions
-storage_getattr_fixed_disk_dev(systemd_sleep_t)
-storage_getattr_removable_dev(systemd_sleep_t)
+# systemd-sleep needs to read swap partitions
+storage_raw_read_fixed_disk(systemd_sleep_t)
+storage_raw_read_removable_device(systemd_sleep_t)
 
 #######################################
 #
@@ -1673,3 +1765,40 @@ fs_list_pstore(systemd_pstore_t)
 fs_read_pstore_files(systemd_pstore_t)
 
 init_search_var_lib_dirs(systemd_pstore_t)
+
+########################################
+#
+# systemd_mountfsd local policy
+#
+
+allow systemd_mountfsd_t self:capability { sys_ptrace sys_resource };
+allow systemd_mountfsd_t systemd_mountfsd_exec_t:file execute_no_trans;
+
+permissive systemd_mountfsd_t;
+
+kernel_dgram_send(systemd_mountfsd_t)
+
+########################################
+#
+# systemd_nsresourced local policy
+#
+
+allow systemd_nsresourced_t self:bpf { map_create map_read map_write prog_load prog_run };
+allow systemd_nsresourced_t self:capability sys_resource;
+allow systemd_nsresourced_t self:capability2 { bpf perfmon };
+allow systemd_nsresourced_t self:perf_event manage_perf_event_perms;
+allow systemd_nsresourced_t systemd_nsresourced_exec_t:file execute_no_trans;
+
+permissive systemd_nsresourced_t;
+#read_files_pattern(systemd_nsresourced_t, systemd_nsresourced_runtime_t, systemd_nsresourced_runtime_t)
+manage_dirs_pattern(systemd_nsresourced_t, systemd_nsresourced_runtime_t, systemd_nsresourced_runtime_t)
+
+kernel_dgram_send(systemd_nsresourced_t)
+
+dev_read_sysfs(systemd_nsresourced_t)
+
+fs_manage_bpf_dirs(systemd_nsresourced_t)
+fs_manage_bpf_files(systemd_nsresourced_t)
+
+init_named_pid_filetrans(systemd_nsresourced_t, systemd_nsresourced_runtime_t, dir, "nsresource")
+init_named_pid_filetrans(systemd_nsresourced_t, systemd_nsresourced_runtime_t, file, "io.systemd.NamespaceResource")

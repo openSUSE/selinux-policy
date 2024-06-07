@@ -576,6 +576,8 @@ fs_getattr_all_fs(abrt_dump_oops_t)
 fs_list_pstorefs(abrt_dump_oops_t)
 fs_getattr_nsfs_files(abrt_dump_oops_t)
 
+init_stream_connectto(abrt_dump_oops_t)
+
 selinux_compute_create_context(abrt_dump_oops_t)
 
 logging_read_generic_logs(abrt_dump_oops_t)
@@ -591,6 +593,11 @@ init_read_var_lib_files(abrt_dump_oops_t)
 optional_policy(`
     sssd_read_public_files(abrt_dump_oops_t)
     sssd_stream_connect(abrt_dump_oops_t)
+')
+
+optional_policy(`
+	systemd_machined_stream_connect(abrt_dump_oops_t)
+	systemd_userdbd_stream_connect(abrt_dump_oops_t)
 ')
 
 optional_policy(`
@@ -683,7 +690,5 @@ optional_policy(`
 
 allow abrt_domain abrt_var_run_t:sock_file write_sock_file_perms;
 allow abrt_domain abrt_var_run_t:unix_stream_socket connectto;
-
-dev_rw_crypto(abrt_domain)
 
 files_read_etc_files(abrt_domain)

@@ -102,6 +102,7 @@ manage_files_pattern(sssd_t, sssd_var_run_t, sssd_var_run_t)
 manage_sock_files_pattern(sssd_t, sssd_var_run_t, sssd_var_run_t)
 files_pid_filetrans(sssd_t, sssd_var_run_t, { file dir sock_file })
 
+kernel_io_uring_use(sssd_t)
 kernel_read_network_state(sssd_t)
 kernel_read_system_state(sssd_t)
 kernel_request_load_module(sssd_t)
@@ -118,7 +119,6 @@ corecmd_exec_bin(sssd_t)
 
 dev_read_urand(sssd_t)
 dev_read_sysfs(sssd_t)
-dev_rw_crypto(sssd_t)
 
 domain_read_all_domains_state(sssd_t)
 domain_obj_id_change_exemption(sssd_t)
