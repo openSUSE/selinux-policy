@@ -72,7 +72,6 @@ ifdef(`distro_gentoo', `
 /var/lib/google-authenticator(/.*)?	gen_context(system_u:object_r:var_auth_t,s0)
 
 /var/lib/lastlog(/.*)?		gen_context(system_u:object_r:lastlog_t,s0)
-/var/lib/wtmpdb(/.*)?		gen_context(system_u:object_r:wtmp_t,s0)
 
 /var/log/btmp.*		--	gen_context(system_u:object_r:faillog_t,s0)
 /var/log/dmesg		--	gen_context(system_u:object_r:var_log_t,s0)

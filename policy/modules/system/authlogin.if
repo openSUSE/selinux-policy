@@ -1995,8 +1995,8 @@ interface(`auth_rw_login_records',`
 		type wtmp_t;
 	')
 
+	allow $1 wtmp_t:file rw_file_perms;
 	logging_search_logs($1)
-	manage_files_pattern($1, wtmp_t, wtmp_t)
 ')
 
 ########################################
