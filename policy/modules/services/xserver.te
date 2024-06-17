@@ -659,6 +659,7 @@ files_read_usr_files(xdm_t)
 # Poweroff wants to create the /poweroff file when run from xdm
 files_create_boot_flag(xdm_t)
 files_dontaudit_getattr_boot_dirs(xdm_t)
+files_dontaudit_getattr_root_files(xdm_t)
 files_dontaudit_write_usr_files(xdm_t)
 files_dontaudit_access_check_etc(xdm_t)
 files_dontaudit_getattr_all_dirs(xdm_t)
