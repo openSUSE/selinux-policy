@@ -58,6 +58,7 @@ interface(`auth_use_pam',`
 	auth_dontaudit_read_shadow($1)
 	auth_read_login_records($1)
 	auth_append_login_records($1)
+	auth_rw_wtmpdb_login_records($1)
 	auth_rw_lastlog($1)
 	auth_create_lastlog($1)
 	auth_manage_faillog($1)

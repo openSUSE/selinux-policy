@@ -76,6 +76,7 @@ term_search_ptys(portslave_t)
 
 auth_domtrans_chk_passwd(portslave_t)
 auth_rw_login_records(portslave_t)
+auth_rw_wtmpdb_login_records(portslave_t)
 auth_use_nsswitch(portslave_t)
 
 init_rw_utmp(portslave_t)

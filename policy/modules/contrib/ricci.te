@@ -140,6 +140,7 @@ files_create_boot_flag(ricci_t)
 
 auth_domtrans_chk_passwd(ricci_t)
 auth_append_login_records(ricci_t)
+auth_rw_wtmpdb_login_records(ricci_t)
 
 init_stream_connect_script(ricci_t)
 

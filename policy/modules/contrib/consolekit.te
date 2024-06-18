@@ -66,6 +66,7 @@ term_use_all_terms(consolekit_t)
 auth_use_nsswitch(consolekit_t)
 auth_manage_pam_console_data(consolekit_t)
 auth_write_login_records(consolekit_t)
+auth_rw_wtmpdb_login_records(consolekit_t)
 auth_create_pam_console_data_dirs(consolekit_t)
 
 init_read_utmp(consolekit_t)
