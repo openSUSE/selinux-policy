@@ -113,6 +113,12 @@ attribute wtmp_file_type;
 type wtmp_t, wtmp_file_type;
 logging_log_file(wtmp_t)
 
+type wtmpdb_t, wtmp_file_type;
+logging_log_file(wtmpdb_t)
+
+type wtmpdb_journal_t;
+logging_log_file(wtmpdb_journal_t)
+
 ########################################
 #
 # Check password local policy
