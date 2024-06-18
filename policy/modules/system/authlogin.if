@@ -1858,10 +1858,10 @@ interface(`auth_dontaudit_exec_utempter',`
 #
 interface(`auth_setattr_login_records',`
 	gen_require(`
-		type wtmp_t;
+		attribute wtmp_file_type;
 	')
 
-	allow $1 wtmp_t:file setattr;
+	allow $1 wtmp_file_type:file setattr;
 	logging_search_logs($1)
 ')
 
@@ -1877,10 +1877,10 @@ interface(`auth_setattr_login_records',`
 #
 interface(`auth_relabel_login_records',`
 	gen_require(`
-		type wtmp_t;
+		attribute wtmp_file_type;
 	')
 
-	allow $1 wtmp_t:file relabel_file_perms;
+	allow $1 wtmp_file_type:file relabel_file_perms;
 ')
 
 
@@ -1897,11 +1897,11 @@ interface(`auth_relabel_login_records',`
 #
 interface(`auth_read_login_records',`
 	gen_require(`
-		type wtmp_t;
+		attribute wtmp_file_type;
 	')
 
 	logging_search_logs($1)
-	allow $1 wtmp_t:file read_file_perms;
+	allow $1 wtmp_file_type:file read_file_perms;
 ')
 
 ########################################
@@ -1918,10 +1918,10 @@ interface(`auth_read_login_records',`
 #
 interface(`auth_dontaudit_read_login_records',`
 	gen_require(`
-		type wtmp_t;
+		attribute wtmp_file_type;
 	')
 
-	dontaudit $1 wtmp_t:file read_file_perms;
+	dontaudit $1 wtmp_file_type:file read_file_perms;
 ')
 
 ########################################
@@ -1937,10 +1937,10 @@ interface(`auth_dontaudit_read_login_records',`
 #
 interface(`auth_dontaudit_write_login_records',`
 	gen_require(`
-		type wtmp_t;
+		attribute wtmp_file_type;
 	')
 
-	dontaudit $1 wtmp_t:file write;
+	dontaudit $1 wtmp_file_type:file write;
 ')
 
 #######################################
@@ -2032,10 +2032,11 @@ interface(`auth_log_filetrans_login_records',`
 interface(`auth_manage_login_records',`
 	gen_require(`
 		type wtmp_t;
+		attribute wtmp_file_type;
 	')
 
 	logging_rw_generic_log_dirs($1)
-	allow $1 wtmp_t:file manage_file_perms;
+	allow $1 wtmp_file_type:file manage_file_perms;
 	logging_log_named_filetrans($1, wtmp_t, file, "wtmp")
 ')
 
