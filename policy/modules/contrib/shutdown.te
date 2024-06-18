@@ -48,6 +48,7 @@ term_use_all_inherited_terms(shutdown_t)
 
 auth_use_nsswitch(shutdown_t)
 auth_write_login_records(shutdown_t)
+auth_rw_wtmpdb_login_records(shutdown_t)
 
 init_rw_utmp(shutdown_t)
 init_stream_connect(shutdown_t)

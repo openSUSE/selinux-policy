@@ -730,6 +730,7 @@ optional_policy(`
 
 optional_policy(`
     auth_rw_login_records(systemd_tmpfiles_t)
+    auth_rw_wtmpdb_login_records(systemd_tmpfiles_t)
 ')
 
 optional_policy(`
