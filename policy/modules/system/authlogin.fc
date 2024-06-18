@@ -81,6 +81,9 @@ ifdef(`distro_gentoo', `
 /var/log/tallylog.*	--	gen_context(system_u:object_r:faillog_t,s0)
 /var/log/wtmp.*		--	gen_context(system_u:object_r:wtmp_t,s0)
 
+/var/lib/wtmpdb(/.*)?           gen_context(system_u:object_r:wtmpdb_t,s0)
+/var/lib/wtmpdb/wtmp.db-journal --      gen_context(system_u:object_r:wtmpdb_journal_t,s0)
+
 /var/lib/rsa(/.*)? 		gen_context(system_u:object_r:var_auth_t,s0)
 /var/rsa(/.*)?	 		gen_context(system_u:object_r:var_auth_t,s0)
 

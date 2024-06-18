@@ -2042,6 +2042,30 @@ interface(`auth_manage_login_records',`
 
 ########################################
 ## <summary>
+##      Read and write wtmpdb files.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`auth_rw_wtmpdb_login_records',`
+        gen_require(`
+                type wtmpdb_t;
+                type wtmpdb_journal_t;
+        ')
+
+        # allow caller domain to rw to sqlite db, but
+        # do not allow to unlink it
+        allow $1 wtmpdb_t:file rw_file_perms;
+        # handle sqlite journal file
+        allow $1 wtmpdb_journal_t:file manage_file_perms;
+        filetrans_pattern($1, wtmpdb_t, wtmpdb_journal_t, file, "wtmp.db-journal")
+')
+
+########################################
+## <summary>
 ##	Read access to the authlogin module.
 ## </summary>
 ## <desc>
