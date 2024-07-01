@@ -64,6 +64,7 @@ optional_policy(`
 		# for monthly cron job
 		auth_log_filetrans_login_records(acct_t)
 		auth_manage_login_records(acct_t)
+		auth_rw_wtmpdb_login_records(acct_t)
 	')
 
 	cron_system_entry(acct_t, acct_exec_t)

@@ -72,6 +72,7 @@ files_search_home(telnetd_t)
 fs_getattr_xattr_fs(telnetd_t)
 
 auth_rw_login_records(telnetd_t)
+auth_rw_wtmpdb_login_records(telnetd_t)
 auth_use_nsswitch(telnetd_t)
 
 init_rw_utmp(telnetd_t)
