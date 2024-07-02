@@ -20,7 +20,7 @@
 # This is in /usr, but is expected to be variable content from a policy perspective (#2042149)
 /usr/lib/sysimage/rpm(/.*)?		gen_context(system_u:object_r:rpm_var_lib_t,s0)
 
-/usr/sbin/zypp-refresh		--	gen_context(system_u:object_r:rpm_exec_t,s0)
+/usr/bin/zypp-refresh		--	gen_context(system_u:object_r:rpm_exec_t,s0)
 /usr/bin/zypper			--	gen_context(system_u:object_r:rpm_exec_t,s0)
 
 /usr/libexec/packagekitd	--	gen_context(system_u:object_r:rpm_exec_t,s0)
