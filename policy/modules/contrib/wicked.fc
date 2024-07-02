@@ -10,27 +10,26 @@
 
 /usr/lib/systemd/system/wicked.* --	gen_context(system_u:object_r:wicked_unit_file_t,s0)
 
-/sbin/ifdown 			--	gen_context(system_u:object_r:wicked_exec_t,s0)
-/sbin/ifprobe 			--	gen_context(system_u:object_r:wicked_exec_t,s0)
-/sbin/ifstatus 			--	gen_context(system_u:object_r:wicked_exec_t,s0)
-/sbin/ifup 			--	gen_context(system_u:object_r:wicked_exec_t,s0)
-/usr/sbin/ifup 			--	gen_context(system_u:object_r:wicked_exec_t,s0)
+/usr/bin/ifdown 			--	gen_context(system_u:object_r:wicked_exec_t,s0)
+/usr/bin/ifprobe 			--	gen_context(system_u:object_r:wicked_exec_t,s0)
+/usr/bin/ifstatus 			--	gen_context(system_u:object_r:wicked_exec_t,s0)
+/usr/bin/ifup 			--	gen_context(system_u:object_r:wicked_exec_t,s0)
 
-/usr/sbin/rcwicked.*		--	gen_context(system_u:object_r:wicked_initrc_exec_t,s0)
+/usr/bin/rcwicked.*		--	gen_context(system_u:object_r:wicked_initrc_exec_t,s0)
 
 /usr/lib/wicked/bin(/.*)?		gen_context(system_u:object_r:wicked_exec_t,s0)
 /usr/libexec/wicked/bin(/.*)?		gen_context(system_u:object_r:wicked_exec_t,s0)
 
 #/usr/lib64/libwicked-0.6.63.so
 
-/usr/sbin/wicked 			--	gen_context(system_u:object_r:wicked_exec_t,s0)
-/usr/sbin/wickedd 			--	gen_context(system_u:object_r:wicked_exec_t,s0)
-/usr/sbin/wickedd-nanny 		--	gen_context(system_u:object_r:wicked_exec_t,s0)
+/usr/bin/wicked 			--	gen_context(system_u:object_r:wicked_exec_t,s0)
+/usr/bin/wickedd 			--	gen_context(system_u:object_r:wicked_exec_t,s0)
+/usr/bin/wickedd-nanny 		--	gen_context(system_u:object_r:wicked_exec_t,s0)
 #/usr/share/wicked/schema/wireless.xml
 /var/lib/wicked(/.*)?				gen_context(system_u:object_r:wicked_var_lib_t,s0)
 #/etc/sysconfig/network/ifcfg-lo
 
-#/usr/sbin/wpa_cli	--	gen_context(system_u:object_r:wpa_cli_exec_t,s0)
+#/usr/bin/wpa_cli	--	gen_context(system_u:object_r:wpa_cli_exec_t,s0)
 #/usr/bin/wpa_supplicant	--	gen_context(system_u:object_r:wicked_exec_t,s0)
 #/var/lib/wicd(/.*)?			gen_context(system_u:object_r:wicked_var_lib_t,s0)
 #/var/log/wicd.*				--	gen_context(system_u:object_r:wicked_log_t,s0)
