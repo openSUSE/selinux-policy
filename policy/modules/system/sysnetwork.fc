@@ -1,9 +1,3 @@
-
-#
-# /bin
-#
-/bin/ip			--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-
 #
 # /dev
 #
@@ -46,42 +40,22 @@ ifdef(`distro_redhat',`
 /run/cloud-init(/.*)?     gen_context(system_u:object_r:net_conf_t,s0)
 
 #
-# /sbin
-#
-/sbin/dhclient.*	--	gen_context(system_u:object_r:dhcpc_exec_t,s0)
-/sbin/dhcdbd		--	gen_context(system_u:object_r:dhcpc_exec_t,s0)
-/sbin/dhcpcd		--	gen_context(system_u:object_r:dhcpc_exec_t,s0)
-/sbin/ethtool		--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-/sbin/ifconfig		--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-/sbin/ip		--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-/sbin/iw		--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-/sbin/ipx_configure	--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-/sbin/ipx_interface	--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-/sbin/ipx_internal_net	--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-/sbin/iwconfig		--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-/sbin/mii-tool		--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-/sbin/pump		--	gen_context(system_u:object_r:dhcpc_exec_t,s0)
-/sbin/tc		--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-
-#
 # /usr
 #
+/usr/bin/dhclient.*	--	gen_context(system_u:object_r:dhcpc_exec_t,s0)
+/usr/bin/dhcdbd	--	gen_context(system_u:object_r:dhcpc_exec_t,s0)
+/usr/bin/dhcpcd	--	gen_context(system_u:object_r:dhcpc_exec_t,s0)
+/usr/bin/ethtool	--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
+/usr/bin/ifconfig	--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
 /usr/bin/ip		--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-
-/usr/sbin/dhclient.*	--	gen_context(system_u:object_r:dhcpc_exec_t,s0)
-/usr/sbin/dhcdbd	--	gen_context(system_u:object_r:dhcpc_exec_t,s0)
-/usr/sbin/dhcpcd	--	gen_context(system_u:object_r:dhcpc_exec_t,s0)
-/usr/sbin/ethtool	--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-/usr/sbin/ifconfig	--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-/usr/sbin/ip		--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-/usr/sbin/iw		--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-/usr/sbin/ipx_configure	--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-/usr/sbin/ipx_interface	--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-/usr/sbin/ipx_internal_net --	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-/usr/sbin/iwconfig	--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-/usr/sbin/mii-tool	--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
-/usr/sbin/pump		--	gen_context(system_u:object_r:dhcpc_exec_t,s0)
-/usr/sbin/tc		--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
+/usr/bin/iw		--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
+/usr/bin/ipx_configure	--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
+/usr/bin/ipx_interface	--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
+/usr/bin/ipx_internal_net --	gen_context(system_u:object_r:ifconfig_exec_t,s0)
+/usr/bin/iwconfig	--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
+/usr/bin/mii-tool	--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
+/usr/bin/pump		--	gen_context(system_u:object_r:dhcpc_exec_t,s0)
+/usr/bin/tc		--	gen_context(system_u:object_r:ifconfig_exec_t,s0)
 
 #
 # /var

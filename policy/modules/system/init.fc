@@ -30,19 +30,10 @@ ifdef(`distro_gentoo', `
 ')
 
 #
-# /bin
-#
-/bin/systemd		--	gen_context(system_u:object_r:init_exec_t,s0)
-
-#
 # /sbin
 #
-/sbin/init(ng)?		--	gen_context(system_u:object_r:init_exec_t,s0)
-# because nowadays, /sbin/init is often a symlink to /sbin/upstart
-/sbin/upstart		--	gen_context(system_u:object_r:init_exec_t,s0)
-
 ifdef(`distro_gentoo', `
-/sbin/rc		--	gen_context(system_u:object_r:rc_exec_t,s0)
+/usr/bin/rc		--	gen_context(system_u:object_r:rc_exec_t,s0)
 ')
 
 #
@@ -50,9 +41,9 @@ ifdef(`distro_gentoo', `
 #
 /usr/bin/sepg_ctl	--	gen_context(system_u:object_r:initrc_exec_t,s0)
 
-/usr/sbin/init(ng)?		--	gen_context(system_u:object_r:init_exec_t,s0)
+/usr/bin/init(ng)?		--	gen_context(system_u:object_r:init_exec_t,s0)
 # because nowadays, /sbin/init is often a symlink to /sbin/upstart
-/usr/sbin/upstart		--	gen_context(system_u:object_r:init_exec_t,s0)
+/usr/bin/upstart		--	gen_context(system_u:object_r:init_exec_t,s0)
 
 /usr/lib/systemd/[^/]*		--	gen_context(system_u:object_r:init_exec_t,s0)
 /usr/lib/systemd/fedora[^/]* 	--	gen_context(system_u:object_r:initrc_exec_t,s0)
@@ -61,8 +52,8 @@ ifdef(`distro_gentoo', `
 /usr/libexec/dcc/start-.* --	gen_context(system_u:object_r:initrc_exec_t,s0)
 /usr/libexec/dcc/stop-.* --	gen_context(system_u:object_r:initrc_exec_t,s0)
 
-/usr/sbin/open_init_pty	--	gen_context(system_u:object_r:initrc_exec_t,s0)
-/usr/sbin/startx	-- 	gen_context(system_u:object_r:initrc_exec_t,s0)
+/usr/bin/open_init_pty	--	gen_context(system_u:object_r:initrc_exec_t,s0)
+/usr/bin/startx	-- 	gen_context(system_u:object_r:initrc_exec_t,s0)
 /usr/bin/systemd	--	gen_context(system_u:object_r:init_exec_t,s0)
 
 /usr/share/system-config-services/system-config-services-mechanism\.py  --	gen_context(system_u:object_r:initrc_exec_t,s0)
