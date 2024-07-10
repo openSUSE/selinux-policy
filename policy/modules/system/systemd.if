@@ -52,7 +52,7 @@ template(`systemd_generator_template',`
 	allow $1_t $1_unit_file_t:dir manage_dir_perms;
 	allow $1_t $1_unit_file_t:file manage_file_perms;
 	allow $1_t $1_unit_file_t:lnk_file manage_lnk_file_perms;
-	systemd_unit_file_filetrans($1_t, $1_unit_file_t, { dir file lnk_file })
+	systemd_unit_file_filetrans($1_t, $1_unit_file_t, file)
 
 	optional_policy(`
 		logging_send_syslog_msg($1_t)
@@ -792,7 +792,7 @@ interface(`systemd_exec_sysctl',`
 
 #######################################
 ## <summary>
-##  Allow a domain to execute systemd-sysctl in the caller domain.
+##  Allow a domain to execute systemd-tmpfiles in the caller domain.
 ## </summary>
 ## <param name="domain">
 ## <summary>
@@ -1396,7 +1396,7 @@ interface(`systemd_manage_unit_symlinks',`
 		attribute systemd_unit_file_type;
 	')
 
-	manage_lnk_files_pattern($1, systemd_unit_file_type, systemd_unit_file_type)
+	manage_lnk_files_pattern($1, systemd_unit_file_t, systemd_unit_file_t)
 ')
 
 ########################################
@@ -3037,7 +3037,47 @@ interface(`systemd_manage_conf_files', `
 interface(`systemd_nsresourced_stream_connect', `
 	gen_require(`
 		type systemd_nsresourced_t;
+		type systemd_nsresourced_runtime_t;
 	')
 
 	allow $1 systemd_nsresourced_t:unix_stream_socket connectto;
+	allow $1 systemd_nsresourced_runtime_t:sock_file write_sock_file_perms;
+')
+
+#######################################
+## <summary>
+##	Create objects in the pid directory
+##	with a private type with a type transition.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`systemd_nsresourced_runtime_filetrans',`
+	gen_require(`
+		type init_var_run_t;
+		type systemd_nsresourced_runtime_t;
+	')
+
+	filetrans_pattern($1, init_var_run_t, systemd_nsresourced_runtime_t, file, "io.systemd.NamespaceResource")
+')
+
+########################################
+## <summary>
+##	Allow caller domain to run bpf on systemd-nsresourced.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`systemd_nsresourced_prog_run_bpf',`
+	gen_require(`
+		type systemd_nsresourced_runtime_t;
+	')
+
+    allow $1 systemd_nsresourced_runtime_t:bpf { map_read map_write prog_run };
 ')
