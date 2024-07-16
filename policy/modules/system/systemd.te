@@ -205,6 +205,8 @@ systemd_generator_template(systemd_fstab_generator)
 systemd_generator_template(systemd_getty_generator)
 # gpt-generator
 systemd_generator_template(systemd_gpt_generator)
+# growpart-generator
+systemd_generator_template(systemd_growpart_generator)
 # rc-local-generator
 systemd_generator_template(systemd_rc_local_generator)
 # ssh-generator
@@ -1350,6 +1352,23 @@ kernel_dgram_send(systemd_gpt_generator_t)
 optional_policy(`
 	udev_read_pid_files(systemd_gpt_generator_t)
 ')
+
+### growpart generator
+
+# needed for cat, ln
+corecmd_exec_bin(systemd_growpart_generator_t)
+
+# needed for lsblk
+dev_list_sysfs(systemd_growpart_generator_t)
+dev_read_sysfs(systemd_growpart_generator_t)
+storage_getattr_fixed_disk_dev(systemd_growpart_generator_t)
+
+optional_policy(`
+        # ignore #!/bin/bash reading passwd file
+        auth_dontaudit_read_passwd_file(systemd_growpart_generator_t)
+')
+
+permissive systemd_growpart_generator_t;
 
 ### systemd rc_local generator
 init_exec_script_files(systemd_rc_local_generator_t)
