@@ -97,3 +97,30 @@ interface(`snapper_filetrans_named_content',`
     files_mountpoint_filetrans($1, snapperd_data_t, dir, ".snapshots")
 ')
 
+########################################
+## <summary>
+##	Create a set of derived types for various
+##	snapper plugins
+## </summary>
+## <param name="prefix">
+##	<summary>
+##	The name to be used for deriving type names.
+##	</summary>
+## </param>
+#
+template(`snapper_plugin_template',`
+	gen_require(`
+		attribute snapper_plugin;
+		type snapperd_t;
+	')
+
+	type snapper_$1_plugin_t, snapper_plugin;
+	type snapper_$1_plugin_exec_t;
+	domain_type(snapper_$1_plugin_t)
+	domain_entry_file(snapper_$1_plugin_t, snapper_$1_plugin_exec_t)
+
+	role system_r types snapper_$1_plugin_t;
+	domtrans_pattern(snapperd_t, snapper_$1_plugin_exec_t, snapper_$1_plugin_t)
+	dontaudit snapperd_t snapper_$1_plugin_t:process { noatsecure rlimitinh siginh };
+')
+
