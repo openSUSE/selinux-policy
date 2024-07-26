@@ -574,6 +574,10 @@ optional_policy(`
 ')
 
 optional_policy(`
+	avahi_dbus_chat(system_cronjob_t)
+')
+
+optional_policy(`
 	bind_read_config(system_cronjob_t)
 ')
 
@@ -872,6 +876,8 @@ userdom_use_inherited_user_terminals(crontab_domain)
 # Read user crontabs
 userdom_read_user_home_content_files(crontab_domain)
 userdom_read_user_home_content_symlinks(crontab_domain)
+userdom_dontaudit_write_user_home_content_files(crontab_domain)
+userdom_dontaudit_manage_user_home_content_dirs(crontab_domain)
 
 tunable_policy(`fcron_crond',`
 	# fcron wants an instant update of a crontab change for the administrator

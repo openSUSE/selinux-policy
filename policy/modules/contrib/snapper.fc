@@ -1,6 +1,7 @@
-/usr/sbin/snapperd		--	gen_context(system_u:object_r:snapperd_exec_t,s0)
+/usr/bin/snapperd		--	gen_context(system_u:object_r:snapperd_exec_t,s0)
 
 /usr/lib/snapper/systemd-helper		--	gen_context(system_u:object_r:snapperd_exec_t,s0)
+/usr/lib/snapper/plugins/grub		--	gen_context(system_u:object_r:snapper_grub_plugin_exec_t,s0)
 
 /etc/snapper(/.*)?          gen_context(system_u:object_r:snapperd_conf_t,s0)
 /etc/sysconfig/snapper  --  gen_context(system_u:object_r:snapperd_conf_t,s0)

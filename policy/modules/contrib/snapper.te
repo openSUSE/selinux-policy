@@ -46,6 +46,8 @@ allow snapperd_t snapperd_data_t:dir { relabelfrom relabelto mounton };
 allow snapperd_t snapperd_data_t:file relabelfrom;
 snapper_filetrans_named_content(snapperd_t)
 
+fs_manage_dos_files(snapperd_t)
+
 allow snapperd_t snapperd_tmp_t:file manage_file_perms;
 allow snapperd_t snapperd_tmp_t:dir manage_dir_perms;
 files_tmp_filetrans(snapperd_t, snapperd_tmp_t, { file dir })
@@ -108,4 +110,27 @@ optional_policy(`
 
 optional_policy(`
     snapper_relabel_snapshots(snapperd_t)
+')
+
+########################################
+#
+# snapper plugins policy
+#
+
+attribute snapper_plugin;
+
+snapper_plugin_template(grub);
+
+### snapper grub plugin
+bootloader_exec(snapper_grub_plugin_t)
+corecmd_exec_bin(snapper_grub_plugin_t)
+files_read_isid_type_files(snapper_grub_plugin_t)
+snapper_filetrans_named_content(snapper_grub_plugin_t)
+
+allow snapper_grub_plugin_t snapperd_data_t:dir manage_dir_perms;
+allow snapper_grub_plugin_t snapperd_data_t:file manage_file_perms;
+dontaudit snapper_grub_plugin_t self:capability { sys_admin };
+
+optional_policy(`
+	auth_dontaudit_read_passwd_file(snapper_grub_plugin_t)
 ')

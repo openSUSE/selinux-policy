@@ -2510,3 +2510,56 @@ interface(`xserver_filetrans_named_content',`
 
 	files_pid_filetrans($1, xdm_var_run_t, dir, "gdm")
 ')
+
+######################################
+## <summary>
+##	Transition to xdm named content in /run
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+## <param name="filename">
+##	<summary>
+##	Only transition for files with this name.
+##	</summary>
+## </param>
+#
+interface(`xserver_var_run_etc_filetrans_named_content',`
+	gen_require(`
+		type var_run_t;
+		type xdm_var_run_t;
+		type xdm_etc_t;
+	')
+
+	filetrans_pattern($1, var_run_t, xdm_var_run_t, dir)
+	manage_dirs_pattern($1, xdm_var_run_t, xdm_var_run_t)
+	filetrans_pattern($1, xdm_var_run_t, xdm_etc_t, file, $2)
+')
+
+######################################
+## <summary>
+##	Transition to xdm named content in /etc
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+## <param name="filename">
+##	<summary>
+##	Only transition for files with this name.
+##	</summary>
+## </param>
+#
+interface(`xserver_etc_filetrans_named_content',`
+	gen_require(`
+		type etc_t;
+		type xdm_etc_t;
+	')
+
+	manage_dirs_pattern($1, etc_t, etc_t)
+	filetrans_pattern($1, etc_t, xdm_etc_t, file, $2)
+	relabel_files_pattern($1, xdm_etc_t, xdm_etc_t)
+')

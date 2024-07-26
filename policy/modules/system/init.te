@@ -339,6 +339,8 @@ files_watch_non_security_dirs(init_t)
 files_watch_non_security_files(init_t)
 files_watch_non_security_lnk_files(init_t)
 
+fs_cgroup_filetrans_memory_pressure(init_t)
+fs_mounton_cgroup(init_t)
 fs_read_efivarfs_files(init_t)
 fs_setattr_efivarfs_files(init_t)
 fs_read_nfsd_files(init_t)
@@ -404,6 +406,7 @@ logging_create_syslog_netlink_audit_socket(init_t)
 logging_write_var_log_dirs(init_t)
 logging_manage_var_log_symlinks(init_t)
 logging_dgram_accept(init_t)
+logging_fd_use(init_t)
 
 seutil_read_config(init_t)
 seutil_read_login_config(init_t)
@@ -582,6 +585,7 @@ optional_policy(`
     systemd_allow_mount_dir(init_t)
     systemd_allow_create_mount_dir(init_t)
     systemd_hostnamed_delete_config(init_t)
+	systemd_manage_conf_files(init_t)
 ')
 
 optional_policy(`
@@ -739,7 +743,7 @@ systemd_relabel_unit_dirs(init_t)
 systemd_relabel_unit_files(init_t)
 systemd_relabel_unit_symlinks(init_t)
 systemd_manage_unit_dirs(initrc_t)
-systemd_manage_unit_symlinks(initrc_t)
+systemd_manage_all_unit_lnk_files(initrc_t)
 systemd_config_all_services(initrc_t)
 systemd_read_unit_files(initrc_t)
 systemd_login_status(init_t)
@@ -754,6 +758,7 @@ systemd_timedated_manage_lib_dirs(init_t)
 systemd_login_mounton_pid_dirs(init_t)
 systemd_mounton_inherited_logind_sessions_dirs(init_t)
 systemd_delete_private_tmp(init_t)
+systemd_nsresourced_runtime_filetrans(init_t)
 systemd_userdbd_stream_connect(init_t)
 systemd_userdbd_runtime_filetrans(init_t)
 systemd_userdbd_runtime_manage_symlinks(init_t)
@@ -766,6 +771,7 @@ files_manage_var_files(init_t)
 
 auth_use_nsswitch(init_t)
 auth_rw_login_records(init_t)
+auth_rw_wtmpdb_login_records(init_t)
 auth_rw_lastlog(init_t)
 auth_domtrans_chk_passwd(init_t)
 auth_manage_passwd(init_t)
@@ -821,6 +827,7 @@ optional_policy(`
     dbus_manage_session_tmp_dirs(init_t)
 	dbus_read_pid_sock_files(init_t)
 	dbus_watch_pid_sock_files(init_t)
+	dbus_use_system_bus_fds(init_t)
 
 	optional_policy(`
 		devicekit_dbus_chat_power(init_t)
@@ -868,6 +875,7 @@ optional_policy(`
 
 optional_policy(`
 	ssh_getattr_server_keys(init_t)
+	ssh_create_vsock_socket(init_t)
 ')
 
 optional_policy(`
@@ -1129,6 +1137,7 @@ term_use_all_terms(initrc_t)
 term_reset_tty_labels(initrc_t)
 
 auth_rw_login_records(initrc_t)
+auth_rw_wtmpdb_login_records(initrc_t)
 auth_manage_faillog(initrc_t)
 auth_setattr_login_records(initrc_t)
 auth_rw_lastlog(initrc_t)

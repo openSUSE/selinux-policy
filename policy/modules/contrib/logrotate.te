@@ -159,6 +159,7 @@ application_exec_all(logrotate_t)
 
 auth_domtrans_chk_passwd(logrotate_t)
 auth_manage_login_records(logrotate_t)
+auth_rw_wtmpdb_login_records(logrotate_t)
 auth_use_nsswitch(logrotate_t)
 
 init_all_labeled_script_domtrans(logrotate_t)

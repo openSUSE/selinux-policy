@@ -109,8 +109,15 @@ application_domain(utempter_t, utempter_exec_t)
 type var_auth_t;
 files_type(var_auth_t)
 
-type wtmp_t;
+attribute wtmp_file_type;
+type wtmp_t, wtmp_file_type;
 logging_log_file(wtmp_t)
+
+type wtmpdb_t, wtmp_file_type;
+logging_log_file(wtmpdb_t)
+
+type wtmpdb_journal_t;
+logging_log_file(wtmpdb_journal_t)
 
 ########################################
 #
@@ -413,7 +420,7 @@ term_getattr_all_ttys(utempter_t)
 term_getattr_all_ptys(utempter_t)
 term_dontaudit_use_all_ttys(utempter_t)
 term_dontaudit_use_all_ptys(utempter_t)
-term_dontaudit_use_ptmx(utempter_t)
+term_use_ptmx(utempter_t)
 
 auth_use_nsswitch(utempter_t)
 

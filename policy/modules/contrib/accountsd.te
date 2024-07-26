@@ -107,3 +107,11 @@ optional_policy(`
 	xserver_manage_xdm_etc_files(accountsd_t)
 	xserver_watch_xdm_etc_dirs(accountsd_t)
 ')
+
+# Handle /etc/sysconfig/displaymanager together with GDM (xdm_t) (bsc#1222978)
+optional_policy(`
+	# Label all files created by accountsd_t under /run called "displaymanager.new" as xdm_etc_t
+	xserver_var_run_etc_filetrans_named_content(accountsd_t, "displaymanager.new")
+	# Write /etc/sysconfig/displaymanager
+	xserver_etc_filetrans_named_content(accountsd_t, "displaymanager")
+')

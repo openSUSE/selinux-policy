@@ -157,6 +157,13 @@ gen_tunable(virt_sandbox_use_all_caps, true)
 ## </desc>
 gen_tunable(virt_lockd_blk_devs, false)
 
+## <desc>
+## <p>
+## Allow virt daemons run unconfined hooks
+## </p>
+## </desc>
+gen_tunable(virt_hooks_unconfined, false)
+
 gen_require(`
     class passwd rootok;
     class passwd passwd;
@@ -202,6 +209,11 @@ files_config_file(virt_etc_t)
 
 type virt_etc_rw_t, virt_file_type;
 files_type(virt_etc_rw_t)
+
+type virt_hook_t, virt_file_type;
+type virt_hook_unconfined_t;
+role system_r types virt_hook_unconfined_t;
+application_domain(virt_hook_unconfined_t, virt_hook_t)
 
 type virt_home_t, virt_file_type;
 userdom_user_home_content(virt_home_t)
@@ -289,6 +301,10 @@ ifdef(`enable_mls',`
 	init_ranged_daemon_domain(virtd_t, virtd_exec_t, s0 - mls_systemhigh)
 	init_ranged_daemon_domain(virtlogd_t, virtlogd_exec_t, s0 - mls_systemhigh)
 ')
+type virt_dbus_t, virt_system_domain;
+type virt_dbus_exec_t, virt_file_type;
+init_daemon_domain(virt_dbus_t, virt_dbus_exec_t)
+init_nnp_daemon_domain(virt_dbus_t)
 
 # virtinterfaced
 type virtinterfaced_t, virt_driver_domain;
@@ -468,6 +484,7 @@ allow svirt_t virtqemud_var_run_t:file write;
 read_files_pattern(svirt_t, virtqemud_t, virtqemud_t)
 
 kernel_request_load_module(svirt_t)
+kernel_read_vm_sysctls(svirt_t)
 
 corenet_udp_sendrecv_generic_if(svirt_t)
 corenet_udp_sendrecv_generic_node(svirt_t)
@@ -1037,7 +1054,7 @@ read_lnk_files_pattern(virt_domain, svirt_image_t, svirt_image_t)
 rw_chr_files_pattern(virt_domain, svirt_image_t, svirt_image_t)
 rw_blk_files_pattern(virt_domain, svirt_image_t, svirt_image_t)
 fs_hugetlbfs_filetrans(virt_domain, svirt_image_t, file)
-allow svirt_t svirt_image_t:file map;
+allow virt_domain svirt_image_t:file map;
 allow svirt_t svirt_image_t:blk_file map;
 allow svirt_t svirt_image_t:chr_file map;
 
@@ -1171,6 +1188,7 @@ tunable_policy(`virt_use_samba',`
 ')
 
 tunable_policy(`virt_use_usb',`
+	dev_rw_generic_usb_dev(virt_domain)
 	dev_rw_usbfs(virt_domain)
 	dev_read_sysfs(virt_domain)
 	fs_getattr_dos_fs(virt_domain)
@@ -1473,6 +1491,7 @@ manage_files_pattern(virtd_lxc_t, virt_lxc_var_run_t, virt_lxc_var_run_t)
 manage_sock_files_pattern(virtd_lxc_t, virt_lxc_var_run_t, virt_lxc_var_run_t)
 files_pid_filetrans(virtd_lxc_t, virt_lxc_var_run_t, { file dir })
 filetrans_pattern(virtd_lxc_t, virt_var_run_t, virt_lxc_var_run_t, dir, "lxc")
+filetrans_pattern(virtd_lxc_t, virt_var_run_t, virt_common_var_run_t, dir, "common")
 
 manage_dirs_pattern(virtd_lxc_t, container_file_t, container_file_t)
 manage_files_pattern(virtd_lxc_t, container_file_t, container_file_t)
@@ -1828,6 +1847,19 @@ tunable_policy(`virt_sandbox_use_audit',`
 
 #######################################
 #
+# virt_driver_domain local policy (common rules)
+#
+
+optional_policy(`
+	policykit_dbus_chat(virt_driver_domain)
+')
+
+optional_policy(`
+	unconfined_read_files(virt_driver_domain)
+')
+
+#######################################
+#
 # virtinterfaced local policy
 #
 allow virtinterfaced_t self:tcp_socket create_stream_socket_perms;
@@ -1891,6 +1923,10 @@ dev_rw_sysfs(virtnetworkd_t)
 sysnet_domtrans_ifconfig(virtnetworkd_t)
 sysnet_read_config(virtnetworkd_t)
 
+tunable_policy(`virt_hooks_unconfined',`
+	domtrans_pattern(virtnetworkd_t, virt_hook_t, virt_hook_unconfined_t)
+')
+
 optional_policy(`
 	dnsmasq_create_pid_dirs(virtnetworkd_t)
 	dnsmasq_domtrans(virtnetworkd_t)
@@ -1932,6 +1968,7 @@ corecmd_exec_shell(virtnodedevd_t)
 
 dev_rw_mtrr(virtnodedevd_t)
 
+files_map_var_lib_files(virtnodedevd_t)
 files_watch_etc_dirs(virtnodedevd_t)
 
 miscfiles_read_hwdata(virtnodedevd_t)
@@ -1992,6 +2029,9 @@ optional_policy(`
 allow virtproxyd_t self:tcp_socket create_stream_socket_perms;
 allow virtproxyd_t self:udp_socket create_socket_perms;
 
+allow virtproxyd_t virt_dbus_t:dir search_dir_perms;
+allow virtproxyd_t virt_dbus_t:file read_file_perms;
+
 manage_dirs_pattern(virtproxyd_t, virt_var_run_t, virt_var_run_t)
 manage_dirs_pattern(virtproxyd_t, virtproxyd_var_run_t, virtproxyd_var_run_t)
 manage_files_pattern(virtproxyd_t, virtproxyd_var_run_t, virtproxyd_var_run_t)
@@ -2008,6 +2048,10 @@ optional_policy(`
 	dnsmasq_filetrans_named_content_fromdir(virtproxyd_t, virtproxyd_var_run_t)
 ')
 
+optional_policy(`
+	systemd_userdbd_stream_connect(virtproxyd_t)
+')
+
 #######################################
 #
 # virtqemud local policy
@@ -2015,6 +2059,7 @@ optional_policy(`
 allow virtqemud_t self:bpf { map_create map_read map_write prog_load prog_run };
 allow virtqemud_t self:capability { audit_write chown dac_override dac_read_search fowner fsetid kill net_admin setgid setuid sys_admin sys_chroot sys_ptrace sys_rawio };
 allow virtqemud_t self:capability2 { bpf perfmon };
+allow virtqemud_t self:cap_userns kill;
 
 allow virtqemud_t self:netlink_audit_socket { nlmsg_relay read write };
 allow virtqemud_t self:process { setcap setexec setrlimit setsched setsockcreate };
@@ -2037,6 +2082,9 @@ allow virtqemud_t virt_var_run_t:file map;
 allow virtqemud_t virtlogd_t:fifo_file rw_inherited_fifo_file_perms;
 allow virtqemud_t virtlogd_t:unix_stream_socket connectto;
 
+create_lnk_files_pattern(virtqemud_t, virt_etc_rw_t, virt_etc_rw_t)
+delete_lnk_files_pattern(virtqemud_t, virt_etc_rw_t, virt_etc_rw_t)
+
 manage_files_pattern(virtqemud_t, virtqemud_lock_t, virtqemud_lock_t)
 files_lock_filetrans(virtqemud_t, virtqemud_lock_t, file)
 
@@ -2055,6 +2103,7 @@ files_tmp_filetrans(virtqemud_t, virtqemud_tmp_t, { file dir sock_file})
 manage_dirs_pattern(virtqemud_t, qemu_var_run_t, qemu_var_run_t)
 manage_files_pattern(virtqemud_t, qemu_var_run_t, qemu_var_run_t)
 manage_sock_files_pattern(virtqemud_t, qemu_var_run_t, qemu_var_run_t)
+filetrans_pattern(virtqemud_t, virt_var_run_t, qemu_var_run_t, dir, "qemu")
 
 manage_dirs_pattern(virtqemud_t, svirt_image_t, svirt_image_t)
 manage_fifo_files_pattern(virtqemud_t, svirt_image_t, svirt_image_t)
@@ -2079,6 +2128,7 @@ read_files_pattern(virtqemud_t, virtproxyd_t, virtproxyd_t)
 kernel_io_uring_use(virtqemud_t)
 kernel_read_all_proc(virtqemud_t)
 kernel_read_network_state_symlinks(virtqemud_t)
+kernel_read_vm_sysctls(virtqemud_t)
 kernel_request_load_module(virtqemud_t)
 
 corecmd_exec_bin(virtqemud_t)
@@ -2092,6 +2142,7 @@ dev_delete_urand(virtqemud_t)
 dev_read_cpuid(virtqemud_t)
 dev_read_sysfs(virtqemud_t)
 dev_read_urand(virtqemud_t)
+dev_rw_vfio_dev(virtqemud_t)
 dev_relabel_all_dev_nodes(virtqemud_t)
 dev_rw_kvm(virtqemud_t)
 dev_rw_lvm_control(virtqemud_t)
@@ -2101,7 +2152,11 @@ files_mounton_non_security(virtqemud_t)
 files_read_all_symlinks(virtqemud_t)
 
 fs_getattr_cgroup(virtqemud_t)
+fs_getattr_cifs(virtqemud_t)
 fs_getattr_hugetlbfs(virtqemud_t)
+fs_getattr_nfs(virtqemud_t)
+fs_getattr_tmpfs(virtqemud_t)
+fs_getattr_xattr_fs(virtqemud_t)
 fs_delete_tmpfs_files(virtqemud_t)
 fs_manage_hugetlbfs_dirs(virtqemud_t)
 fs_manage_cgroup_dirs(virtqemud_t)
@@ -2130,6 +2185,10 @@ tunable_policy(`virtqemud_use_execmem',`
 	allow virtqemud_t self:process { execmem execstack };
 ')
 
+tunable_policy(`virt_use_nfs',`
+	fs_manage_nfs_files(virtqemud_t)
+')
+
 optional_policy(`
 	dmidecode_domtrans(virtqemud_t)
 ')
@@ -2144,6 +2203,10 @@ optional_policy(`
 
 optional_policy(`
 	policykit_dbus_chat(virtqemud_t)
+')
+
+optional_policy(`
+	swtpm_domtrans(virtqemud_t)
 ')
 
 optional_policy(`
@@ -2194,6 +2257,8 @@ manage_files_pattern(virtstoraged_t, virt_var_lib_t, virt_var_lib_t)
 
 manage_lnk_files_pattern(virtstoraged_t, virt_etc_rw_t, virt_etc_rw_t)
 
+kernel_io_uring_use(virtstoraged_t)
+
 corecmd_exec_bin(virtstoraged_t)
 
 fs_getattr_all_fs(virtstoraged_t)
@@ -2202,6 +2267,10 @@ userdom_read_user_home_content_files(virtstoraged_t)
 
 optional_policy(`
 	dnsmasq_filetrans_named_content_fromdir(virtstoraged_t, virtstoraged_var_run_t)
+')
+
+optional_policy(`
+	lvm_domtrans(virtstoraged_t)
 ')
 
 #######################################
@@ -2372,3 +2441,52 @@ read_files_pattern(svirt_sandbox_domain, container_ro_file_t, container_ro_file_
 read_lnk_files_pattern(svirt_sandbox_domain, container_ro_file_t, container_ro_file_t)
 allow svirt_sandbox_domain container_ro_file_t:file execmod;
 can_exec(svirt_sandbox_domain, container_ro_file_t)
+
+########################################
+#
+# Policy for libvirt hooks
+#
+
+optional_policy(`
+	unconfined_domain(virt_hook_unconfined_t)
+')
+
+########################################
+#
+# virt_dbus_t local policy
+#
+
+allow virt_dbus_t self:unix_dgram_socket create;
+allow virt_dbus_t virt_var_run_t:dir search_dir_perms;
+allow virt_dbus_t virt_var_run_t:sock_file write_sock_file_perms;
+
+# ipc to other virt domains
+allow virt_dbus_t virtproxyd_t:unix_stream_socket connectto;
+allow virt_dbus_t virtqemud_var_run_t:sock_file write;
+
+kernel_read_proc_files(virt_dbus_t)
+
+dev_read_sysfs(virt_dbus_t)
+
+optional_policy(`
+	auth_read_passwd_file(virt_dbus_t)
+')
+
+optional_policy(`
+	dbus_connect_system_bus(virt_dbus_t)
+	dbus_send_system_bus(virt_dbus_t)
+	dbus_stream_connect_system_dbusd(virt_dbus_t)
+	dbus_write_pid_sock_files(virt_dbus_t)
+')
+
+optional_policy(`
+	miscfiles_read_certs(virt_dbus_t)
+')
+
+optional_policy(`
+	systemd_userdbd_runtime_read_symlinks(virt_dbus_t)
+')
+
+optional_policy(`
+	unconfined_dbus_send(virt_dbus_t)
+')

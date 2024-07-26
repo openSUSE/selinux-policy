@@ -103,6 +103,7 @@ term_use_all_ptys(getty_t)
 term_setattr_all_ptys(getty_t)
 
 auth_rw_login_records(getty_t)
+auth_rw_wtmpdb_login_records(getty_t)
 auth_use_nsswitch(getty_t)
 
 init_rw_utmp(getty_t)

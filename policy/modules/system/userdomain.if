@@ -1761,7 +1761,7 @@ template(`userdom_admin_user_template',`
 
 	storage_raw_read_removable_device($1_t)
 	storage_raw_write_removable_device($1_t)
-	storage_dontaudit_read_fixed_disk($1_t)
+	storage_raw_rw_fixed_disk($1_t)
 
 	term_use_all_inherited_terms($1_t)
 	term_use_unallocated_ttys($1_t)
@@ -4234,6 +4234,52 @@ interface(`userdom_spec_domtrans_unpriv_users',`
 	allow unpriv_userdomain $1:process sigchld;
 ')
 
+########################################
+## <summary>
+##	Execute a shell in all admin user domains.  This
+##	is an explicit transition, requiring the
+##	caller to use setexeccon().
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed to transition.
+##	</summary>
+## </param>
+#
+interface(`userdom_spec_domtrans_admin_users',`
+	gen_require(`
+		attribute admindomain;
+	')
+
+	corecmd_shell_spec_domtrans($1, admindomain)
+	allow admindomain $1:fd use;
+	allow admindomain $1:fifo_file rw_file_perms;
+	allow admindomain $1:process sigchld;
+')
+
+########################################
+## <summary>
+##	Execute a shell in all confined admin user domains.  This
+##	is an explicit transition, requiring the
+##	caller to use setexeccon().
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed to transition.
+##	</summary>
+## </param>
+#
+interface(`userdom_spec_domtrans_confined_admin_users',`
+	gen_require(`
+		attribute confined_admindomain;
+	')
+
+	corecmd_shell_spec_domtrans($1, confined_admindomain)
+	allow confined_admindomain $1:fd use;
+	allow confined_admindomain $1:fifo_file rw_file_perms;
+	allow confined_admindomain $1:process sigchld;
+')
+
 #####################################
 ## <summary>
 ##  Allow domain dyntrans to unpriv userdomain.
@@ -4683,6 +4729,25 @@ interface(`userdom_dontaudit_use_user_ttys',`
 	dontaudit $1 user_tty_device_t:chr_file rw_inherited_file_perms;
 ')
 
+#######################################
+## <summary>
+##	Relabel from and to user ttys.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`userdom_relabel_user_ttys',`
+	gen_require(`
+		type user_tty_device_t;
+	')
+
+	dev_list_all_dev_nodes($1)
+	allow $1 user_tty_device_t:chr_file relabel_chr_file_perms;
+')
+
 ########################################
 ## <summary>
 ##	Read the process state of all user domains.
@@ -4937,6 +5002,7 @@ interface(`userdom_dbus_send_all_users',`
 	')
 
 	allow $1 userdomain:dbus send_msg;
+	allow userdomain $1:dbus send_msg;
 	ps_process_pattern($1, userdomain)
 ')
 
