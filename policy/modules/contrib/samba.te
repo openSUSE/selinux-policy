@@ -286,7 +286,7 @@ optional_policy(`
 # smbd Local policy
 #
 
-allow smbd_t self:capability { chown fowner kill fsetid setgid setuid sys_chroot sys_nice sys_admin sys_resource lease  dac_read_search net_admin };
+allow smbd_t self:capability { chown fowner kill fsetid setgid setuid sys_chroot sys_nice sys_admin sys_resource lease dac_override dac_read_search net_admin };
 dontaudit smbd_t self:capability sys_tty_config;
 dontaudit smbd_t self:capability2 block_suspend;
 allow smbd_t self:process ~{ ptrace setcurrent setexec setfscreate setrlimit execmem execstack execheap };
@@ -420,6 +420,7 @@ auth_domtrans_chk_passwd(smbd_t)
 auth_domtrans_upd_passwd(smbd_t)
 auth_manage_cache(smbd_t)
 auth_write_login_records(smbd_t)
+auth_rw_wtmpdb_login_records(smbd_t)
 
 domain_use_interactive_fds(smbd_t)
 domain_dontaudit_list_all_domains_state(smbd_t)

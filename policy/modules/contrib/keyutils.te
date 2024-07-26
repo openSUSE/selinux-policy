@@ -19,6 +19,8 @@ role system_r types keyutils_dns_resolver_t;
 ### policy for the keyutils_request_t domain
 allow keyutils_request_t self:unix_dgram_socket create_socket_perms;
 
+corecmd_exec_bin(keyutils_request_t)
+
 domain_read_view_all_domains_keyrings(keyutils_request_t)
 
 optional_policy(`
@@ -43,4 +45,8 @@ sysnet_read_config(keyutils_dns_resolver_t)
 
 optional_policy(`
 	avahi_stream_connect(keyutils_dns_resolver_t)
+')
+
+optional_policy(`
+	logging_send_syslog_msg(keyutils_dns_resolver_t)
 ')

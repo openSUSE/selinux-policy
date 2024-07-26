@@ -1,5 +1,5 @@
-/usr/sbin/stacd			--	gen_context(system_u:object_r:nvme_stas_exec_t,s0)
-/usr/sbin/stafd		        --      gen_context(system_u:object_r:nvme_stas_exec_t,s0)
+/usr/bin/stacd			--	gen_context(system_u:object_r:nvme_stas_exec_t,s0)
+/usr/bin/stafd		        --      gen_context(system_u:object_r:nvme_stas_exec_t,s0)
 
 /usr/lib/systemd/system/stacd\.service		--      gen_context(system_u:object_r:nvme_stas_unit_file_t,s0)
 /usr/lib/systemd/system/stafd\.service		--	gen_context(system_u:object_r:nvme_stas_unit_file_t,s0)
@@ -9,5 +9,5 @@
 /var/cache/stacd(/.*)?			gen_context(system_u:object_r:nvme_stas_cache_t,s0)
 /var/cache/stafd(/.*)?			gen_context(system_u:object_r:nvme_stas_cache_t,s0)
 
-/var/run/stacd(/.*)?			gen_context(system_u:object_r:nvme_stas_var_run_t,s0)
-/var/run/stafd(/.*)?			gen_context(system_u:object_r:nvme_stas_var_run_t,s0)
+/run/stacd(/.*)?			gen_context(system_u:object_r:nvme_stas_var_run_t,s0)
+/run/stafd(/.*)?			gen_context(system_u:object_r:nvme_stas_var_run_t,s0)

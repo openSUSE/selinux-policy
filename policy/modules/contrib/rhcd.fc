@@ -1,7 +1,7 @@
-/usr/sbin/rhcd			--	gen_context(system_u:object_r:rhcd_exec_t,s0)
+/usr/bin/rhcd			--	gen_context(system_u:object_r:rhcd_exec_t,s0)
 
 /usr/lib/systemd/system/rhcd.*	--	gen_context(system_u:object_r:rhcd_unit_file_t,s0)
 
 /var/log/rhc-worker-playbook(/.*)?	gen_context(system_u:object_r:rhcd_var_log_t,s0)
 
-/var/run/rhc(/.*)?			gen_context(system_u:object_r:rhcd_var_run_t,s0)
+/run/rhc(/.*)?			gen_context(system_u:object_r:rhcd_var_run_t,s0)

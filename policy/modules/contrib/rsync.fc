@@ -3,9 +3,9 @@
 # we only want to confine the rsync server for now. Otherwise client workloads
 # transition to rsync_t and fail
 #/usr/bin/rsync                --      gen_context(system_u:object_r:rsync_exec_t,s0)
-/usr/sbin/rsyncd       --      gen_context(system_u:object_r:rsync_exec_t,s0)
+/usr/bin/rsyncd       --      gen_context(system_u:object_r:rsync_exec_t,s0)
 
 /var/log/rsync.*		gen_context(system_u:object_r:rsync_log_t,s0)
 
-/var/run/rsyncd\.lock	--	gen_context(system_u:object_r:rsync_var_run_t,s0)
-/var/run/swift_server\.lock	--	gen_context(system_u:object_r:rsync_var_run_t,s0)
+/run/rsyncd\.lock	--	gen_context(system_u:object_r:rsync_var_run_t,s0)
+/run/swift_server\.lock	--	gen_context(system_u:object_r:rsync_var_run_t,s0)

@@ -406,6 +406,7 @@ logging_send_audit_msgs(audisp_remote_t)
 
 auth_use_nsswitch(audisp_remote_t)
 auth_append_login_records(audisp_remote_t)
+auth_rw_wtmpdb_login_records(audisp_remote_t)
 
 mls_file_write_all_levels(audisp_remote_t)
 
@@ -658,7 +659,7 @@ fs_getattr_all_fs(syslogd_t)
 fs_read_efivarfs_files(syslogd_t)
 fs_search_auto_mountpoints(syslogd_t)
 fs_list_cgroup_dirs(syslogd_t)
-fs_write_cgroup_files(syslogd_t)
+fs_cgroup_write_memory_pressure(syslogd_t)
 
 miscfiles_manage_generic_cert_files(syslogd_t)
 
@@ -773,6 +774,8 @@ optional_policy(`
 optional_policy(`
 	systemd_rw_bootchart_tmpfs_files(syslogd_t)
 	systemd_map_bootchart_tmpfs_files(syslogd_t)
+	systemd_list_conf_dirs(syslogd_t)
+	systemd_read_conf_files(syslogd_t)
 ')
 
 optional_policy(`

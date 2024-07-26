@@ -58,6 +58,7 @@ interface(`auth_use_pam',`
 	auth_dontaudit_read_shadow($1)
 	auth_read_login_records($1)
 	auth_append_login_records($1)
+	auth_rw_wtmpdb_login_records($1)
 	auth_rw_lastlog($1)
 	auth_create_lastlog($1)
 	auth_manage_faillog($1)
@@ -1858,10 +1859,10 @@ interface(`auth_dontaudit_exec_utempter',`
 #
 interface(`auth_setattr_login_records',`
 	gen_require(`
-		type wtmp_t;
+		attribute wtmp_file_type;
 	')
 
-	allow $1 wtmp_t:file setattr;
+	allow $1 wtmp_file_type:file setattr;
 	logging_search_logs($1)
 ')
 
@@ -1877,10 +1878,10 @@ interface(`auth_setattr_login_records',`
 #
 interface(`auth_relabel_login_records',`
 	gen_require(`
-		type wtmp_t;
+		attribute wtmp_file_type;
 	')
 
-	allow $1 wtmp_t:file relabel_file_perms;
+	allow $1 wtmp_file_type:file relabel_file_perms;
 ')
 
 
@@ -1897,11 +1898,11 @@ interface(`auth_relabel_login_records',`
 #
 interface(`auth_read_login_records',`
 	gen_require(`
-		type wtmp_t;
+		attribute wtmp_file_type;
 	')
 
 	logging_search_logs($1)
-	allow $1 wtmp_t:file read_file_perms;
+	allow $1 wtmp_file_type:file read_file_perms;
 ')
 
 ########################################
@@ -1918,10 +1919,10 @@ interface(`auth_read_login_records',`
 #
 interface(`auth_dontaudit_read_login_records',`
 	gen_require(`
-		type wtmp_t;
+		attribute wtmp_file_type;
 	')
 
-	dontaudit $1 wtmp_t:file read_file_perms;
+	dontaudit $1 wtmp_file_type:file read_file_perms;
 ')
 
 ########################################
@@ -1937,10 +1938,10 @@ interface(`auth_dontaudit_read_login_records',`
 #
 interface(`auth_dontaudit_write_login_records',`
 	gen_require(`
-		type wtmp_t;
+		attribute wtmp_file_type;
 	')
 
-	dontaudit $1 wtmp_t:file write;
+	dontaudit $1 wtmp_file_type:file write;
 ')
 
 #######################################
@@ -1995,8 +1996,8 @@ interface(`auth_rw_login_records',`
 		type wtmp_t;
 	')
 
+	allow $1 wtmp_t:file rw_file_perms;
 	logging_search_logs($1)
-	manage_files_pattern($1, wtmp_t, wtmp_t)
 ')
 
 ########################################
@@ -2032,11 +2033,36 @@ interface(`auth_log_filetrans_login_records',`
 interface(`auth_manage_login_records',`
 	gen_require(`
 		type wtmp_t;
+		attribute wtmp_file_type;
 	')
 
 	logging_rw_generic_log_dirs($1)
-	allow $1 wtmp_t:file manage_file_perms;
+	allow $1 wtmp_file_type:file manage_file_perms;
 	logging_log_named_filetrans($1, wtmp_t, file, "wtmp")
+')
+
+########################################
+## <summary>
+##      Read and write wtmpdb files.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`auth_rw_wtmpdb_login_records',`
+        gen_require(`
+                type wtmpdb_t;
+                type wtmpdb_journal_t;
+        ')
+
+        # allow caller domain to rw to sqlite db, but
+        # do not allow to unlink it
+        allow $1 wtmpdb_t:file rw_file_perms;
+        # handle sqlite journal file
+        allow $1 wtmpdb_journal_t:file manage_file_perms;
+        filetrans_pattern($1, wtmpdb_t, wtmpdb_journal_t, file, "wtmp.db-journal")
 ')
 
 ########################################
@@ -2290,6 +2316,24 @@ interface(`auth_read_passwd_file',`
 	')
 
 	allow $1 passwd_file_t:file read_file_perms;
+')
+
+########################################
+## <summary>
+##	Dontaudit reading the passwd passwords file
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`auth_dontaudit_read_passwd_file',`
+	gen_require(`
+		type passwd_file_t;
+	')
+
+	dontaudit $1 passwd_file_t:file { getattr open read };
 ')
 
 ########################################

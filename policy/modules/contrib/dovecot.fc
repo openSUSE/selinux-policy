@@ -17,7 +17,7 @@ ifdef(`distro_debian',`
 #
 # /usr
 #
-/usr/sbin/dovecot		--	gen_context(system_u:object_r:dovecot_exec_t,s0)
+/usr/bin/dovecot		--	gen_context(system_u:object_r:dovecot_exec_t,s0)
 
 /usr/share/ssl/certs/dovecot\.pem --	gen_context(system_u:object_r:dovecot_cert_t,s0)
 /usr/share/ssl/private/dovecot\.pem --	gen_context(system_u:object_r:dovecot_cert_t,s0)
@@ -41,8 +41,8 @@ ifdef(`distro_redhat', `
 #
 # /var
 #
-/var/run/dovecot(-login)?(/.*)?		gen_context(system_u:object_r:dovecot_var_run_t,s0)
-/var/run/dovecot/login/ssl-parameters.dat -- gen_context(system_u:object_r:dovecot_var_lib_t,s0)
+/run/dovecot(-login)?(/.*)?		gen_context(system_u:object_r:dovecot_var_run_t,s0)
+/run/dovecot/login/ssl-parameters.dat -- gen_context(system_u:object_r:dovecot_var_lib_t,s0)
 
 /var/lib/dovecot(/.*)?			gen_context(system_u:object_r:dovecot_var_lib_t,s0)
 
