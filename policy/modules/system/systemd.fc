@@ -77,6 +77,7 @@ HOME_DIR/\.config/systemd/user(/.*)?		gen_context(system_u:object_r:systemd_unit
 /usr/lib/systemd/systemd-network-generator	--	gen_context(system_u:object_r:systemd_network_generator_exec_t,s0)
 
 /usr/lib/systemd/system-generators/growpart-generator.sh	--	gen_context(system_u:object_r:systemd_growpart_generator_exec_t,s0)
+/usr/lib/systemd/system-generators/ibft-rule-generator	--	gen_context(system_u:object_r:systemd_ibft_rule_generator_exec_t,s0)
 /usr/lib/systemd/system-generators/systemd-bless-boot-generator	--	gen_context(system_u:object_r:systemd_bless_boot_generator_exec_t,s0)
 /usr/lib/systemd/system-generators/systemd-cryptsetup-generator	--	gen_context(system_u:object_r:systemd_cryptsetup_generator_exec_t,s0)
 /usr/lib/systemd/system-generators/systemd-debug-generator	--	gen_context(system_u:object_r:systemd_debug_generator_exec_t,s0)
