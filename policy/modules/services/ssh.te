@@ -373,6 +373,11 @@ optional_policy(`
 ')
 
 optional_policy(`
+    kandim_kanidm_sshkeys_transition(sshd_t)
+    kandim_kanidm_sshkeys_exec(sshd_t)
+')
+
+optional_policy(`
 	daemontools_service_domain(sshd_t, sshd_exec_t)
 ')
 

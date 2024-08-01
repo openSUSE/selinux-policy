@@ -2298,6 +2298,10 @@ interface(`auth_read_passwd',`
 		sssd_stream_connect($1)
 	')
 	init_dbus_chat($1)
+	optional_policy(`
+	    kanidm_read_public_files($1)
+	    kanidm_unixd_stream_connect($1)
+	')
 ')
 
 ########################################
