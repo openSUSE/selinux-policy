@@ -5308,6 +5308,26 @@ interface(`files_create_home_dir',`
 
 ########################################
 ## <summary>
+## 	Manage /home directories
+## </summary>
+## <param name="domain">
+## 	<summary>
+##	Domain allowed access
+##	</summary>
+## </param>
+#
+interface(`files_manage_home_dir',`
+	gen_require(`
+		type home_root_t;
+	')
+
+	create_dirs_pattern($1, home_root_t, home_root_t)
+	# on modern systems these can by dynamic symlinks
+	manage_lnk_files_pattern($1, home_root_t, home_root_t)
+')
+
+########################################
+## <summary>
 ##	Search home directories root (/home).
 ## </summary>
 ## <param name="domain">
