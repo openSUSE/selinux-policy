@@ -135,4 +135,5 @@ dontaudit snapper_grub_plugin_t self:capability { sys_admin };
 
 optional_policy(`
 	auth_dontaudit_read_passwd_file(snapper_grub_plugin_t)
+	nscd_dontaudit_search_pid(snapper_grub_plugin_t)
 ')
