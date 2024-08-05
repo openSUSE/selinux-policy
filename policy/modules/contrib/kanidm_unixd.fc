@@ -1,0 +1,11 @@
+/usr/sbin/kanidm_unixd              --  gen_context(system_u:object_r:kanidm_unixd_exec_t,s0)
+/usr/sbin/kanidm-unix               --  gen_context(system_u:object_r:kanidm_unix_exec_t,s0)
+
+/usr/sbin/kanidm_ssh_authorizedkeys --  gen_context(system_u:object_r:kanidm_sshkeys_exec_t,s0)
+/usr/sbin/kanidm_ssh_authorizedkeys_direct -- gen_context(system_u:object_r:kanidm_sshkeys_direct_exec_t,s0)
+/usr/sbin/kanidm_unixd_tasks        --  gen_context(system_u:object_r:kanidm_unixd_tasks_exec_t,s0)
+
+/etc/kanidm(/.*)?                       gen_context(system_u:object_r:kanidm_conf_t,s0)
+/run/kanidm-unixd(/.*)?                 gen_context(system_u:object_r:kanidm_unixd_var_run_t,s0)
+/var/cache/kanidm-unixd(/.*)?           gen_context(system_u:object_r:kanidm_unixd_var_cache_t,s0)
+/var/cache/private/kanidm-unixd(/.*)?   gen_context(system_u:object_r:kanidm_unixd_var_cache_t,s0)
