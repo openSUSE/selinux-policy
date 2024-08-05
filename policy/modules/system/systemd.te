@@ -207,8 +207,12 @@ systemd_generator_template(systemd_getty_generator)
 systemd_generator_template(systemd_gpt_generator)
 # growpart-generator
 systemd_generator_template(systemd_growpart_generator)
+# ibft-rule-generator
+systemd_generator_template(systemd_ibft_rule_generator)
 # rc-local-generator
 systemd_generator_template(systemd_rc_local_generator)
+# systemd-status-mail
+systemd_generator_template(systemd_status_mail_generator)
 # ssh-generator
 systemd_generator_template(systemd_ssh_generator)
 # sysv-generator
@@ -1370,8 +1374,29 @@ optional_policy(`
 
 permissive systemd_growpart_generator_t;
 
+### ibft-rule-generator (from open-iscsi package)
+corecmd_exec_bin(systemd_ibft_rule_generator_t)
+udev_manage_rules_files(systemd_ibft_rule_generator_t)
+
+optional_policy(`
+        # ignore #!/bin/bash reading passwd file
+        auth_dontaudit_read_passwd_file(systemd_ibft_rule_generator_t)
+')
+
+permissive systemd_ibft_rule_generator_t;
+
 ### systemd rc_local generator
 init_exec_script_files(systemd_rc_local_generator_t)
+
+### status-mail generator (from os-update package)
+corecmd_exec_bin(systemd_status_mail_generator_t)
+
+optional_policy(`
+        # ignore #!/bin/bash reading passwd file
+        auth_dontaudit_read_passwd_file(systemd_status_mail_generator_t)
+')
+
+permissive systemd_status_mail_generator_t;
 
 ### ssh generator
 allow systemd_ssh_generator_t self:vsock_socket create;
