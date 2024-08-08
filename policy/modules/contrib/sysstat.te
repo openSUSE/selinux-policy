@@ -15,6 +15,9 @@ init_script_file(sysstat_initrc_exec_t)
 type sysstat_log_t;
 logging_log_file(sysstat_log_t)
 
+type sysstat_var_run_t;
+files_pid_file(sysstat_var_run_t)
+
 ########################################
 #
 # Local policy
@@ -27,6 +30,10 @@ manage_dirs_pattern(sysstat_t,sysstat_log_t,sysstat_log_t)
 manage_files_pattern(sysstat_t, sysstat_log_t, sysstat_log_t)
 manage_lnk_files_pattern(sysstat_t,sysstat_log_t,sysstat_log_t)
 logging_log_filetrans(sysstat_t, sysstat_log_t, { file dir })
+
+manage_files_pattern(sysstat_t, sysstat_var_run_t, sysstat_var_run_t)
+manage_dirs_pattern(sysstat_t, sysstat_var_run_t, sysstat_var_run_t)
+files_pid_filetrans(sysstat_t, sysstat_var_run_t, { dir file })
 
 can_exec(sysstat_t, sysstat_exec_t)
 
