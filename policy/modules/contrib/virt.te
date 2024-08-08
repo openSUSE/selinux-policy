@@ -339,6 +339,9 @@ files_type(virtnodedevd_t)
 type virtnodedevd_var_run_t, virt_driver_var_run;
 files_pid_file(virtnodedevd_var_run_t)
 
+type virtnodedevd_lock_t, virt_file_type;
+files_lock_file(virtnodedevd_lock_t)
+
 # virtnwfilterd
 type virtnwfilterd_t, virt_driver_domain;
 type virtnwfilterd_exec_t, virt_driver_executable;
@@ -479,6 +482,8 @@ allow svirt_t self:netlink_route_socket r_netlink_socket_perms;
 allow svirt_t virtlogd_t:fifo_file write;
 allow svirt_t virtlogd_t:unix_stream_socket connectto;
 
+allow svirt_t virtqemud_t:tun_socket attach_queue;
+allow svirt_t virtqemud_t:fifo_file read;
 allow svirt_t virtqemud_var_run_t:file write;
 
 read_files_pattern(svirt_t, virtqemud_t, virtqemud_t)
@@ -504,6 +509,10 @@ storage_rw_inherited_fixed_disk_dev(svirt_t)
 
 userdom_read_all_users_state(svirt_t)
 
+optional_policy(`
+	unconfined_stream_connect(svirt_t)
+')
+
 #######################################
 #
 # svirt_prot_exec local policy
@@ -511,6 +520,8 @@ userdom_read_all_users_state(svirt_t)
 
 allow svirt_tcg_t self:process { execmem execstack };
 allow svirt_tcg_t self:netlink_route_socket r_netlink_socket_perms;
+
+kernel_read_vm_sysctls(svirt_tcg_t)
 
 corenet_udp_sendrecv_generic_if(svirt_tcg_t)
 corenet_udp_sendrecv_generic_node(svirt_tcg_t)
@@ -1924,6 +1935,7 @@ sysnet_domtrans_ifconfig(virtnetworkd_t)
 sysnet_read_config(virtnetworkd_t)
 
 tunable_policy(`virt_hooks_unconfined',`
+	corecmd_exec_shell(virtnetworkd_t)
 	domtrans_pattern(virtnetworkd_t, virt_hook_t, virt_hook_unconfined_t)
 ')
 
@@ -1954,6 +1966,9 @@ allow virtnodedevd_t self:capability { net_admin sys_admin };
 allow virtnodedevd_t self:netlink_generic_socket create_socket_perms;
 allow virtnodedevd_t self:process { setsched };
 
+manage_files_pattern(virtnodedevd_t, virtnodedevd_lock_t, virtnodedevd_lock_t)
+files_lock_filetrans(virtnodedevd_t, virtnodedevd_lock_t, file)
+
 manage_dirs_pattern(virtnodedevd_t, virt_var_run_t, virt_var_run_t)
 manage_dirs_pattern(virtnodedevd_t, virtnodedevd_var_run_t, virtnodedevd_var_run_t)
 manage_files_pattern(virtnodedevd_t, virtnodedevd_var_run_t, virtnodedevd_var_run_t)
@@ -1978,6 +1993,11 @@ optional_policy(`
 ')
 
 optional_policy(`
+	systemd_userdbd_stream_connect(virtnodedevd_t)
+')
+
+optional_policy(`
+	udev_domtrans(virtnodedevd_t)
 	udev_read_pid_files(virtnodedevd_t)
 ')
 
@@ -2077,6 +2097,7 @@ allow virtqemud_t virt_cache_t:file { relabelfrom relabelto };
 
 allow virtqemud_t virt_driver_domain:unix_stream_socket connectto;
 
+allow virtqemud_t virt_var_run_t:dir relabelfrom;
 allow virtqemud_t virt_var_run_t:file map;
 
 allow virtqemud_t virtlogd_t:fifo_file rw_inherited_fifo_file_perms;
@@ -2113,6 +2134,8 @@ read_files_pattern(virtqemud_t, svirt_t, svirt_t)
 read_lnk_files_pattern(virtqemud_t, svirt_t, svirt_t)
 
 manage_files_pattern(virtqemud_t, virt_content_t, virt_content_t)
+
+read_files_pattern(virtqemud_t, virt_dbus_t, virt_dbus_t)
 
 manage_files_pattern(virtqemud_t, virt_image_t, virt_image_t)
 
@@ -2167,6 +2190,7 @@ fs_manage_tmpfs_symlinks(virtqemud_t)
 fs_mount_tmpfs(virtqemud_t)
 fs_read_nsfs_files(virtqemud_t)
 fs_relabel_tmpfs_chr_file(virtqemud_t)
+fs_unmount_xattr_fs(virtqemud_t)
 
 seutil_read_default_contexts(virtqemud_t)
 seutil_read_file_contexts(virtqemud_t)
@@ -2203,6 +2227,16 @@ optional_policy(`
 
 optional_policy(`
 	policykit_dbus_chat(virtqemud_t)
+')
+
+optional_policy(`
+	tunable_policy(`virt_use_sanlock',`
+		sanlock_stream_connect(virtqemud_t)
+	')
+')
+
+optional_policy(`
+	ssh_domtrans_ssh(virtqemud_t)
 ')
 
 optional_policy(`
@@ -2246,6 +2280,7 @@ files_pid_filetrans(virtstoraged_t, virtstoraged_var_run_t, { dir file sock_file
 filetrans_pattern(virtstoraged_t, virt_var_run_t, virtstoraged_var_run_t, { file sock_file } )
 
 manage_dirs_pattern(virtstoraged_t, virt_content_t, virt_content_t)
+manage_files_pattern(virtstoraged_t, virt_content_t, virt_content_t)
 
 manage_dirs_pattern(virtstoraged_t, virt_image_t, virt_image_t)
 manage_files_pattern(virtstoraged_t, virt_image_t, virt_image_t)
@@ -2462,6 +2497,7 @@ allow virt_dbus_t virt_var_run_t:sock_file write_sock_file_perms;
 
 # ipc to other virt domains
 allow virt_dbus_t virtproxyd_t:unix_stream_socket connectto;
+allow virt_dbus_t virtqemud_t:unix_stream_socket connectto;
 allow virt_dbus_t virtqemud_var_run_t:sock_file write;
 
 kernel_read_proc_files(virt_dbus_t)

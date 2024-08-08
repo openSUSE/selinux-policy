@@ -570,6 +570,7 @@ tunable_policy(`deny_ptrace',`',`
 
 files_manage_non_security_dirs(abrt_dump_oops_t)
 files_manage_non_security_files(abrt_dump_oops_t)
+files_read_non_security_sock_files(abrt_dump_oops_t)
 files_map_non_security_files(abrt_dump_oops_t)
 
 fs_getattr_all_fs(abrt_dump_oops_t)
@@ -589,6 +590,10 @@ logging_watch_generic_log_dirs(abrt_dump_oops_t)
 logging_watch_journal_dir(abrt_dump_oops_t)
 
 init_read_var_lib_files(abrt_dump_oops_t)
+
+optional_policy(`
+	samba_stream_connect_winbind(abrt_dump_oops_t)
+')
 
 optional_policy(`
     sssd_read_public_files(abrt_dump_oops_t)

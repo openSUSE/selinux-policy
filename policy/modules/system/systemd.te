@@ -600,9 +600,10 @@ allow systemd_networkd_t self:udp_socket create_socket_perms;
 allow systemd_networkd_t self:rawip_socket create_socket_perms;
 allow systemd_networkd_t self:tun_socket { relabelfrom relabelto create_socket_perms };
 
-allow systemd_networkd_t systemd_networkd_var_lib_t:dir list_dir_perms;
-
 allow init_t systemd_networkd_t:netlink_route_socket create_netlink_socket_perms;
+
+allow systemd_networkd_t systemd_networkd_var_lib_t:dir list_dir_perms;
+create_files_pattern(systemd_networkd_t, systemd_networkd_var_lib_t, systemd_networkd_var_lib_t)
 
 manage_files_pattern(systemd_networkd_t, systemd_networkd_var_run_t, systemd_networkd_var_run_t)
 manage_lnk_files_pattern(systemd_networkd_t, systemd_networkd_var_run_t, systemd_networkd_var_run_t)
@@ -763,6 +764,8 @@ files_relabel_non_auth_files(systemd_tmpfiles_t)
 files_list_lost_found(systemd_tmpfiles_t)
 files_map_system_db_files(systemd_tmpfiles_t)
 
+files_filetrans_named_content_var(systemd_tmpfiles_t)
+
 mls_file_read_all_levels(systemd_tmpfiles_t)
 mls_file_write_all_levels(systemd_tmpfiles_t)
 mls_file_upgrade(systemd_tmpfiles_t)
@@ -830,6 +833,7 @@ optional_policy(`
 optional_policy(`
 	rpm_read_db(systemd_tmpfiles_t)
 	rpm_delete_db(systemd_tmpfiles_t)
+	rpm_named_filetrans(systemd_tmpfiles_t)
 ')
 
 optional_policy(`
@@ -1002,6 +1006,10 @@ optional_policy(`
 	optional_policy(`
 		init_dbus_chat_script(systemd_hostnamed_t)
 	')
+')
+
+optional_policy(`
+	nscd_shutdown(systemd_hostnamed_t)
 ')
 
 optional_policy(`
@@ -1286,10 +1294,14 @@ allow systemd_generator systemd_unit_file_t:lnk_file manage_lnk_file_perms;
 allow systemd_generator systemd_unit_file_type:file getattr_file_perms;
 allow systemd_generator systemd_unit_file_type:lnk_file getattr_lnk_file_perms;
 
-fs_getattr_cgroup(systemd_generator)
-fs_search_cgroup_dirs(systemd_generator)
 kernel_read_proc_files(systemd_generator)
 dev_write_kmsg(systemd_generator)
+
+dev_write_kmsg(systemd_generator)
+files_map_etc_files(systemd_generator)
+fs_getattr_all_fs(systemd_generator)
+fs_search_cgroup_dirs(systemd_generator)
+init_read_state(systemd_generator)
 
 ### Rules for individual systemd generator domains
 
@@ -1297,10 +1309,13 @@ dev_write_kmsg(systemd_generator)
 fs_read_efivarfs_files(systemd_bless_boot_generator_t)
 
 ### cryptsetup generator
-init_read_state(systemd_cryptsetup_generator_t)
+manage_dirs_pattern(systemd_cryptsetup_generator_t, systemd_fstab_generator_unit_file_t, systemd_fstab_generator_unit_file_t)
+manage_files_pattern(systemd_cryptsetup_generator_t, systemd_fstab_generator_unit_file_t, systemd_fstab_generator_unit_file_t)
 
 ### fstab generator
 allow systemd_fstab_generator_t self:capability { dac_override dac_read_search };
+manage_dirs_pattern(systemd_fstab_generator_t, systemd_cryptsetup_generator_unit_file_t, systemd_cryptsetup_generator_unit_file_t)
+manage_files_pattern(systemd_fstab_generator_t, systemd_cryptsetup_generator_unit_file_t, systemd_cryptsetup_generator_unit_file_t)
 
 create_lnk_files_pattern(systemd_fstab_generator_t, systemd_unit_file_type, systemd_unit_file_type)
 
@@ -1336,7 +1351,7 @@ files_list_tmp(systemd_gpt_generator_t)
 files_list_usr(systemd_gpt_generator_t)
 files_list_var(systemd_gpt_generator_t)
 
-fs_getattr_xattr_fs(systemd_gpt_generator_t)
+fs_getattr_dos_dirs(systemd_gpt_generator_t)
 fs_mount_tmpfs(systemd_gpt_generator_t)
 
 mls_file_read_to_clearance(systemd_gpt_generator_t)
@@ -1829,6 +1844,10 @@ fs_read_pstore_files(systemd_pstore_t)
 
 init_search_var_lib_dirs(systemd_pstore_t)
 
+optional_policy(`
+	logging_dgram_send(systemd_pstore_t)
+')
+
 ########################################
 #
 # systemd_mountfsd local policy
@@ -1852,7 +1871,6 @@ allow systemd_nsresourced_t self:capability2 { bpf perfmon };
 allow systemd_nsresourced_t self:perf_event manage_perf_event_perms;
 allow systemd_nsresourced_t systemd_nsresourced_exec_t:file execute_no_trans;
 
-permissive systemd_nsresourced_t;
 #read_files_pattern(systemd_nsresourced_t, systemd_nsresourced_runtime_t, systemd_nsresourced_runtime_t)
 manage_dirs_pattern(systemd_nsresourced_t, systemd_nsresourced_runtime_t, systemd_nsresourced_runtime_t)
 
