@@ -268,6 +268,8 @@ type systemd_userdbd_runtime_t;
 files_pid_file(systemd_userdbd_runtime_t)
 
 systemd_domain_template(systemd_sleep)
+type systemd_sleep_var_lib_t;
+files_type(systemd_sleep_var_lib_t)
 
 systemd_domain_template(systemd_pstore)
 type systemd_pstore_var_lib_t;
@@ -279,6 +281,9 @@ type systemd_nsresourced_runtime_t;
 files_pid_file(systemd_nsresourced_runtime_t)
 
 systemd_domain_template(systemd_mountfsd)
+
+systemd_domain_template(systemd_pcrextend)
+systemd_domain_template(systemd_pcrlock)
 
 #######################################
 #
@@ -1298,7 +1303,7 @@ kernel_read_proc_files(systemd_generator)
 dev_write_kmsg(systemd_generator)
 
 dev_write_kmsg(systemd_generator)
-files_map_etc_files(systemd_generator)
+files_map_read_etc_files(systemd_generator)
 fs_getattr_all_fs(systemd_generator)
 fs_search_cgroup_dirs(systemd_generator)
 init_read_state(systemd_generator)
@@ -1334,8 +1339,11 @@ optional_policy(`
 
 ### getty generator
 dev_read_sysfs(systemd_getty_generator_t)
-init_read_state(systemd_getty_generator_t)
 term_use_unallocated_ttys(systemd_getty_generator_t)
+
+optional_policy(`
+	userdom_use_user_ttys(systemd_getty_generator_t)
+')
 
 ### gpt generator
 allow systemd_gpt_generator_t self:capability sys_rawio;
@@ -1781,6 +1789,8 @@ dontaudit systemd_sleep_t self:capability sys_ptrace;
 
 allow systemd_sleep_t systemd_unit_file_t:service { start stop };
 
+manage_files_pattern(systemd_sleep_t, systemd_sleep_var_lib_t, systemd_sleep_var_lib_t)
+
 kernel_dgram_send(systemd_sleep_t)
 
 corecmd_exec_bin(systemd_sleep_t)
@@ -1884,3 +1894,16 @@ fs_manage_bpf_files(systemd_nsresourced_t)
 
 init_named_pid_filetrans(systemd_nsresourced_t, systemd_nsresourced_runtime_t, dir, "nsresource")
 init_named_pid_filetrans(systemd_nsresourced_t, systemd_nsresourced_runtime_t, file, "io.systemd.NamespaceResource")
+
+########################################
+#
+# systemd_pcrextend and systemd_pcrlock local policy
+#
+
+permissive systemd_pcrextend_t;
+
+optional_policy(`
+	logging_write_journal_files(systemd_pcrextend_t)
+')
+
+permissive systemd_pcrlock_t;
