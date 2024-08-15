@@ -47,6 +47,7 @@ dontaudit rhsmcertd_t self:process setfscreate;
 
 allow rhsmcertd_t self:fifo_file rw_fifo_file_perms;
 allow rhsmcertd_t self:unix_stream_socket create_stream_socket_perms;
+allow rhsmcertd_t rhsmcertd_var_run_t:sock_file manage_sock_file_perms;
 
 manage_dirs_pattern(rhsmcertd_t, rhsmcertd_config_t, rhsmcertd_config_t)
 manage_files_pattern(rhsmcertd_t, rhsmcertd_config_t, rhsmcertd_config_t)
@@ -99,6 +100,7 @@ dev_read_sysfs(rhsmcertd_t)
 dev_read_rand(rhsmcertd_t)
 dev_read_urand(rhsmcertd_t)
 dev_read_raw_memory(rhsmcertd_t)
+dev_rw_papr_sysparm(rhsmcertd_t)
 
 domain_obj_id_change_exemption(rhsmcertd_t)
 domain_read_all_domains_state(rhsmcertd_t)
@@ -158,6 +160,10 @@ optional_policy(`
 
 optional_policy(`
 	hostname_exec(rhsmcertd_t)
+')
+
+optional_policy(`
+	ica_rw_map_tmpfs_files(rhsmcertd_t)
 ')
 
 optional_policy(`

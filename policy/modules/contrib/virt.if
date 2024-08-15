@@ -398,6 +398,24 @@ interface(`virt_rw_stream_sockets_svirt',`
 	allow $1 svirt_t:unix_stream_socket { getopt read setopt write };
 ')
 
+#######################################
+## <summary>
+##	Connect to lxc process over a unix domain stream socket.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`virt_stream_connect_lxc',`
+	gen_require(`
+		type virtd_lxc_t, virt_lxc_var_run_t;
+	')
+
+	stream_connect_pattern($1, virt_lxc_var_run_t, virt_lxc_var_run_t, virtd_lxc_t)
+')
+
 ########################################
 ## <summary>
 ##	Allow domain to attach to virt TUN devices
@@ -643,6 +661,25 @@ interface(`virt_manage_pid_files',`
 	manage_files_pattern($1, virt_var_run_t, virt_var_run_t)
 	manage_files_pattern($1, virt_driver_var_run, virt_driver_var_run)
 	manage_files_pattern($1, virt_lxc_var_run_t, virt_lxc_var_run_t)
+')
+
+########################################
+## <summary>
+##	Manage virt pid sock files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`virt_manage_pid_sock_files',`
+	gen_require(`
+		type virt_var_run_t;
+	')
+
+	files_search_pids($1)
+	manage_sock_files_pattern($1, virt_var_run_t, virt_var_run_t)
 ')
 
 ########################################
@@ -1874,6 +1911,27 @@ interface(`virt_dbus_chat',`
 	allow virt_driver_domain $1:dbus send_msg;
 	ps_process_pattern(virtd_t, $1)
 	ps_process_pattern(virt_driver_domain, $1)
+')
+
+########################################
+## <summary>
+##	Send and receive messages from
+##	virt-dbus over dbus.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`virt_dbus_chat_dbus',`
+	gen_require(`
+		type virt_dbus_t;
+		class dbus send_msg;
+	')
+
+	allow $1 virt_dbus_t:dbus send_msg;
+	allow virt_dbus_t $1:dbus send_msg;
 ')
 
 ########################################
