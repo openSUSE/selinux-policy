@@ -335,6 +335,7 @@ files_create_default_dir(init_t)
 files_remount_rootfs(init_t)
 files_create_var_dirs(init_t)
 files_read_non_security_sock_files(init_t)
+files_var_filetrans(init_t, var_lib_t, dir, "lib")
 files_watch_non_security_dirs(init_t)
 files_watch_non_security_files(init_t)
 files_watch_non_security_lnk_files(init_t)
@@ -883,6 +884,12 @@ optional_policy(`
 ')
 
 optional_policy(`
+	kanidm_read_public_files(init_t)
+	kanidm_unixd_stream_connect(init_t)
+	kanidm_read_cache_files(init_t)
+')
+
+optional_policy(`
 	rpcbind_filetrans_named_content(init_t)
 	rpcbind_relabel_sock_file(init_t)
 ')
@@ -1354,6 +1361,10 @@ ifdef(`distro_redhat',`
 
 	optional_policy(`
 		tgtd_stream_connect(initrc_t)
+	')
+
+	optional_policy(`
+		usermanage_run_passwd(initrc_t, system_r)
 	')
 
 	optional_policy(`

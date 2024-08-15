@@ -1,0 +1,194 @@
+policy_module(kanidm_unixd, 1.0.0)
+
+########################################
+#
+# Declarations
+#
+
+# Process types
+type kanidm_unixd_t;
+type kanidm_unixd_tasks_t;
+type kanidm_unix_t;
+
+# File types
+type kanidm_conf_t;
+files_config_file(kanidm_conf_t)
+
+type kanidm_unixd_var_run_t;
+files_pid_file(kanidm_unixd_var_run_t)
+
+type kanidm_unixd_var_cache_t;
+files_type(kanidm_unixd_var_cache_t)
+
+type kanidm_unixd_exec_t;
+init_daemon_domain(kanidm_unixd_t, kanidm_unixd_exec_t)
+init_nnp_daemon_domain(kanidm_unixd_t, kanidm_unixd_exec_t)
+
+type kanidm_unixd_tasks_exec_t;
+init_daemon_domain(kanidm_unixd_tasks_t, kanidm_unixd_tasks_exec_t)
+init_nnp_daemon_domain(kanidm_unixd_tasks_t, kanidm_unixd_tasks_exec_t)
+
+type kanidm_unix_exec_t;
+files_type(kanidm_unix_exec_t)
+
+type kanidm_sshkeys_exec_t;
+files_type(kanidm_sshkeys_exec_t)
+
+type kanidm_sshkeys_direct_exec_t;
+files_type(kanidm_sshkeys_direct_exec_t)
+
+type kanidm_sshkeys_t;
+domain_type(kanidm_sshkeys_t)
+type kanidm_sshkeys_direct_t;
+domain_type(kanidm_sshkeys_direct_t)
+
+########################################
+#
+# kanidm_unixd local policy
+
+auth_read_passwd_file(kanidm_unixd_t)
+auth_watch_passwd(kanidm_unixd_t)
+
+
+corenet_tcp_connect_http_port(kanidm_unixd_t)
+corenet_tcp_sendrecv_http_port(kanidm_unixd_t)
+
+dev_rw_tpm(kanidm_unixd_t)
+
+sysnet_dns_name_resolve(kanidm_unixd_t)
+sysnet_read_config(kanidm_unixd_t)
+
+miscfiles_read_all_certs(kanidm_unixd_t)
+miscfiles_read_localization(kanidm_unixd_t)
+
+files_read_etc_files(kanidm_unixd_t)
+manage_dirs_pattern(kanidm_unixd_t, kanidm_unixd_var_run_t, kanidm_unixd_var_run_t)
+manage_sock_files_pattern(kanidm_unixd_t, kanidm_unixd_var_run_t, kanidm_unixd_var_run_t)
+files_pid_filetrans(kanidm_unixd_t, kanidm_unixd_var_run_t, { dir file sock_file })
+
+allow kanidm_unixd_t kanidm_conf_t:dir search;
+allow kanidm_unixd_t kanidm_conf_t:file { getattr open read };
+allow kanidm_unixd_t kanidm_unixd_var_cache_t:dir { add_name getattr open read remove_name search write };
+allow kanidm_unixd_t kanidm_unixd_var_cache_t:file { create unlink };
+allow kanidm_unixd_t kanidm_unixd_var_cache_t:file { getattr lock open read write };
+allow kanidm_unixd_t kanidm_unixd_var_cache_t:lnk_file { getattr read };
+
+# kanidm_unixd_tasks local policy
+#
+# Unixd tasks has to create home dirs and set their ownerships, which is why
+# it needs many of these dac/mac permissions.
+
+auth_read_passwd_file(kanidm_unixd_tasks_t)
+files_manage_home_dir(kanidm_unixd_tasks_t)
+files_list_home(kanidm_unixd_tasks_t)
+userdom_manage_user_home_content_dirs(kanidm_unixd_tasks_t)
+userdom_manage_user_home_dirs(kanidm_unixd_tasks_t)
+
+seutil_read_file_contexts(kanidm_unixd_tasks_t)
+
+selinux_get_fs_mount(kanidm_unixd_tasks_t)
+
+allow kanidm_unixd_tasks_t kanidm_conf_t:dir search;
+allow kanidm_unixd_tasks_t kanidm_conf_t:file { getattr open read };
+allow kanidm_unixd_tasks_t kanidm_unixd_t:unix_stream_socket connectto;
+allow kanidm_unixd_tasks_t kanidm_unixd_var_run_t:dir search;
+allow kanidm_unixd_tasks_t kanidm_unixd_var_run_t:sock_file write;
+allow kanidm_unixd_tasks_t self:capability { chown dac_override };
+allow kanidm_unixd_tasks_t self:process setfscreate;
+
+########################################
+#
+# kanidm_sshkeys local policy
+
+dev_rw_null(kanidm_sshkeys_t)
+files_list_root(kanidm_sshkeys_t)
+files_read_etc_files(kanidm_sshkeys_t)
+files_read_usr_files(kanidm_sshkeys_t)
+files_search_pids(kanidm_sshkeys_t)
+kernel_read_proc_files(kanidm_sshkeys_t)
+libs_use_ld_so(kanidm_sshkeys_t)
+miscfiles_read_localization(kanidm_sshkeys_t)
+
+allow kanidm_sshkeys_t kanidm_conf_t:dir search;
+allow kanidm_sshkeys_t kanidm_conf_t:file { getattr open read };
+allow kanidm_sshkeys_t kanidm_sshkeys_exec_t:file { entrypoint execute map read };
+allow kanidm_sshkeys_t kanidm_unixd_t:unix_stream_socket connectto;
+allow kanidm_sshkeys_t kanidm_unixd_var_run_t:dir search;
+allow kanidm_sshkeys_t kanidm_unixd_var_run_t:sock_file { getattr write };
+allow kanidm_sshkeys_t self:dir search;
+allow kanidm_sshkeys_t self:file { getattr open read };
+# FIXME neverallow
+#allow kanidm_sshkeys_t self:process getsched;
+allow kanidm_sshkeys_t self:unix_stream_socket { connect create getopt read write };
+
+# Reading ld.so.cache. Not part of libs_use_ld_so
+# not needed, part of doman permissions
+#allow kanidm_sshkeys_t etc_t:file map;
+
+# I need to check why these are requested.
+seutil_read_file_contexts(kanidm_sshkeys_t)
+selinux_get_fs_mount(kanidm_sshkeys_t)
+
+# FIXME not enabled for now
+# kernel_read_proc_symlinks(kanidm_sshkeys_t)
+kernel_dontaudit_read_proc_symlinks(kanidm_sshkeys_t)
+
+########################################
+#
+# kanidm_sshkeys_direct local policy
+
+corenet_tcp_connect_http_port(kanidm_sshkeys_direct_t)
+corenet_tcp_sendrecv_http_port(kanidm_sshkeys_direct_t)
+
+sysnet_dns_name_resolve(kanidm_sshkeys_direct_t)
+sysnet_read_config(kanidm_sshkeys_direct_t)
+
+
+dev_rw_null(kanidm_sshkeys_direct_t)
+
+files_list_root(kanidm_sshkeys_direct_t)
+files_read_etc_files(kanidm_sshkeys_direct_t)
+files_read_usr_files(kanidm_sshkeys_direct_t)
+files_search_pids(kanidm_sshkeys_direct_t)
+
+miscfiles_read_all_certs(kanidm_sshkeys_direct_t)
+miscfiles_read_localization(kanidm_sshkeys_direct_t)
+
+auth_read_passwd_file(kanidm_sshkeys_direct_t)
+
+kernel_read_proc_files(kanidm_sshkeys_direct_t)
+libs_use_ld_so(kanidm_sshkeys_direct_t)
+
+#============= kanidm_sshkeys_direct_t ==============
+
+allow kanidm_sshkeys_direct_t kanidm_conf_t:dir search;
+allow kanidm_sshkeys_direct_t kanidm_conf_t:file { getattr open read };
+allow kanidm_sshkeys_direct_t kanidm_sshkeys_direct_exec_t:file { entrypoint execute map read };
+allow kanidm_sshkeys_direct_t self:dir search;
+allow kanidm_sshkeys_direct_t self:file { getattr open read };
+# FIXME is a neverallow
+#allow kanidm_sshkeys_direct_t self:process { fork getsched };
+allow kanidm_sshkeys_direct_t self:unix_stream_socket { connect create getopt read write };
+
+# Reading ld.so.cache. Not part of libs_use_ld_so
+allow kanidm_sshkeys_direct_t etc_t:file map;
+
+# FIXME not enabled for now
+#kernel_read_proc_symlinks(kanidm_sshkeys_direct_t);
+kernel_dontaudit_read_proc_symlinks(kanidm_sshkeys_direct_t);
+
+files_search_var_lib(kanidm_sshkeys_direct_t);
+files_read_var_lib_files(kanidm_sshkeys_direct_t);
+
+# FIXME keep for now, but we likely will not enable these transitions
+#============= sshd_t ==============
+# Allow sshd_t to call the ssh authorised keys binary for execution, while ensuring that the context
+# of the ssh key binary is isolated separate to sshd
+# domtrans_pattern(sshd_t, kanidm_sshkeys_exec_t, kanidm_sshkeys_t)
+# domtrans_pattern(sshd_t, kanidm_sshkeys_direct_exec_t, kanidm_sshkeys_direct_t)
+
+#============= unconfined_t ==============
+# Allow unconfined users to call the various CLI tools, while forcing them into a confined state.
+# domtrans_pattern(unconfined_t, kanidm_unix_exec_t, kanidm_unix_t)
+# domtrans_pattern(unconfined_t, kanidm_sshkeys_exec_t, kanidm_sshkeys_t)
+# domtrans_pattern(unconfined_t, kanidm_sshkeys_direct_exec_t, kanidm_sshkeys_direct_t)

@@ -110,6 +110,24 @@ interface(`dev_getattr_fs',`
 
 ########################################
 ## <summary>
+##	Unmount the device filesystems.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`dev_unmount_fs',`
+	gen_require(`
+		type device_t;
+	')
+
+	allow $1 device_t:filesystem unmount;
+')
+
+########################################
+## <summary>
 ##	Mount a filesystem on /dev
 ## </summary>
 ## <param name="domain">
@@ -5123,7 +5141,26 @@ interface(`dev_read_sysfs',`
 
 ########################################
 ## <summary>
-##	Allow caller to modify hardware state information.
+##	Allow caller to write to sysfs files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`dev_write_sysfs',`
+	gen_require(`
+		type sysfs_t;
+	')
+
+	write_files_pattern($1, sysfs_t, sysfs_t)
+	read_lnk_files_pattern($1, sysfs_t, sysfs_t)
+')
+
+########################################
+## <summary>
+##	Allow caller to r/w to sysfs files.
 ## </summary>
 ## <param name="domain">
 ##	<summary>
@@ -5404,6 +5441,24 @@ interface(`dev_delete_urand',`
         ')
 
         allow $1 urandom_device_t:chr_file unlink;
+')
+
+########################################
+## <summary>
+##      Allow set attributes of dev/urandom.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`dev_setattr_urand',`
+        gen_require(`
+                type urandom_device_t;
+        ')
+
+	setattr_chr_files_pattern($1, device_t, urandom_device_t)
 ')
 
 ########################################
@@ -6678,6 +6733,24 @@ interface(`dev_setattr_gnss',`
 	')
 
 	setattr_chr_files_pattern($1, device_t, gnss_device_t)
+')
+
+########################################
+## <summary>
+##	Allow read/write the papr-sysparm device
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`dev_rw_papr_sysparm',`
+	gen_require(`
+		type device_t, papr_sysparm_device_t;
+	')
+
+	rw_chr_files_pattern($1, device_t, papr_sysparm_device_t)
 ')
 
 ########################################

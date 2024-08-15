@@ -5308,6 +5308,26 @@ interface(`files_create_home_dir',`
 
 ########################################
 ## <summary>
+## 	Manage /home directories
+## </summary>
+## <param name="domain">
+## 	<summary>
+##	Domain allowed access
+##	</summary>
+## </param>
+#
+interface(`files_manage_home_dir',`
+	gen_require(`
+		type home_root_t;
+	')
+
+	create_dirs_pattern($1, home_root_t, home_root_t)
+	# on modern systems these can by dynamic symlinks
+	manage_lnk_files_pattern($1, home_root_t, home_root_t)
+')
+
+########################################
+## <summary>
 ##	Search home directories root (/home).
 ## </summary>
 ## <param name="domain">
@@ -10481,6 +10501,24 @@ interface(`files_filetrans_named_content',`
 	files_var_filetrans($1, tmp_t, dir, "tmp")
 	files_var_filetrans($1, var_run_t, dir, "run")
 	files_var_filetrans($1, etc_runtime_t, file, ".updated")
+')
+
+########################################
+## <summary>
+##	Transition named content in the var_t directory
+## </summary>
+## <param name="domain">
+##	<summary>
+##      Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_filetrans_named_content_var',`
+	gen_require(`
+		type var_lib_t;
+	')
+
+	files_pid_filetrans($1, var_lib_t, dir, "lib")
 ')
 
 ########################################

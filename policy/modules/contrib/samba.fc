@@ -23,6 +23,7 @@
 
 /usr/bin/net			--	gen_context(system_u:object_r:samba_net_exec_t,s0)
 /usr/bin/ntlm_auth		--	gen_context(system_u:object_r:winbind_helper_exec_t,s0)
+/usr/bin/samba-gpupdate		--	gen_context(system_u:object_r:samba_gpupdate_exec_t,s0)
 /usr/bin/smbcontrol		--	gen_context(system_u:object_r:smbcontrol_exec_t,s0)
 /usr/bin/smbmount		--	gen_context(system_u:object_r:smbmount_exec_t,s0)
 /usr/bin/smbmnt			--	gen_context(system_u:object_r:smbmount_exec_t,s0)
@@ -42,6 +43,9 @@
 
 /var/lib/samba(/.*)?			gen_context(system_u:object_r:samba_var_t,s0)
 /var/lib/samba/winbindd_privileged(/.*)? gen_context(system_u:object_r:winbind_var_run_t,s0)
+/var/lib/samba/certs(/.*)?		gen_context(system_u:object_r:samba_cert_t,s0)
+/var/lib/samba/private/certs(/.*)?	gen_context(system_u:object_r:samba_cert_t,s0)
+
 
 /var/log/samba(/.*)?			gen_context(system_u:object_r:samba_log_t,s0)
 

@@ -1,0 +1,155 @@
+## <summary>policy for kanidm_unixd</summary>
+
+########################################
+## <summary>
+##	Execute kanidm_unixd_exec_t in the kanidm_unixd domain.
+## </summary>
+## <param name="domain">
+## <summary>
+##	Domain allowed to transition.
+## </summary>
+## </param>
+#
+interface(`kanidm_unixd_domtrans',`
+	gen_require(`
+		type kanidm_unixd_t, kanidm_unixd_exec_t;
+	')
+
+	corecmd_search_bin($1)
+	domtrans_pattern($1, kanidm_unixd_exec_t, kanidm_unixd_t)
+')
+
+######################################
+## <summary>
+##	Execute kanidm_unixd in the caller domain.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`kanidm_unixd_exec',`
+	gen_require(`
+		type kanidm_unixd_exec_t;
+	')
+
+	corecmd_search_bin($1)
+	can_exec($1, kanidm_unixd_exec_t)
+')
+
+
+########################################
+## <summary>
+##      Read kanidm public config files.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`kanidm_read_public_files',`
+        gen_require(`
+                type kanidm_conf_t;
+        ')
+
+        list_dirs_pattern($1, kanidm_conf_t, kanidm_conf_t)
+        read_files_pattern($1, kanidm_conf_t, kanidm_conf_t)
+    	allow $1 kanidm_conf_t:file map;
+')
+
+########################################
+## <summary>
+##      Read kanidm public config files.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`kanidm_read_cache_files',`
+        gen_require(`
+                type kanidm_unixd_var_cache_t;
+        ')
+
+        list_dirs_pattern($1, kanidm_unixd_var_cache_t, kanidm_unixd_var_cache_t)
+        read_files_pattern($1, kanidm_unixd_var_cache_t, kanidm_unixd_var_cache_t)
+        read_lnk_files_pattern($1, kanidm_unixd_var_cache_t, kanidm_unixd_var_cache_t)
+')
+
+########################################
+## <summary>
+##      Connect to kanidm over a unix stream socket.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`kanidm_unixd_stream_connect',`
+        gen_require(`
+                type kanidm_unixd_t, kanidm_unixd_var_run_t;
+        ')
+
+        files_search_pids($1)
+        stream_connect_pattern($1, kanidm_unixd_var_run_t, kanidm_unixd_var_run_t, kanidm_unixd_t)
+')
+
+########################################
+## <summary>
+##	Execute kanidm_sshkeys in the caller domain.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`kandim_kanidm_sshkeys_exec',`
+        gen_require(`
+                type kanidm_sshkeys_exec_t;
+        ')
+
+        allow $1 kanidm_sshkeys_exec_t:file { exec_file_perms };
+')
+
+########################################
+## <summary>
+##     Execute kanidm_sshkeys in the dedicated domain.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`kandim_kanidm_sshkeys_transition',`
+        gen_require(`
+                type kanidm_sshkeys_exec_t, kanidm_sshkeys_t;
+                type kanidm_sshkeys_direct_exec_t, kanidm_sshkeys_direct_t;
+        ')
+
+        domtrans_pattern($1, kanidm_sshkeys_exec_t, kanidm_sshkeys_t)
+        domtrans_pattern($1, kanidm_sshkeys_direct_exec_t, kanidm_sshkeys_direct_t)
+')
+
+########################################
+## <summary>
+##     Execute kanidm_unix in the dedicated domain.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`kandim_unix_transition',`
+        gen_require(`
+                type kanidm_unix_exec_t, kanidm_unix_t;
+        ')
+
+        domtrans_pattern($1, kanidm_unix_exec_t, kanidm_unix_t)
+')
