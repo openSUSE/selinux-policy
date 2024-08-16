@@ -496,6 +496,7 @@ optional_policy(`
 allow syslogd_t self:capability { sys_ptrace dac_read_search dac_override sys_resource sys_tty_config ipc_lock net_admin setgid setuid sys_admin sys_nice chown fsetid setuid setgid setpcap net_raw };
 dontaudit syslogd_t self:capability sys_tty_config;
 dontaudit syslogd_t self:cap_userns { kill sys_ptrace };
+dontaudit syslogd_t self:process execmem;
 allow syslogd_t self:capability2 { syslog block_suspend };
 # setpgid for metalog
 # setrlimit for syslog-ng
@@ -639,6 +640,9 @@ dev_read_urand(syslogd_t)
 # relating to systemd-kmsg-syslogd
 dev_write_kmsg(syslogd_t)
 dev_read_kmsg(syslogd_t)
+# for syslog-ng
+dev_rw_generic_pipes(syslogd_t)
+dev_setattr_generic_pipes(syslogd_t)
 
 domain_read_all_domains_state(syslogd_t)
 domain_getattr_all_domains(syslogd_t)
