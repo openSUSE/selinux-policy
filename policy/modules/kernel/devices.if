@@ -537,6 +537,43 @@ interface(`dev_dontaudit_getattr_generic_pipes',`
 
 ########################################
 ## <summary>
+##	Allow read write on generic pipes.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain to not audit.
+##	</summary>
+## </param>
+#
+interface(`dev_rw_generic_pipes',`
+	gen_require(`
+		type device_t;
+	')
+
+	rw_fifo_files_pattern($1, device_t, device_t)
+')
+
+########################################
+## <summary>
+##	Allow setattr on generic pipes.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain to not audit.
+##	</summary>
+## </param>
+#
+interface(`dev_setattr_generic_pipes',`
+	gen_require(`
+		type device_t;
+	')
+
+	setattr_fifo_files_pattern($1, device_t, device_t)
+')
+
+
+########################################
+## <summary>
 ##	Write generic socket files in /dev.
 ## </summary>
 ## <param name="domain">
