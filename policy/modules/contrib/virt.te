@@ -1475,6 +1475,7 @@ optional_policy(`
 ')
 
 optional_policy(`
+	dev_rw_xen(virsh_t)
 	xen_manage_image_dirs(virsh_t)
 	xen_read_image_files(virsh_t)
 	xen_read_lib_files(virsh_t)
