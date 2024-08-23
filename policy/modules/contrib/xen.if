@@ -315,3 +315,22 @@ interface(`xen_stream_connect_xm',`
 	files_search_pids($1)
 	stream_connect_pattern($1, xenstored_var_run_t, xenstored_var_run_t, xm_t)
 ')
+
+########################################
+## <summary>
+##	File transition from xend_var_lib_t
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`xen_filetrans_named_lib_content',`
+	gen_require(`
+		type xend_var_lib_t;
+		type xenstored_var_lib_t;
+	')
+
+	filetrans_pattern($1, xend_var_lib_t, xenstored_var_lib_t, dir, "xenstore")
+')

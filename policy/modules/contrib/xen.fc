@@ -24,6 +24,7 @@ ifdef(`distro_debian',`
 /var/lib/xen/images(/.*)?	gen_context(system_u:object_r:xen_image_t,s0)
 /var/lib/xend(/.*)?		gen_context(system_u:object_r:xend_var_lib_t,s0)
 /var/lib/xenstored(/.*)?	gen_context(system_u:object_r:xenstored_var_lib_t,s0)
+/var/lib/xen/xenstore(/.*)?	gen_context(system_u:object_r:xenstored_var_lib_t,s0)
 
 /var/log/evtchnd\.log.*	--	gen_context(system_u:object_r:evtchnd_var_log_t,s0)
 /var/log/xen(/.*)?		gen_context(system_u:object_r:xend_var_log_t,s0)
