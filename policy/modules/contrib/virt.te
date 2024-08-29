@@ -2347,6 +2347,10 @@ optional_policy(`
 	lvm_domtrans(virtstoraged_t)
 ')
 
+optional_policy(`
+	udev_domtrans(virtstoraged_t)
+')
+
 #######################################
 #
 # virtvboxd local policy
