@@ -2321,10 +2321,7 @@ filetrans_pattern(virtstoraged_t, virt_var_run_t, virtstoraged_var_run_t, { file
 manage_dirs_pattern(virtstoraged_t, virt_content_t, virt_content_t)
 manage_files_pattern(virtstoraged_t, virt_content_t, virt_content_t)
 
-manage_dirs_pattern(virtstoraged_t, virt_image_t, virt_image_t)
-manage_files_pattern(virtstoraged_t, virt_image_t, virt_image_t)
-
-manage_files_pattern(virtstoraged_t, svirt_image_t, svirt_image_t)
+virt_manage_images(virtstoraged_t)
 
 manage_dirs_pattern(virtstoraged_t, virt_var_lib_t, virt_var_lib_t)
 manage_files_pattern(virtstoraged_t, virt_var_lib_t, virt_var_lib_t)
@@ -2345,6 +2342,10 @@ optional_policy(`
 
 optional_policy(`
 	lvm_domtrans(virtstoraged_t)
+')
+
+optional_policy(`
+	udev_domtrans(virtstoraged_t)
 ')
 
 #######################################
