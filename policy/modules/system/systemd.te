@@ -491,6 +491,12 @@ optional_policy(`
 ')
 
 optional_policy(`
+	# needed after systemd commit 76f2191d8eb5 ("logind:
+	# introduce CreateSessionWithPIDFD()")
+	ssh_fd_use(systemd_logind_t)
+')
+
+optional_policy(`
 	# It links /run/user/$USER/X11/display to /tmp/.X11-unix/X* sock_file
 	xserver_search_xdm_tmp_dirs(systemd_logind_t)
 ')
@@ -1425,6 +1431,8 @@ permissive systemd_status_mail_generator_t;
 ### ssh generator
 allow systemd_ssh_generator_t self:vsock_socket create;
 allow systemd_ssh_generator_t vsock_device_t:chr_file { read_chr_file_perms };
+
+kernel_read_sysctl(systemd_ssh_generator_t)
 
 dev_read_sysfs(systemd_ssh_generator_t)
 kernel_request_load_module(systemd_ssh_generator_t)
