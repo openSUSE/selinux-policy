@@ -125,6 +125,13 @@ gen_tunable(virt_sandbox_use_audit, true)
 ## </desc>
 gen_tunable(virt_sandbox_use_netlink, false)
 
+## <desc>
+## <p>
+## Allow using qemu for xen dom0 disk backend
+## </p>
+## </desc>
+gen_tunable(xen_use_qemu_for_dom0_disk_backend, false)
+
 # The following three tunables are not used anywhere in selinux-policy,
 # but they are referred to from container-selinux
 # virt_sandbox_use_sys_admin virt_sandbox_use_mknod virt_sandbox_use_all_caps
@@ -522,6 +529,27 @@ userdom_read_all_users_state(svirt_t)
 optional_policy(`
 	unconfined_stream_connect(svirt_t)
 ')
+
+# for xen-qemu-dom0-disk-backend.service.in
+optional_policy(`
+	# qemu-dom0.pid needs to be labeled qemu_var_run_t
+	# instead of xen_var_run_t
+	xenstored_filetrans_qemu_named_pid_content(svirt_t)
+
+	tunable_policy(`xen_use_qemu_for_dom0_disk_backend',`
+		# allow init_t to transition to qemu_t, otherwise
+		# qemu-system-* is started with init_t
+		# it should be init_daemon_domain(qemu_t, qemu_exec_t)
+		# but that does not work in a tunable, so dirty hack:
+		qemu_domtrans(init_t)
+		init_ioctl_stream_sockets(svirt_t)
+
+		# qemu needs to read xen hypercall devices to be able
+		# to create and destroy vms
+		dev_rw_xen(svirt_t)
+	')
+')
+
 
 #######################################
 #

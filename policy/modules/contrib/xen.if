@@ -318,6 +318,25 @@ interface(`xen_stream_connect_xm',`
 
 ########################################
 ## <summary>
+##	File transition from xenstored_var_run_t
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`xenstored_filetrans_qemu_named_pid_content',`
+	gen_require(`
+		type xenstored_var_run_t;
+		type qemu_var_run_t;
+	')
+
+	filetrans_pattern($1, xenstored_var_run_t, qemu_var_run_t, file, "qemu-dom0.pid")
+')
+
+########################################
+## <summary>
 ##	File transition from xend_var_lib_t
 ## </summary>
 ## <param name="domain">
