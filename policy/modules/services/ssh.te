@@ -316,6 +316,8 @@ allow sshd_t self:process setcurrent;
 
 allow sshd_t sshd_keytab_t:file read_file_perms;
 
+ssh_rw_vsock_socket(sshd_t)
+
 kernel_search_key(sshd_t)
 kernel_link_key(sshd_t)
 kernel_read_fs_sysctls(sshd_t)
@@ -645,6 +647,8 @@ logging_send_audit_msgs(sshd_sandbox_t)
 allow sshd_t sshd_net_t:process signal;
 
 allow sshd_net_t self:process setrlimit;
+
+ssh_rw_vsock_socket(sshd_net_t)
 
 dev_rw_crypto(sshd_net_t)
 dev_rw_crypto(ssh_keygen_t)

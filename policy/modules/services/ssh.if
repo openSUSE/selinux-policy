@@ -1184,3 +1184,21 @@ interface(`ssh_create_vsock_socket',`
 
 	allow $1 sshd_t:vsock_socket create_stream_socket_perms;
 ')
+
+#######################################
+## <summary>
+##	Allow caller to read/write vsock socket for sshd
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`ssh_rw_vsock_socket',`
+	gen_require(`
+		type sshd_t;
+	')
+
+	allow $1 sshd_t:vsock_socket rw_socket_perms;
+')
