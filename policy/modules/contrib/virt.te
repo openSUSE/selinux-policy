@@ -2137,7 +2137,7 @@ allow virtqemud_t self:tcp_socket create_socket_perms;
 allow virtqemud_t self:tun_socket create;
 allow virtqemud_t self:udp_socket { connect create getattr };
 
-allow virtqemud_t qemu_var_run_t:dir relabelfrom;
+allow virtqemud_t qemu_var_run_t:{ dir file sock_file } relabelfrom;
 
 allow virtqemud_t svirt_t:process { getattr setsched signal signull transition };
 allow virtqemud_t svirt_t:unix_stream_socket { connectto create_stream_socket_perms };
@@ -2162,6 +2162,7 @@ delete_lnk_files_pattern(virtqemud_t, virt_etc_rw_t, virt_etc_rw_t)
 manage_files_pattern(virtqemud_t, virtqemud_lock_t, virtqemud_lock_t)
 files_lock_filetrans(virtqemud_t, virtqemud_lock_t, file)
 
+allow virtqemud_t virtqemud_var_run_t:dir relabelfrom;
 manage_dirs_pattern(virtqemud_t, virt_var_run_t, virt_var_run_t)
 manage_dirs_pattern(virtqemud_t, virtqemud_var_run_t, virtqemud_var_run_t)
 manage_files_pattern(virtqemud_t, virtqemud_var_run_t, virtqemud_var_run_t)
@@ -2314,6 +2315,8 @@ optional_policy(`
 	userdom_read_all_users_state(virtqemud_t)
 	userdom_read_user_home_content_files(virtqemud_t)
 	userdom_relabel_user_home_files(virtqemud_t)
+	userdom_relabel_user_tmp_files(virtqemud_t)
+	userdom_relabelfrom_user_tmp_sock_files(virtqemud_t)
 ')
 
 #######################################
