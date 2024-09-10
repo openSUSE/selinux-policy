@@ -91,6 +91,7 @@ HOME_DIR/\.config/systemd/user(/.*)?		gen_context(system_u:object_r:systemd_unit
 /usr/lib/systemd/system-generators/status-mail-generator.sh	--	gen_context(system_u:object_r:systemd_status_mail_generator_exec_t,s0)
 /usr/lib/systemd/system-generators/systemd-sysv-generator	--	gen_context(system_u:object_r:systemd_sysv_generator_exec_t,s0)
 /usr/lib/systemd/system-generators/systemd-tpm2-generator	--	gen_context(system_u:object_r:systemd_tpm2_generator_exec_t,s0)
+/usr/lib/systemd/system-generators/udev-trigger-generator	--	gen_context(system_u:object_r:systemd_udev_trigger_generator_exec_t,s0)
 /usr/lib/systemd/system-generators/zram-generator	--	gen_context(system_u:object_r:systemd_zram_generator_exec_t,s0)
 /usr/lib/systemd/system-generators/.+	--	gen_context(system_u:object_r:systemd_generic_generator_exec_t,s0)
 /usr/lib/systemd/zram-generator.conf	--	gen_context(system_u:object_r:systemd_zram_generator_conf_t,s0)
