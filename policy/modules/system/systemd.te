@@ -1444,6 +1444,9 @@ dev_list_sysfs(systemd_tpm2_generator_t)
 ### udev trigger generator
 corecmd_exec_bin(systemd_udev_trigger_generator_t)
 
+dev_list_sysfs(systemd_udev_trigger_generator_t)
+dev_read_sysfs(systemd_udev_trigger_generator_t)
+
 optional_policy(`
         # ignore #!/bin/bash reading passwd file
         auth_dontaudit_read_passwd_file(systemd_udev_trigger_generator_t)
