@@ -739,6 +739,24 @@ interface(`logging_read_syslog_pid',`
 
 ########################################
 ## <summary>
+##	Use the syslog pid sock_file as mount point.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`logging_mounton_syslog_pid_socket',`
+	gen_require(`
+		type syslogd_var_run_t;
+	')
+
+	allow $1 syslogd_var_run_t:sock_file mounton;
+')
+
+########################################
+## <summary>
 ##	Relabel the syslog pid sock_file.
 ## </summary>
 ## <param name="domain">
@@ -1787,6 +1805,24 @@ interface(`logging_syslogd_pid_filetrans',`
 
 	files_search_pids($1)
 	filetrans_pattern($1, syslogd_var_run_t, $2, $3, $4)
+')
+
+#######################################
+## <summary>
+##	Create files in /run/log/journal/ directory.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`logging_create_journal_files',`
+	gen_require(`
+		type syslogd_var_run_t;
+	')
+
+	allow $1 syslogd_var_run_t:file { create };
 ')
 
 #######################################
