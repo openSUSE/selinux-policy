@@ -1791,6 +1791,24 @@ interface(`logging_syslogd_pid_filetrans',`
 
 #######################################
 ## <summary>
+##	Create files in /run/log/journal/ directory.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`logging_create_journal_files',`
+	gen_require(`
+		type syslogd_var_run_t;
+	')
+
+	allow $1 syslogd_var_run_t:file { create };
+')
+
+#######################################
+## <summary>
 ##	Map files in /run/log/journal/ directory.
 ## </summary>
 ## <param name="domain">
