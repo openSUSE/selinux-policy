@@ -1871,7 +1871,11 @@ tunable_policy(`selinuxuser_direct_dri_enabled',`
 ')
 
 # Handle /etc/sysconfig/displaymanager together with accountsservice (accountsd_t) (bsc#1222978)
+#============= xdm_t ==============
 optional_policy(`
+	gnome_remote_desktop_rw_tcp_sockets(xdm_t)
+	dev_rw_dma_dev(xdm_t)
+	# Handle /etc/sysconfig/displaymanager together with accountsservice (accountsd_t) (bsc#1222978)
 	# Label all files created by xdm_t under /run called "displaymanager.new" as xdm_etc_t
 	xserver_var_run_etc_filetrans_named_content(xdm_t, "displaymanager.new")
 	# Write /etc/sysconfig/displaymanager
