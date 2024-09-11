@@ -1413,7 +1413,9 @@ permissive systemd_growpart_generator_t;
 
 ### ibft-rule-generator (from open-iscsi package)
 corecmd_exec_bin(systemd_ibft_rule_generator_t)
+udev_create_rules_dir(systemd_ibft_rule_generator_t)
 udev_manage_rules_files(systemd_ibft_rule_generator_t)
+udev_named_filetrans_runtime_generated_rules(systemd_ibft_rule_generator_t)
 
 optional_policy(`
         # ignore #!/bin/bash reading passwd file

@@ -172,6 +172,42 @@ interface(`udev_manage_rules_files',`
 
 ########################################
 ## <summary>
+##	Create udev rules directory
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`udev_create_rules_dir',`
+	gen_require(`
+		type udev_rules_t;
+	')
+
+	allow $1 udev_rules_t:dir create_dir_perms;
+')
+
+########################################
+## <summary>
+##	named filetrans from udev_var_run_t to udev_rules_t
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+interface(`udev_named_filetrans_runtime_generated_rules',`
+	gen_require(`
+		type udev_rules_t;
+		type udev_var_run_t;
+	')
+
+	filetrans_pattern($1, udev_var_run_t, udev_rules_t, dir, "rules.d")
+')
+
+########################################
+## <summary>
 ##	Do not audit search of udev database directories.
 ## </summary>
 ## <param name="domain">
