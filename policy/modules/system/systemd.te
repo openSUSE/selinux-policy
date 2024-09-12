@@ -221,6 +221,8 @@ systemd_generator_template(systemd_ssh_generator)
 systemd_generator_template(systemd_sysv_generator)
 # tpm2-generator
 systemd_generator_template(systemd_tpm2_generator)
+# udev-trigger-generator
+systemd_generator_template(systemd_udev_trigger_generator)
 # zram-generator
 systemd_generator_template(systemd_zram_generator)
 type systemd_zram_generator_conf_t;
@@ -1454,6 +1456,19 @@ init_read_script_files(systemd_sysv_generator_t)
 
 ### tpm2 generator
 dev_list_sysfs(systemd_tpm2_generator_t)
+
+### udev trigger generator
+corecmd_exec_bin(systemd_udev_trigger_generator_t)
+
+dev_list_sysfs(systemd_udev_trigger_generator_t)
+dev_read_sysfs(systemd_udev_trigger_generator_t)
+
+optional_policy(`
+        # ignore #!/bin/bash reading passwd file
+        auth_dontaudit_read_passwd_file(systemd_udev_trigger_generator_t)
+')
+
+permissive systemd_udev_trigger_generator_t;
 
 ### zram generator
 allow systemd_zram_generator_t systemd_fstab_generator_unit_file_t:file write_file_perms;
