@@ -90,6 +90,9 @@ ifdef(`distro_redhat', `
 /usr/bin/yast2			--	gen_context(system_u:object_r:rpm_exec_t,s0)
 /var/lib/YaST2(/.*)?			gen_context(system_u:object_r:rpm_var_lib_t,s0)
 /var/log/YaST2(/.*)?			gen_context(system_u:object_r:rpm_log_t,s0)
+/usr/lib/YaST2(/.*)?			gen_context(system_u:object_r:rpm_var_lib_t,s0)
+/usr/lib/YaST2/bin/.*			gen_context(system_u:object_r:rpm_exec_t,s0)
+/usr/lib/YaST2/startup/YaST2.*		gen_context(system_u:object_r:rpm_exec_t,s0)
 ')
 
 ifdef(`enable_mls',`
