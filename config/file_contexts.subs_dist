@@ -32,3 +32,15 @@
 /var/mnt             /mnt
 /bin                 /usr/bin
 /usr/sbin            /usr/bin
+
+# SUSE-specific section
+/var/run/lock /var/lock
+/usr/local /usr
+
+## for netconfig
+/var/run/netconfig /etc
+/var/adm/netconfig/md5/etc /etc
+/var/adm/netconfig/md5/var /var
+
+## for transactional systems
+/usr/etc /etc
