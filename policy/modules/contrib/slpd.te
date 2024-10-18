@@ -28,6 +28,9 @@ allow slpd_t self:capability { kill net_admin setgid setuid };
 # SUSE specific patch "extensions.diff" in openslp needs chroot()
 allow slpd_t self:capability sys_chroot;
 
+# SUSE specific patch "openslp.netlink.diff" in openslp uses TCPDIAG_GETSOCK
+allow slpd_t self:netlink_tcpdiag_socket create;
+
 allow slpd_t self:process signal;
 allow slpd_t self:fifo_file rw_fifo_file_perms;
 allow slpd_t self:tcp_socket { accept listen };
