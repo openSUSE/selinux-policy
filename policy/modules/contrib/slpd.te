@@ -24,6 +24,10 @@ files_pid_file(slpd_var_run_t)
 #
 
 allow slpd_t self:capability { kill net_admin setgid setuid };
+
+# SUSE specific patch "extensions.diff" in openslp needs chroot()
+allow slpd_t self:capability sys_chroot;
+
 allow slpd_t self:process signal;
 allow slpd_t self:fifo_file rw_fifo_file_perms;
 allow slpd_t self:tcp_socket { accept listen };
