@@ -579,6 +579,7 @@ optional_policy(`
 ')
 
 optional_policy(`
+	systemd_homed_stream_connect(nsswitch_domain)
 	systemd_userdbd_stream_connect(nsswitch_domain)
 	systemd_machined_stream_connect(nsswitch_domain)
 ')
@@ -694,12 +695,6 @@ optional_policy(`
 optional_policy(`
 	oddjob_dbus_chat(login_pgm)
 	oddjob_domtrans_mkhomedir(login_pgm)
-')
-
-optional_policy(`
-	openct_stream_connect(login_pgm)
-	openct_signull(login_pgm)
-	openct_read_pid_files(login_pgm)
 ')
 
 optional_policy(`

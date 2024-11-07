@@ -168,6 +168,8 @@ manage_files_pattern(ssh_server, ssh_home_t, ssh_home_t)
 
 kernel_read_device_sysctls(ssh_t)
 kernel_read_kernel_sysctls(ssh_t)
+kernel_read_net_sysctls(ssh_t)
+kernel_read_network_state_symlinks(ssh_t)
 kernel_read_system_state(ssh_t)
 
 corenet_all_recvfrom_netlabel(ssh_t)
@@ -251,6 +253,8 @@ optional_policy(`
 	gnome_read_generic_cache_files(ssh_t)
 	gnome_map_generic_cache_files(ssh_t)
 	gnome_read_home_config(ssh_t)
+	gnome_map_home_config_file(ssh_t)
+	gnome_watch_home_config_dirs(ssh_t)
 	gnome_stream_connect_gkeyringd(ssh_t)
 ')
 

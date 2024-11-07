@@ -79,6 +79,9 @@ init_nnp_daemon_domain(systemd_networkd_t)
 type systemd_networkd_unit_file_t;
 systemd_unit_file(systemd_networkd_unit_file_t)
 
+type systemd_cache_t;
+files_type(systemd_cache_t)
+
 type systemd_networkd_var_lib_t;
 files_type(systemd_networkd_var_lib_t)
 
@@ -1858,6 +1861,10 @@ optional_policy(`
 
 optional_policy(`
 	sysstat_domtrans(systemd_sleep_t)
+')
+
+optional_policy(`
+	systemd_homed_dbus_chat(systemd_sleep_t)
 ')
 
 optional_policy(`

@@ -4907,6 +4907,25 @@ interface(`files_manage_isid_type_dirs',`
 
 ########################################
 ## <summary>
+##	Map files on new filesystems
+##	that have not yet been labeled.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_mmap_isid_files',`
+	gen_require(`
+		type unlabeled_t;
+	')
+
+	allow $1 unlabeled_t:file { getattr map };
+')
+
+########################################
+## <summary>
 ##	Mount a filesystem on a directory on new filesystems
 ##	that has not yet been labeled.
 ## </summary>
@@ -5324,6 +5343,24 @@ interface(`files_manage_home_dir',`
 	create_dirs_pattern($1, home_root_t, home_root_t)
 	# on modern systems these can by dynamic symlinks
 	manage_lnk_files_pattern($1, home_root_t, home_root_t)
+')
+
+########################################
+## <summary>
+## 	Delete /home directories
+## </summary>
+## <param name="domain">
+## 	<summary>
+##	Domain allowed access
+##	</summary>
+## </param>
+#
+interface(`files_delete_home_dir',`
+	gen_require(`
+		type home_root_t;
+	')
+
+	delete_dirs_pattern($1, home_root_t, home_root_t)
 ')
 
 ########################################
@@ -6122,6 +6159,25 @@ interface(`files_manage_mdevctl_conf_files',`
 
 	files_search_etc(mdevctl_conf_t)
 	manage_files_pattern($1, mdevctl_conf_t, mdevctl_conf_t)
+')
+
+#######################################
+## <summary>
+##	Watch mdevctl configuration dirs
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_watch_mdevctl_conf_dirs',`
+	gen_require(`
+		type mdevctl_conf_t;
+	')
+
+	files_search_etc(mdevctl_conf_t)
+	allow $1 mdevctl_conf_t:dir watch_dir_perms;
 ')
 
 ###################################
