@@ -1,0 +1,110 @@
+policy_module(health-checker, 1.0.0)
+
+########################################
+#
+# Declarations
+#
+attribute_role health_checker_roles;
+roleattribute system_r health_checker_roles;
+
+type health_checker_t;
+type health_checker_exec_t;
+init_system_domain(health_checker_t, health_checker_exec_t)
+type health_checker_plugin_t;
+type health_checker_plugin_exec_t;
+# health-checker plugins can also be launched individually (both via systemd and interactively)
+init_system_domain(health_checker_plugin_t, health_checker_plugin_exec_t)
+
+role health_checker_roles types { health_checker_t health_checker_plugin_t };
+
+type health_checker_tmp_t;
+files_tmp_file(health_checker_tmp_t)
+type health_checker_etc_t;
+files_config_file(health_checker_etc_t)
+type health_checker_var_lib_t;
+files_type(health_checker_var_lib_t)
+
+type health_checker_unit_file_t;
+systemd_unit_file(health_checker_unit_file_t)
+
+########################################
+#
+# health-checker policy
+#
+
+# Allow health-checker to execute plugins under /usr/libexec/health-checker/
+domtrans_pattern(health_checker_t, health_checker_plugin_exec_t, health_checker_plugin_t)
+
+corecmd_exec_shell(health_checker_t)
+corecmd_exec_bin(health_checker_t)
+systemd_status_all_unit_files(health_checker_t)
+
+logging_send_syslog_msg(health_checker_t)
+
+# Allow health-checker to execute and transition into bootloader
+optional_policy(`
+	bootloader_run(health_checker_t, health_checker_roles)
+')
+
+manage_files_pattern(health_checker_t, health_checker_var_lib_t, health_checker_var_lib_t)
+files_var_lib_filetrans(health_checker_t, health_checker_var_lib_t, file)
+
+fs_getattr_xattr_fs(health_checker_t)
+
+optional_policy(`
+	# ignore #!/bin/bash reading passwd file
+	auth_dontaudit_read_passwd_file(health_checker_t)
+')
+
+# Set domain to permissive
+# WARNING: unconfined_t currently can transition to this domain (see unconfineduser.te)
+# Before setting this domain to confined, consider the consequences of unconfined_t
+# transitioning into a domain which is no longer permissive.
+permissive health_checker_t;
+
+########################################
+#
+# health-checker plugins policy
+#
+corecmd_exec_shell(health_checker_plugin_t)
+corecmd_exec_bin(health_checker_plugin_t)
+
+init_status(health_checker_plugin_t)
+systemd_status_all_unit_files(health_checker_plugin_t)
+systemd_getattr_unit_files(health_checker_plugin_t)
+
+logging_send_syslog_msg(health_checker_plugin_t)
+
+# Allow health-checker plugins to execute and transition into rpm
+optional_policy(`
+	rpm_run(health_checker_plugin_t, health_checker_roles)
+')
+
+# Allow health-checker plugins to execute and transition into bootloader
+optional_policy(`
+	bootloader_run(health_checker_plugin_t, health_checker_roles)
+')
+
+# Allow health-checker plugins to talk to rebootmgr over dbus
+optional_policy(`
+	dbus_connect_system_bus(health_checker_plugin_t)
+	dbus_system_bus_client(health_checker_plugin_t)
+	rebootmgr_dbus_chat(health_checker_plugin_t)
+')
+
+manage_files_pattern(health_checker_plugin_t, health_checker_tmp_t, health_checker_tmp_t)
+files_tmp_filetrans(health_checker_plugin_t, health_checker_tmp_t, file)
+
+manage_files_pattern(health_checker_plugin_t, health_checker_etc_t, health_checker_etc_t)
+files_etc_filetrans(health_checker_plugin_t, health_checker_tmp_t, file)
+
+optional_policy(`
+	# ignore #!/bin/bash reading passwd file
+	auth_dontaudit_read_passwd_file(health_checker_plugin_t)
+')
+
+# Set domain to permissive
+# WARNING: unconfined_t currently can transition to this domain (see unconfineduser.te)
+# Before setting this domain to confined, consider the consequences of unconfined_t
+# transitioning into a domain which is no longer permissive.
+permissive health_checker_plugin_t;

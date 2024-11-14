@@ -399,6 +399,14 @@ optional_policy(`
 ')
 
 optional_policy(`
+	# Allow unconfined user to execute health-checker and its plugins in their respective domains (both permissive).
+	# This is necessary for the right file transitions to take place on /run/rpmdb (bsc#1231127) .
+	# WARNING: This could become a problem if health_checker_t or health_checker_plugin_t ever become confined.
+	health_checker_domtrans_health_checker(unconfined_t, unconfined_r)
+	health_checker_domtrans_health_checker_plugin(unconfined_t, unconfined_r)
+')
+
+optional_policy(`
 	optional_policy(`
 		samba_run_unconfined_net(unconfined_t, unconfined_r)
 	')
