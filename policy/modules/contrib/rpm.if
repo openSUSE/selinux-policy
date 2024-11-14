@@ -1070,3 +1070,22 @@ interface(`rpm_script_rw_stream_sockets',`
 
 	allow $1 rpm_script_t:unix_stream_socket { rw_socket_perms };
 ')
+
+########################################
+## <summary>
+##	Create rpmdb lock file under /run with the correct label.
+## </summary>
+## <param name="filename">
+##	<summary>
+##	rpmdb lock file name under /run
+##	</summary>
+## </param>
+#
+interface(`rpm_run_lockfile_named_filetrans',`
+	gen_require(`
+		type rpm_t;
+		type var_run_t;
+		type rpm_var_lib_t;
+	')
+	filetrans_pattern(rpm_t, var_run_t, rpm_var_lib_t, file, $1)
+')

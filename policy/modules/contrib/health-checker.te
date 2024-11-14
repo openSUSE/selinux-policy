@@ -103,6 +103,12 @@ optional_policy(`
 	auth_dontaudit_read_passwd_file(health_checker_plugin_t)
 ')
 
+# Workaround for a rpmdb lockfile under /run on systems where /usr is RO (bsc#1231127)
+# Used by rpmdb-consistency.sh plugin
+optional_policy(`
+	rpm_run_lockfile_named_filetrans("rpmdb")
+')
+
 # Set domain to permissive
 # WARNING: unconfined_t currently can transition to this domain (see unconfineduser.te)
 # Before setting this domain to confined, consider the consequences of unconfined_t
