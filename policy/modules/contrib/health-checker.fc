@@ -1,0 +1,8 @@
+/usr/lib/systemd/system/health-checker.service	--	gen_context(system_u:object_r:health_checker_unit_file_t,s0)
+
+/usr/bin/health-checker							--	gen_context(system_u:object_r:health_checker_exec_t,s0)
+
+/usr/libexec/health-checker/.*\.sh				--	gen_context(system_u:object_r:health_checker_plugin_exec_t,s0)
+/usr/local/libexec/health-checker/.*\.sh		--	gen_context(system_u:object_r:health_checker_plugin_exec_t,s0)
+
+/var/lib/misc/health-check.*					--	gen_context(system_u:object_r:health_checker_var_lib_t,s0)
