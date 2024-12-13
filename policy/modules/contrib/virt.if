@@ -2140,3 +2140,23 @@ interface(`virt_manage_qemu_pid_sock_files',`
        files_search_pids($1)
        manage_sock_files_pattern($1, qemu_var_run_t, qemu_var_run_t)
 ')
+
+########################################
+## <summary>
+##	 Read virtqemud PID files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	 </summary>
+## </param>
+#
+interface(`virt_read_virtqemud_pid_files',`
+	gen_require(`
+		type virtqemud_var_run_t;
+	')
+
+	files_search_pids($1)
+	list_dirs_pattern($1, virtqemud_var_run_t, virtqemud_var_run_t)
+	read_files_pattern($1, virtqemud_var_run_t, virtqemud_var_run_t)
+')
