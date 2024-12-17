@@ -28,6 +28,7 @@ allow staff_t self:netlink_generic_socket { create_socket_perms };
 allow staff_t self:netlink_route_socket nlmsg_write;
 
 corenet_ib_access_unlabeled_pkeys(staff_t)
+corenet_tcp_bind_generic_port(staff_t)
 
 kernel_io_uring_use(staff_t)
 kernel_read_ring_buffer(staff_t)
@@ -206,6 +207,10 @@ optional_policy(`
 
 optional_policy(`
     iotop_run(staff_t, staff_r)
+')
+
+optional_policy(`
+	lldpad_dgram_send(staff_t)
 ')
 
 optional_policy(`

@@ -24,6 +24,7 @@ allow sysadm_t self:system all_system_perms;
 #
 # Local policy
 #
+kernel_io_uring_use(sysadm_t)
 kernel_manage_perf_event(sysadm_t)
 kernel_prog_run_bpf(sysadm_t)
 kernel_read_fs_sysctls(sysadm_t)
@@ -380,6 +381,10 @@ optional_policy(`
 ')
 
 optional_policy(`
+	lldpad_dgram_send(sysadm_t)
+')
+
+optional_policy(`
 	logrotate_run(sysadm_t, sysadm_r)
 ')
 
@@ -561,7 +566,7 @@ optional_policy(`
 ')
 
 optional_policy(`
-	screen_role_template(sysadm, sysadm_r, sysadm_t)
+	screen_admin_role_template(sysadm, sysadm_r, sysadm_t)
     allow sysadm_screen_t self:capability { dac_read_search dac_override chown };
 ')
 
@@ -682,6 +687,7 @@ optional_policy(`
 ')
 
 optional_policy(`
+	virt_dbus_chat_dbus(sysadm_t)
 	virt_stream_connect(sysadm_t)
 	virt_filetrans_home_content(sysadm_t)
 	virt_manage_pid_dirs(sysadm_t)
