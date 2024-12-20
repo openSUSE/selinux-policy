@@ -519,7 +519,7 @@ optional_policy(`
 allow systemd_machined_t self:capability { dac_read_search dac_override setgid sys_admin sys_chroot sys_ptrace kill };
 allow systemd_machined_t systemd_unit_file_t:service { status start stop };
 allow systemd_machined_t self:unix_dgram_socket create_socket_perms;
-allow systemd_machined_t self:cap_userns { setgid setuid sys_admin sys_chroot sys_ptrace };
+allow systemd_machined_t self:cap_userns { kill setgid setuid sys_admin sys_chroot sys_ptrace };
 
 manage_dirs_pattern(systemd_machined_t, systemd_machined_var_run_t, systemd_machined_var_run_t)
 manage_files_pattern(systemd_machined_t, systemd_machined_var_run_t, systemd_machined_var_run_t)
@@ -673,6 +673,10 @@ optional_policy(`
 
 optional_policy(`
 	logging_send_syslog_msg(systemd_networkd_t)
+')
+
+optional_policy(`
+	mount_read_pid_files(systemd_networkd_t)
 ')
 
 optional_policy(`
@@ -1247,7 +1251,8 @@ allow systemd_sysctl_t modules_object_t:dir search;
 # sys_ptrace - to read /proc/<pid>/exe of the dumped process
 # setgid setuid - to set own credentials to match the dumped process credentials
 # setpcap - to drop capabilities
-allow systemd_coredump_t self:capability { dac_read_search net_admin setgid setpcap setuid sys_admin sys_ptrace sys_resource };
+allow systemd_coredump_t self:capability { dac_read_search net_admin setgid setpcap setuid sys_ptrace };
+dontaudit systemd_coredump_t self:capability sys_resource;
 allow systemd_coredump_t self:cap_userns { dac_read_search dac_override sys_admin sys_ptrace };
 
 # To set its capability set
@@ -1321,6 +1326,7 @@ dev_write_kmsg(systemd_generator)
 dev_write_kmsg(systemd_generator)
 files_map_read_etc_files(systemd_generator)
 fs_getattr_all_fs(systemd_generator)
+fs_getattr_nsfs_files(systemd_generator)
 fs_search_cgroup_dirs(systemd_generator)
 init_read_state(systemd_generator)
 
@@ -1336,6 +1342,7 @@ permissive systemd_btrfs_soft_reboot_generator_t;
 
 ### cryptsetup generator
 manage_dirs_pattern(systemd_cryptsetup_generator_t, systemd_fstab_generator_unit_file_t, systemd_fstab_generator_unit_file_t)
+
 manage_files_pattern(systemd_cryptsetup_generator_t, systemd_fstab_generator_unit_file_t, systemd_fstab_generator_unit_file_t)
 
 ### fstab generator
@@ -1463,7 +1470,7 @@ optional_policy(`
 init_read_script_files(systemd_sysv_generator_t)
 
 ### tpm2 generator
-dev_list_sysfs(systemd_tpm2_generator_t)
+dev_read_sysfs(systemd_tpm2_generator_t)
 
 ### udev trigger generator
 corecmd_exec_bin(systemd_udev_trigger_generator_t)
@@ -1614,6 +1621,7 @@ dev_read_urand(systemd_domain)
 
 fs_search_all(systemd_domain)
 fs_getattr_all_fs(systemd_domain)
+fs_getattr_nsfs_files(systemd_domain)
 
 files_read_etc_files(systemd_domain)
 files_read_etc_runtime_files(systemd_domain)
@@ -1846,9 +1854,7 @@ dev_create_sysfs_files(systemd_sleep_t)
 dev_rw_sysfs(systemd_sleep_t)
 dev_write_kmsg(systemd_sleep_t)
 
-fs_create_efivarfs_files(systemd_sleep_t)
-fs_setattr_efivarfs_files(systemd_sleep_t)
-fs_rw_efivarfs_files(systemd_sleep_t)
+fs_manage_efivarfs_files(systemd_sleep_t)
 
 fstools_rw_swap_files(systemd_sleep_t)
 

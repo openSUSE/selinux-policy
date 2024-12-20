@@ -491,6 +491,7 @@ files_mountpoint(container_ro_file_t)
 # svirt local policy
 #
 
+allow svirt_t self:capability sys_rawio;
 allow svirt_t self:process ptrace;
 
 allow svirt_t self:netlink_rdma_socket create_socket_perms;
@@ -556,10 +557,12 @@ optional_policy(`
 # svirt_prot_exec local policy
 #
 
+allow svirt_tcg_t self:capability sys_rawio;
 allow svirt_tcg_t self:process { execmem execstack };
 allow svirt_tcg_t self:netlink_route_socket r_netlink_socket_perms;
 
-allow svirt_tcg_t virtqemud_var_run_t: file write;
+allow svirt_tcg_t virtqemud_t:fifo_file read;
+allow svirt_tcg_t virtqemud_var_run_t:file write;
 
 read_files_pattern(svirt_tcg_t, virtqemud_t, virtqemud_t)
 
@@ -964,7 +967,9 @@ optional_policy(`
 #
 # virtlogd local policy
 #
+allow virtlogd_t self:capability kill;
 allow virtlogd_t virt_image_t:dir search_dir_perms;
+allow virtlogd_t svirt_t:process signal;
 
 # virtlogd is allowed to manage files it creates in /var/run/libvirt
 manage_files_pattern(virtlogd_t, virt_var_run_t, virtlogd_var_run_t)
@@ -2146,17 +2151,25 @@ allow virtqemud_t svirt_t:unix_stream_socket { connectto create_stream_socket_pe
 allow virtqemud_t svirt_socket_t:unix_stream_socket connectto;
 allow virtqemud_t svirt_tcg_t: process { setsched signal signull transition };
 allow virtqemud_t svirt_tcg_t: unix_stream_socket { connectto create_stream_socket_perms };
+
+allow virtqemud_t svirt_devpts_t:chr_file open;
 allow virtqemud_t svirt_tmpfs_t:file { map write };
 
 allow virtqemud_t virt_cache_t:file { relabelfrom relabelto };
 
 allow virtqemud_t virt_driver_domain:unix_stream_socket connectto;
 
+allow virtqemud_t virt_var_lib_t:file relabelfrom;
+
 allow virtqemud_t virt_var_run_t:dir relabelfrom;
 allow virtqemud_t virt_var_run_t:file map;
 
 allow virtqemud_t virtlogd_t:fifo_file rw_inherited_fifo_file_perms;
 allow virtqemud_t virtlogd_t:unix_stream_socket connectto;
+
+read_files_pattern(virtqemud_t, virsh_t, virsh_t)
+
+read_files_pattern(virtqemud_t, virtd_t, virtd_t)
 
 create_lnk_files_pattern(virtqemud_t, virt_etc_rw_t, virt_etc_rw_t)
 delete_lnk_files_pattern(virtqemud_t, virt_etc_rw_t, virt_etc_rw_t)
@@ -2165,6 +2178,9 @@ manage_files_pattern(virtqemud_t, virtqemud_lock_t, virtqemud_lock_t)
 files_lock_filetrans(virtqemud_t, virtqemud_lock_t, file)
 
 allow virtqemud_t virtqemud_var_run_t:dir relabelfrom;
+allow virtqemud_t virtqemud_var_run_t:sock_file relabelfrom;
+allow virtqemud_t virt_log_t:file relabelfrom;
+
 manage_dirs_pattern(virtqemud_t, virt_var_run_t, virt_var_run_t)
 manage_dirs_pattern(virtqemud_t, virtqemud_var_run_t, virtqemud_var_run_t)
 manage_files_pattern(virtqemud_t, virtqemud_var_run_t, virtqemud_var_run_t)
@@ -2182,7 +2198,7 @@ manage_files_pattern(virtqemud_t, qemu_var_run_t, qemu_var_run_t)
 manage_sock_files_pattern(virtqemud_t, qemu_var_run_t, qemu_var_run_t)
 filetrans_pattern(virtqemud_t, virt_var_run_t, qemu_var_run_t, dir, "qemu")
 
-read_chr_files_pattern(virtqemud_t, svirt_image_t, svirt_image_t)
+rw_chr_files_pattern(virtqemud_t, svirt_image_t, svirt_image_t)
 setattr_chr_files_pattern(virtqemud_t, svirt_image_t, svirt_image_t)
 manage_dirs_pattern(virtqemud_t, svirt_image_t, svirt_image_t)
 manage_fifo_files_pattern(virtqemud_t, svirt_image_t, svirt_image_t)
@@ -2223,6 +2239,7 @@ corenet_tcp_bind_vnc_port(virtqemud_t)
 
 dev_delete_urand(virtqemud_t)
 dev_read_cpuid(virtqemud_t)
+dev_read_sgx_vepc(virtqemud_t)
 dev_read_sysfs(virtqemud_t)
 dev_read_urand(virtqemud_t)
 dev_rw_vfio_dev(virtqemud_t)
@@ -2230,6 +2247,8 @@ dev_relabel_all_dev_nodes(virtqemud_t)
 dev_rw_kvm(virtqemud_t)
 dev_rw_lvm_control(virtqemud_t)
 dev_rw_vhost(virtqemud_t)
+dev_rw_sev(virtqemud_t)
+dev_setattr_sev(virtqemud_t)
 dev_setattr_urand(virtqemud_t)
 dev_unmount_fs(virtqemud_t)
 
@@ -2251,6 +2270,9 @@ fs_manage_tmpfs_dirs(virtqemud_t)
 fs_manage_tmpfs_symlinks(virtqemud_t)
 fs_mount_tmpfs(virtqemud_t)
 fs_read_nsfs_files(virtqemud_t)
+fs_create_tmpfs_chr_blk_files(virtqemud_t)
+fs_setattr_tmpfs_chr_blk_files(virtqemud_t)
+fs_relabel_tmpfs_blk_file(virtqemud_t)
 fs_relabel_tmpfs_chr_file(virtqemud_t)
 fs_unmount_xattr_fs(virtqemud_t)
 
@@ -2261,6 +2283,9 @@ init_stream_connect(virtqemud_t)
 init_stream_connect_script(virtqemud_t)
 
 selinux_compute_create_context(virtqemud_t)
+
+storage_rw_fixed_disk_blk_dev(virtqemud_t)
+storage_setattr_fixed_disk_dev(virtqemud_t)
 
 sysnet_exec_ifconfig(virtqemud_t)
 sysnet_manage_config(virtqemud_t)
@@ -2371,6 +2396,7 @@ manage_lnk_files_pattern(virtstoraged_t, virt_etc_rw_t, virt_etc_rw_t)
 
 kernel_get_sysvipc_info(virtstoraged_t)
 kernel_io_uring_use(virtstoraged_t)
+kernel_read_vm_sysctls(virtstoraged_t)
 
 corecmd_exec_bin(virtstoraged_t)
 
