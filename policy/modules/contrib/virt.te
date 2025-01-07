@@ -1086,6 +1086,7 @@ kernel_io_uring_use(virt_domain)
 # qemu uses userfaultfd to implement live post-copy migration
 # https://wiki.qemu.org/Features/PostCopyLiveMigration
 kernel_userfaultfd_use(virt_domain)
+kernel_kvm_gmem_use(virt_domain)
 
 userdom_search_user_home_content(virt_domain)
 userdom_read_user_home_content_symlinks(virt_domain)
@@ -2137,20 +2138,22 @@ allow virtqemud_t self:bpf { map_create map_read map_write prog_load prog_run };
 allow virtqemud_t self:capability { audit_write chown dac_override dac_read_search fowner fsetid kill net_admin setpcap setgid setuid sys_admin sys_chroot sys_ptrace sys_rawio sys_resource };
 allow virtqemud_t self:capability2 { bpf perfmon };
 allow virtqemud_t self:cap_userns kill;
-
 allow virtqemud_t self:netlink_audit_socket { nlmsg_relay read write };
-allow virtqemud_t self:process { setcap setexec setrlimit setsched setsockcreate };
+allow virtqemud_t self:process { getpgid setcap setexec setrlimit setsched setsockcreate };
 allow virtqemud_t self:tcp_socket create_socket_perms;
-allow virtqemud_t self:tun_socket create;
+allow virtqemud_t self:tun_socket { create relabelfrom relabelto };
 allow virtqemud_t self:udp_socket { connect create getattr };
 
 allow virtqemud_t qemu_var_run_t:{ dir file sock_file } relabelfrom;
 
-allow virtqemud_t svirt_t:process { getattr setsched signal signull transition };
+allow virtqemud_t svirt_t:netlink_route_socket create_netlink_socket_perms;
+allow virtqemud_t svirt_t:process { getattr getrlimit setsched signal signull transition };
+allow virtqemud_t svirt_t:tcp_socket create_stream_socket_perms;
+allow virtqemud_t svirt_t:udp_socket create_socket_perms;
 allow virtqemud_t svirt_t:unix_stream_socket { connectto create_stream_socket_perms };
 allow virtqemud_t svirt_socket_t:unix_stream_socket connectto;
-allow virtqemud_t svirt_tcg_t: process { setsched signal signull transition };
-allow virtqemud_t svirt_tcg_t: unix_stream_socket { connectto create_stream_socket_perms };
+allow virtqemud_t svirt_tcg_t:process { getrlimit getsched setsched signal signull transition };
+allow virtqemud_t svirt_tcg_t:unix_stream_socket { connectto create_stream_socket_perms };
 
 allow virtqemud_t svirt_devpts_t:chr_file open;
 allow virtqemud_t svirt_tmpfs_t:file { map write };
@@ -2179,7 +2182,7 @@ files_lock_filetrans(virtqemud_t, virtqemud_lock_t, file)
 
 allow virtqemud_t virtqemud_var_run_t:dir relabelfrom;
 allow virtqemud_t virtqemud_var_run_t:sock_file relabelfrom;
-allow virtqemud_t virt_log_t:file relabelfrom;
+allow virtqemud_t virt_log_t:file relabel_file_perms;
 
 manage_dirs_pattern(virtqemud_t, virt_var_run_t, virt_var_run_t)
 manage_dirs_pattern(virtqemud_t, virtqemud_var_run_t, virtqemud_var_run_t)
@@ -2207,6 +2210,7 @@ manage_sock_files_pattern(virtqemud_t, svirt_image_t, svirt_image_t)
 read_files_pattern(virtqemud_t, svirt_t, svirt_t)
 read_lnk_files_pattern(virtqemud_t, svirt_t, svirt_t)
 read_files_pattern(virtqemud_t, svirt_tcg_t, svirt_tcg_t)
+read_lnk_files_pattern(virtqemud_t, svirt_tcg_t, svirt_tcg_t)
 
 manage_files_pattern(virtqemud_t, virt_content_t, virt_content_t)
 
@@ -2239,9 +2243,9 @@ corenet_tcp_bind_vnc_port(virtqemud_t)
 
 dev_delete_urand(virtqemud_t)
 dev_read_cpuid(virtqemud_t)
-dev_read_sgx_vepc(virtqemud_t)
 dev_read_sysfs(virtqemud_t)
 dev_read_urand(virtqemud_t)
+dev_rw_sgx_vepc(virtqemud_t)
 dev_rw_vfio_dev(virtqemud_t)
 dev_relabel_all_dev_nodes(virtqemud_t)
 dev_rw_kvm(virtqemud_t)
@@ -2295,7 +2299,10 @@ tunable_policy(`virtqemud_use_execmem',`
 ')
 
 tunable_policy(`virt_use_nfs',`
+	fs_manage_nfs_dirs(virtqemud_t)
 	fs_manage_nfs_files(virtqemud_t)
+	fs_read_nfs_symlinks(virtqemud_t)
+	fs_mmap_nfs_files(virtqemud_t)
 ')
 
 optional_policy(`
@@ -2304,6 +2311,10 @@ optional_policy(`
 
 optional_policy(`
 	dnsmasq_filetrans_named_content_fromdir(virtqemud_t, virtqemud_var_run_t)
+')
+
+optional_policy(`
+	numad_domtrans(virtqemud_t)
 ')
 
 optional_policy(`
@@ -2326,6 +2337,7 @@ optional_policy(`
 
 optional_policy(`
 	ssh_domtrans_ssh(virtqemud_t)
+	ssh_signal(virtqemud_t)
 ')
 
 optional_policy(`
