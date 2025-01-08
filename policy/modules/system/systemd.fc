@@ -78,6 +78,7 @@ HOME_DIR/\.config/systemd/user(/.*)?		gen_context(system_u:object_r:systemd_unit
 /usr/lib/systemd/systemd-modules-load	--	gen_context(system_u:object_r:systemd_modules_load_exec_t,s0)
 /usr/lib/systemd/systemd-network-generator	--	gen_context(system_u:object_r:systemd_network_generator_exec_t,s0)
 
+/usr/lib/systemd/system-generators/btrfs-soft-reboot-generator	--	gen_context(system_u:object_r:systemd_btrfs_soft_reboot_generator_exec_t,s0)
 /usr/lib/systemd/system-generators/growpart-generator.sh	--	gen_context(system_u:object_r:systemd_growpart_generator_exec_t,s0)
 /usr/lib/systemd/system-generators/ibft-rule-generator	--	gen_context(system_u:object_r:systemd_ibft_rule_generator_exec_t,s0)
 /usr/lib/systemd/system-generators/systemd-bless-boot-generator	--	gen_context(system_u:object_r:systemd_bless_boot_generator_exec_t,s0)
@@ -101,6 +102,11 @@ HOME_DIR/\.config/systemd/user(/.*)?		gen_context(system_u:object_r:systemd_unit
 /usr/lib/systemd/systemd-journal-upload		--	gen_context(system_u:object_r:systemd_journal_upload_exec_t,s0)
 /usr/lib/systemd/systemd-sleep		--	gen_context(system_u:object_r:systemd_sleep_exec_t,s0)
 
+/var/cache/systemd(//.*)?		gen_context(system_u:object_r:systemd_cache_t,s0)
+
+/var/lib/confexts(/.*)?				gen_context(system_u:object_r:systemd_importd_var_lib_t,s0)
+/var/lib/extensions(/.*)?			gen_context(system_u:object_r:systemd_importd_var_lib_t,s0)
+/var/lib/portables(/.*)?			gen_context(system_u:object_r:systemd_importd_var_lib_t,s0)
 /var/lib/machines(/.*)?			gen_context(system_u:object_r:systemd_machined_var_lib_t,s0)
 /var/lib/systemd/coredump(/.*)?		gen_context(system_u:object_r:systemd_coredump_var_lib_t,s0)
 /var/lib/systemd/network(/.*)?         gen_context(system_u:object_r:systemd_networkd_var_lib_t,s0)

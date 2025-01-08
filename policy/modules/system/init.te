@@ -397,6 +397,7 @@ init_exec_notrans_direct_init_entry(init_t)
 libs_rw_ld_so_cache(init_t)
 
 logging_create_devlog_dev(init_t)
+logging_create_journal_files(init_t)
 logging_send_syslog_msg(init_t)
 logging_send_audit_msgs(init_t)
 logging_manage_generic_logs(init_t)
@@ -404,6 +405,7 @@ logging_mmap_generic_logs(init_t)
 logging_relabel_devlog_dev(init_t)
 logging_manage_audit_config(init_t)
 logging_create_syslog_netlink_audit_socket(init_t)
+logging_mounton_syslog_pid_socket(init_t)
 logging_write_var_log_dirs(init_t)
 logging_manage_var_log_symlinks(init_t)
 logging_dgram_accept(init_t)
@@ -833,6 +835,7 @@ optional_policy(`
 	optional_policy(`
 		devicekit_dbus_chat_power(init_t)
 	')
+
 ')
 
 optional_policy(`
@@ -877,6 +880,9 @@ optional_policy(`
 optional_policy(`
 	ssh_getattr_server_keys(init_t)
 	ssh_create_vsock_socket(init_t)
+	# needed after systemd commit 76f2191d8eb5 ("logind:
+	# introduce CreateSessionWithPIDFD()")
+	ssh_fd_use(init_t)
 ')
 
 optional_policy(`
@@ -898,6 +904,12 @@ optional_policy(`
 	stratisd_data_read_lnk_files(init_t)
 ')
 
+optional_policy(`
+	systemd_homed_cache_filetrans(init_t)
+	systemd_homed_dbus_chat(init_t)
+	systemd_homed_write_pipes(init_t)
+')
+	
 optional_policy(`
 	systemd_filetrans_named_content(init_t)
     systemd_write_inhibit_pipes(init_t)

@@ -40,6 +40,7 @@ files_pid_filetrans(qatlib_t, qatlib_var_run_t, { dir file sock_file } )
 kernel_load_module(qatlib_t)
 kernel_read_proc_files(qatlib_t)
 kernel_request_load_module(qatlib_t)
+kernel_search_debugfs(qatlib_t)
 kernel_stream_connect(qatlib_t)
 
 corecmd_exec_shell(qatlib_t)
@@ -82,5 +83,6 @@ optional_policy(`
 
 optional_policy(`
 	systemd_search_unit_dirs(qatlib_t)
+	systemd_machined_stream_connect(qatlib_t)
 	systemd_userdbd_stream_connect(qatlib_t)
 ')
