@@ -1309,6 +1309,7 @@ interface(`gnome_read_home_config',`
 	read_files_pattern($1, config_home_t, config_home_t)
 	read_lnk_files_pattern($1, config_home_t, config_home_t)
 ')
+
 #######################################
 ## <summary>
 ##  append gnome homedir content (.config)
@@ -1344,6 +1345,24 @@ interface(`gnome_delete_home_config',`
 
     delete_files_pattern($1, config_home_t, config_home_t)
     delete_lnk_files_pattern($1, config_home_t, config_home_t)
+')
+
+########################################
+## <summary>
+##	map gnome homedir file
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`gnome_map_home_config_file',`
+	gen_require(`
+		type config_home_t;
+	')
+
+	allow $1 config_home_t:file map;
 ')
 
 ########################################
@@ -1563,6 +1582,34 @@ interface(`gnome_filetrans_gstreamer_home_content',`
     gnome_cache_filetrans($1, gstreamer_home_t, dir, "gstreamer-1.2")
     gnome_cache_filetrans($1, gstreamer_home_t, dir, "gstreamer-10")
     gnome_cache_filetrans($1, gstreamer_home_t, dir, "gstreamer-12")
+')
+
+
+#######################################
+## <summary>
+##  file name transition gstreamer admin home content files.
+## </summary>
+## <param name="domain">
+##  <summary>
+##  Domain allowed access.
+##  </summary>
+## </param>
+#
+interface(`gnome_filetrans_gstreamer_admin_home_content',`
+    gen_require(`
+        type gstreamer_home_t;
+    ')
+
+    userdom_admin_home_dir_filetrans($1, gstreamer_home_t, file, ".grl-bookmarks")
+    userdom_admin_home_dir_filetrans($1, gstreamer_home_t, file, ".grl-metadata-store")
+    userdom_admin_home_dir_filetrans($1, gstreamer_home_t, file, ".grl-podcasts")
+    userdom_admin_home_dir_filetrans($1, gstreamer_home_t, dir, ".gstreamer-0.12")
+    userdom_admin_home_dir_filetrans($1, gstreamer_home_t, dir, ".gstreamer-0.10")
+    userdom_admin_home_dir_filetrans($1, gstreamer_home_t, dir, ".gstreamer-1.0")
+    userdom_admin_home_dir_filetrans($1, gstreamer_home_t, dir, ".gstreamer-1.2")
+    userdom_admin_home_dir_filetrans($1, gstreamer_home_t, dir, ".gstreamer-10")
+    userdom_admin_home_dir_filetrans($1, gstreamer_home_t, dir, ".gstreamer-12")
+    userdom_admin_home_dir_filetrans($1, gstreamer_home_t, dir, ".orc")
 ')
 
 #######################################
@@ -1935,7 +1982,7 @@ gen_require(`
 	userdom_admin_home_dir_filetrans($1, gconf_home_t, dir, ".gconfd")
 	userdom_admin_home_dir_filetrans($1, gconf_home_t, dir, ".local")
 	userdom_admin_home_dir_filetrans($1, gnome_home_t, dir, ".gnome2")
-	gnome_filetrans_gstreamer_home_content($1)
+	gnome_filetrans_gstreamer_admin_home_content($1)
 	# /root/.color/icc: legacy
 	userdom_admin_home_dir_filetrans($1, icc_data_home_t, dir, "icc")
 ')
@@ -2205,6 +2252,44 @@ interface(`gnome_initial_setup_read_state',`
 	')
 
 	ps_process_pattern($1, gnome_initial_setup_t)
+')
+
+########################################
+## <summary>
+##	Write/append gnome-initial-setup fifo files
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`gnome_initial_setup_write_fifo_files',`
+	gen_require(`
+		type gnome_initial_setup_t;
+	')
+
+	
+	allow $1 gnome_initial_setup_t:fifo_file write_fifo_file_perms;
+')
+
+########################################
+## <summary>
+##	Read gnome-initial-setup tmp files
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`gnome_initial_setup_read_tmp_files',`
+	gen_require(`
+		type gnome_initial_setup_tmp_t;
+	')
+
+	
+	allow $1 gnome_initial_setup_tmp_t:file read_file_perms;
 ')
 
 ########################################

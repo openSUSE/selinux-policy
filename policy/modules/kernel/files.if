@@ -2910,6 +2910,24 @@ interface(`files_root_filetrans',`
 
 ########################################
 ## <summary>
+##	Read files in the root directory.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain to not audit.
+##	</summary>
+## </param>
+#
+interface(`files_read_root_files',`
+	gen_require(`
+		type root_t;
+	')
+
+	read_files_pattern($1, root_t, root_t)
+')
+
+########################################
+## <summary>
 ##	Do not audit attempts to getattr files in
 ##	the root directory.
 ## </summary>
@@ -4907,6 +4925,25 @@ interface(`files_manage_isid_type_dirs',`
 
 ########################################
 ## <summary>
+##	Map files on new filesystems
+##	that have not yet been labeled.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_mmap_isid_files',`
+	gen_require(`
+		type unlabeled_t;
+	')
+
+	allow $1 unlabeled_t:file { getattr map };
+')
+
+########################################
+## <summary>
 ##	Mount a filesystem on a directory on new filesystems
 ##	that has not yet been labeled.
 ## </summary>
@@ -5324,6 +5361,24 @@ interface(`files_manage_home_dir',`
 	create_dirs_pattern($1, home_root_t, home_root_t)
 	# on modern systems these can by dynamic symlinks
 	manage_lnk_files_pattern($1, home_root_t, home_root_t)
+')
+
+########################################
+## <summary>
+## 	Delete /home directories
+## </summary>
+## <param name="domain">
+## 	<summary>
+##	Domain allowed access
+##	</summary>
+## </param>
+#
+interface(`files_delete_home_dir',`
+	gen_require(`
+		type home_root_t;
+	')
+
+	delete_dirs_pattern($1, home_root_t, home_root_t)
 ')
 
 ########################################
@@ -6103,6 +6158,62 @@ interface(`files_read_world_readable_sockets',`
 	')
 
 	allow $1 readable_t:sock_file read_sock_file_perms;
+')
+
+#######################################
+## <summary>
+##	Manage mdevctl configuration files
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_manage_mdevctl_conf_files',`
+	gen_require(`
+		type mdevctl_conf_t;
+	')
+
+	files_search_etc(mdevctl_conf_t)
+	manage_files_pattern($1, mdevctl_conf_t, mdevctl_conf_t)
+')
+
+#######################################
+## <summary>
+##	Watch mdevctl configuration dirs
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_watch_mdevctl_conf_dirs',`
+	gen_require(`
+		type mdevctl_conf_t;
+	')
+
+	files_search_etc(mdevctl_conf_t)
+	allow $1 mdevctl_conf_t:dir watch_dir_perms;
+')
+
+###################################
+## <summary>
+##	Create /etc/mdevctl.d with the correct type
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_etc_filetrans_mdevctl_conf',`
+	gen_require(`
+		type etc_t, mdevctl_conf_t;
+	')
+
+	filetrans_pattern($1, etc_t, mdevctl_conf_t, dir, "mdevctl.d")
 ')
 
 #######################################

@@ -1,0 +1,53 @@
+## <summary>Policy for the health-checker system daemon.</summary>
+
+########################################
+## <summary>
+##	Execute health-checker in the health_checker_t domain.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed to transition.
+##	</summary>
+## </param>
+## <param name="role">
+##	<summary>
+##	Role allowed access.
+##	</summary>
+## </param>
+#
+interface(`health_checker_domtrans_health_checker',`
+	gen_require(`
+		type health_checker_t, health_checker_exec_t;
+		attribute_role health_checker_roles;
+	')
+
+	corecmd_search_bin($1)
+	domtrans_pattern($1, health_checker_exec_t, health_checker_t)
+	roleattribute $2 health_checker_roles;
+')
+
+########################################
+## <summary>
+##	Execute health-checker plugins in the health_checker_plugin_t domain.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed to transition.
+##	</summary>
+## </param>
+## <param name="role">
+##	<summary>
+##	Role allowed access.
+##	</summary>
+## </param>
+#
+interface(`health_checker_domtrans_health_checker_plugin',`
+	gen_require(`
+		type health_checker_plugin_t, health_checker_plugin_exec_t;
+		attribute_role health_checker_roles;
+	')
+
+	corecmd_search_bin($1)
+	domtrans_pattern($1, health_checker_plugin_exec_t, health_checker_plugin_t)
+	roleattribute $2 health_checker_roles;
+')

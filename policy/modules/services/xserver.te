@@ -1079,6 +1079,7 @@ optional_policy(`
 	gnome_initial_setup_manage_var_run(xdm_t)
 	gnome_initial_setup_noatsecure(xdm_t)
 	gnome_initial_setup_read_state(xdm_t)
+	gnome_initial_setup_write_fifo_files(xdm_t)
 ')
 
 optional_policy(`
@@ -1128,11 +1129,6 @@ optional_policy(`
 	resmgr_stream_connect(xdm_t)
 ')
 
-optional_policy(`
-    rhev_stream_connect_agentd(xdm_t)
-	rhev_read_pid_files_agentd(xdm_t)
-')
-
 # On crash gdm execs gdb to dump stack
 optional_policy(`
 	rpm_exec(xdm_t)
@@ -1163,6 +1159,12 @@ optional_policy(`
 
 optional_policy(`
     sssd_read_pid_files(xdm_t)
+')
+
+optional_policy(`
+    systemd_homed_write_pid_sock_files(xdm_t)
+    systemd_homed_write_pipes(xdm_t)
+    systemd_homed_dbus_chat(xdm_t)
 ')
 
 optional_policy(`
@@ -1860,10 +1862,6 @@ optional_policy(`
 	thumb_nnp_domtrans(x_userdomain)
 ')
 
-optional_policy(`
-        timedatex_dbus_chat(x_userdomain)
-')
-
 tunable_policy(`selinuxuser_direct_dri_enabled',`
 	dev_rw_dri(dridomain)
 ',`
@@ -1871,7 +1869,11 @@ tunable_policy(`selinuxuser_direct_dri_enabled',`
 ')
 
 # Handle /etc/sysconfig/displaymanager together with accountsservice (accountsd_t) (bsc#1222978)
+#============= xdm_t ==============
 optional_policy(`
+	gnome_remote_desktop_rw_tcp_sockets(xdm_t)
+	dev_rw_dma_dev(xdm_t)
+	# Handle /etc/sysconfig/displaymanager together with accountsservice (accountsd_t) (bsc#1222978)
 	# Label all files created by xdm_t under /run called "displaymanager.new" as xdm_etc_t
 	xserver_var_run_etc_filetrans_named_content(xdm_t, "displaymanager.new")
 	# Write /etc/sysconfig/displaymanager

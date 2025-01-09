@@ -90,8 +90,15 @@ ifdef(`distro_redhat', `
 /usr/bin/yast2			--	gen_context(system_u:object_r:rpm_exec_t,s0)
 /var/lib/YaST2(/.*)?			gen_context(system_u:object_r:rpm_var_lib_t,s0)
 /var/log/YaST2(/.*)?			gen_context(system_u:object_r:rpm_log_t,s0)
+/usr/lib/YaST2(/.*)?			gen_context(system_u:object_r:rpm_var_lib_t,s0)
+/usr/lib/YaST2/bin/.*			gen_context(system_u:object_r:rpm_exec_t,s0)
+/usr/lib/YaST2/startup/YaST2.*		gen_context(system_u:object_r:rpm_exec_t,s0)
 ')
 
 ifdef(`enable_mls',`
 /usr/bin/cpio			--	gen_context(system_u:object_r:rpm_exec_t,s0)
 ')
+
+# Workaround for a rpmdb lockfile under /run on systems where /usr is RO (bsc#1231127).
+# Used e.g. by health-checker rpmdb-consistency.sh plugin (see health-checker.te).
+/run/rpmdb										--	gen_context(system_u:object_r:rpm_var_lib_t,s0)

@@ -79,6 +79,9 @@ init_nnp_daemon_domain(systemd_networkd_t)
 type systemd_networkd_unit_file_t;
 systemd_unit_file(systemd_networkd_unit_file_t)
 
+type systemd_cache_t;
+files_type(systemd_cache_t)
+
 type systemd_networkd_var_lib_t;
 files_type(systemd_networkd_var_lib_t)
 
@@ -195,6 +198,8 @@ systemd_domain_template(systemd_sysctl)
 ### domains and file types for systemd generators
 # bless-boot-generator
 systemd_generator_template(systemd_bless_boot_generator)
+# btrfs-soft-reboot-generator
+systemd_generator_template(systemd_btrfs_soft_reboot_generator)
 # cryptsetup-generator
 systemd_generator_template(systemd_cryptsetup_generator)
 # debug-generator
@@ -251,6 +256,9 @@ files_type(systemd_machined_var_lib_t)
 
 systemd_domain_template(systemd_importd)
 init_nnp_daemon_domain(systemd_importd_t)
+
+type systemd_importd_var_lib_t;
+files_type(systemd_importd_var_lib_t)
 
 type systemd_importd_var_run_t;
 files_pid_file(systemd_importd_var_run_t)
@@ -493,6 +501,12 @@ optional_policy(`
 ')
 
 optional_policy(`
+	# needed after systemd commit 76f2191d8eb5 ("logind:
+	# introduce CreateSessionWithPIDFD()")
+	ssh_fd_use(systemd_logind_t)
+')
+
+optional_policy(`
 	# It links /run/user/$USER/X11/display to /tmp/.X11-unix/X* sock_file
 	xserver_search_xdm_tmp_dirs(systemd_logind_t)
 ')
@@ -505,7 +519,7 @@ optional_policy(`
 allow systemd_machined_t self:capability { dac_read_search dac_override setgid sys_admin sys_chroot sys_ptrace kill };
 allow systemd_machined_t systemd_unit_file_t:service { status start stop };
 allow systemd_machined_t self:unix_dgram_socket create_socket_perms;
-allow systemd_machined_t self:cap_userns { setgid setuid sys_admin sys_chroot sys_ptrace };
+allow systemd_machined_t self:cap_userns { kill setgid setuid sys_admin sys_chroot sys_ptrace };
 
 manage_dirs_pattern(systemd_machined_t, systemd_machined_var_run_t, systemd_machined_var_run_t)
 manage_files_pattern(systemd_machined_t, systemd_machined_var_run_t, systemd_machined_var_run_t)
@@ -659,6 +673,10 @@ optional_policy(`
 
 optional_policy(`
 	logging_send_syslog_msg(systemd_networkd_t)
+')
+
+optional_policy(`
+	mount_read_pid_files(systemd_networkd_t)
 ')
 
 optional_policy(`
@@ -1233,7 +1251,8 @@ allow systemd_sysctl_t modules_object_t:dir search;
 # sys_ptrace - to read /proc/<pid>/exe of the dumped process
 # setgid setuid - to set own credentials to match the dumped process credentials
 # setpcap - to drop capabilities
-allow systemd_coredump_t self:capability { dac_read_search net_admin setgid setpcap setuid sys_admin sys_ptrace sys_resource };
+allow systemd_coredump_t self:capability { dac_read_search net_admin setgid setpcap setuid sys_ptrace };
+dontaudit systemd_coredump_t self:capability sys_resource;
 allow systemd_coredump_t self:cap_userns { dac_read_search dac_override sys_admin sys_ptrace };
 
 # To set its capability set
@@ -1307,6 +1326,7 @@ dev_write_kmsg(systemd_generator)
 dev_write_kmsg(systemd_generator)
 files_map_read_etc_files(systemd_generator)
 fs_getattr_all_fs(systemd_generator)
+fs_getattr_nsfs_files(systemd_generator)
 fs_search_cgroup_dirs(systemd_generator)
 init_read_state(systemd_generator)
 
@@ -1315,8 +1335,14 @@ init_read_state(systemd_generator)
 ### bless-boot generator
 fs_read_efivarfs_files(systemd_bless_boot_generator_t)
 
+### systemd-btrfs-soft-reboot generator
+mount_read_pid_files(systemd_btrfs_soft_reboot_generator_t)
+
+permissive systemd_btrfs_soft_reboot_generator_t;
+
 ### cryptsetup generator
 manage_dirs_pattern(systemd_cryptsetup_generator_t, systemd_fstab_generator_unit_file_t, systemd_fstab_generator_unit_file_t)
+
 manage_files_pattern(systemd_cryptsetup_generator_t, systemd_fstab_generator_unit_file_t, systemd_fstab_generator_unit_file_t)
 
 ### fstab generator
@@ -1430,7 +1456,10 @@ permissive systemd_status_mail_generator_t;
 allow systemd_ssh_generator_t self:vsock_socket create;
 allow systemd_ssh_generator_t vsock_device_t:chr_file { read_chr_file_perms };
 
+kernel_read_sysctl(systemd_ssh_generator_t)
+
 dev_read_sysfs(systemd_ssh_generator_t)
+kernel_request_load_module(systemd_ssh_generator_t)
 
 optional_policy(`
 	ssh_domtrans(systemd_ssh_generator_t)
@@ -1441,7 +1470,7 @@ optional_policy(`
 init_read_script_files(systemd_sysv_generator_t)
 
 ### tpm2 generator
-dev_list_sysfs(systemd_tpm2_generator_t)
+dev_read_sysfs(systemd_tpm2_generator_t)
 
 ### udev trigger generator
 corecmd_exec_bin(systemd_udev_trigger_generator_t)
@@ -1592,6 +1621,7 @@ dev_read_urand(systemd_domain)
 
 fs_search_all(systemd_domain)
 fs_getattr_all_fs(systemd_domain)
+fs_getattr_nsfs_files(systemd_domain)
 
 files_read_etc_files(systemd_domain)
 files_read_etc_runtime_files(systemd_domain)
@@ -1723,6 +1753,12 @@ allow systemd_importd_t self:udp_socket create_socket_perms;
 allow systemd_importd_t self:unix_dgram_socket sendto;
 allow systemd_importd_t systemd_importd_exec_t:file execute_no_trans;
 
+manage_dirs_pattern(systemd_importd_t, systemd_importd_var_lib_t, systemd_importd_var_lib_t)
+manage_files_pattern(systemd_importd_t, systemd_importd_var_lib_t, systemd_importd_var_lib_t)
+files_var_lib_filetrans(systemd_importd_t, systemd_importd_var_lib_t, dir, "confexts")
+files_var_lib_filetrans(systemd_importd_t, systemd_importd_var_lib_t, dir, "extensions")
+files_var_lib_filetrans(systemd_importd_t, systemd_importd_var_lib_t, dir, "portables")
+
 manage_dirs_pattern(systemd_importd_t, systemd_importd_var_run_t, systemd_importd_var_run_t)
 manage_files_pattern(systemd_importd_t, systemd_importd_var_run_t, systemd_importd_var_run_t)
 manage_sock_files_pattern(systemd_importd_t, systemd_importd_var_run_t, systemd_importd_var_run_t)
@@ -1818,9 +1854,7 @@ dev_create_sysfs_files(systemd_sleep_t)
 dev_rw_sysfs(systemd_sleep_t)
 dev_write_kmsg(systemd_sleep_t)
 
-fs_create_efivarfs_files(systemd_sleep_t)
-fs_setattr_efivarfs_files(systemd_sleep_t)
-fs_rw_efivarfs_files(systemd_sleep_t)
+fs_manage_efivarfs_files(systemd_sleep_t)
 
 fstools_rw_swap_files(systemd_sleep_t)
 
@@ -1842,6 +1876,10 @@ optional_policy(`
 
 optional_policy(`
 	sysstat_domtrans(systemd_sleep_t)
+')
+
+optional_policy(`
+	systemd_homed_dbus_chat(systemd_sleep_t)
 ')
 
 optional_policy(`

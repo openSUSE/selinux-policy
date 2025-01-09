@@ -141,6 +141,13 @@ optional_policy(`
 ')
 
 optional_policy(`
+    ipsec_domtrans(openvswitch_t)
+    ipsec_domtrans_mgmt(openvswitch_t)
+    ipsec_manage_conf_files(openvswitch_t)
+    ipsec_manage_key_file(openvswitch_t)
+')
+
+optional_policy(`
 	iptables_domtrans(openvswitch_t)
 ')
 

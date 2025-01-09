@@ -355,6 +355,27 @@ interface(`ipsec_read_config',`
 	allow $1 ipsec_conf_file_t:dir list_dir_perms;
 ')
 
+
+#######################################
+## <summary>
+## 	Allow to manage ipsec conf files.
+## </summary>
+## <param name="domain">
+## 	<summary>
+## 	Domain allowed access.
+## 	</summary>
+## </param>
+#
+interface(`ipsec_manage_conf_files',`
+	gen_require(`
+		type ipsec_conf_file_t;
+	')
+
+	manage_files_pattern($1, ipsec_conf_file_t, ipsec_conf_file_t)
+	files_etc_filetrans($1, ipsec_conf_file_t, file, "ipsec.conf")
+')
+
+
 ########################################
 ## <summary>
 ##	Match the default SPD entry.

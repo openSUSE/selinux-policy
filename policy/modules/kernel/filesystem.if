@@ -2064,6 +2064,24 @@ interface(`fs_dontaudit_write_configfs_dirs',`
 
 #######################################
 ## <summary>
+##	Getattr dirs on a configfs filesystem.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`fs_getattr_configfs_dirs',`
+	gen_require(`
+		type configfs_t;
+	')
+
+	allow $1 configfs_t:dir getattr;
+')
+
+#######################################
+## <summary>
 ##	Read dirs
 ##	on a configfs filesystem.
 ## </summary>
@@ -6121,6 +6139,42 @@ interface(`fs_rw_tmpfs_chr_files',`
 
 	allow $1 tmpfs_t:dir list_dir_perms;
 	rw_chr_files_pattern($1, tmpfs_t, tmpfs_t)
+')
+
+########################################
+## <summary>
+##	Create character nodes on tmpfs filesystems.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain to not audit.
+##	</summary>
+## </param>
+#
+interface(`fs_create_tmpfs_chr_blk_files',`
+	gen_require(`
+		type tmpfs_t;
+	')
+
+	allow $1 tmpfs_t:chr_file create_blk_file_perms;
+')
+
+########################################
+## <summary>
+##	Set attributes of character nodes on tmpfs filesystems.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain to not audit.
+##	</summary>
+## </param>
+#
+interface(`fs_setattr_tmpfs_chr_blk_files',`
+	gen_require(`
+		type tmpfs_t;
+	')
+
+	allow $1 tmpfs_t:chr_file setattr;
 ')
 
 ########################################

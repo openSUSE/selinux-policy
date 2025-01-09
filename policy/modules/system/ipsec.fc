@@ -9,6 +9,8 @@
 
 /etc/ipsec\.secrets.*		--	gen_context(system_u:object_r:ipsec_key_file_t,s0)
 /etc/ipsec\.conf		--	gen_context(system_u:object_r:ipsec_conf_file_t,s0)
+/etc/strongswan.conf		--	gen_context(system_u:object_r:ipsec_conf_file_t,s0)
+/etc/strongswan.d(/.*)?			gen_context(system_u:object_r:ipsec_conf_file_t,s0)
 /etc/strongswan/ipsec\.secrets.*		--	gen_context(system_u:object_r:ipsec_key_file_t,s0)
 /etc/strongswan/ipsec\.conf		--	gen_context(system_u:object_r:ipsec_conf_file_t,s0)
 /etc/strongswan/swanctl/bliss/(/.*)?	gen_context(system_u:object_r:ipsec_key_file_t,s0)
@@ -38,6 +40,7 @@
 
 /usr/libexec/ipsec/_plutoload	-- 	gen_context(system_u:object_r:ipsec_mgmt_exec_t,s0)
 /usr/libexec/ipsec/_plutorun	--	gen_context(system_u:object_r:ipsec_mgmt_exec_t,s0)
+/usr/libexec/ipsec/charon	--	gen_context(system_u:object_r:ipsec_exec_t,s0)
 /usr/libexec/ipsec/eroute	--	gen_context(system_u:object_r:ipsec_exec_t,s0)
 /usr/libexec/ipsec/klipsdebug	--	gen_context(system_u:object_r:ipsec_exec_t,s0)
 /usr/libexec/ipsec/pluto	--	gen_context(system_u:object_r:ipsec_exec_t,s0)
