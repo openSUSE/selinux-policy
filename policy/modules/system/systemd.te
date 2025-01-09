@@ -214,6 +214,8 @@ systemd_generator_template(systemd_gpt_generator)
 systemd_generator_template(systemd_growpart_generator)
 # ibft-rule-generator
 systemd_generator_template(systemd_ibft_rule_generator)
+# import-generator
+systemd_generator_template(systemd_import_generator)
 # rc-local-generator
 systemd_generator_template(systemd_rc_local_generator)
 # systemd-status-mail
@@ -226,6 +228,8 @@ systemd_generator_template(systemd_sysv_generator)
 systemd_generator_template(systemd_tpm2_generator)
 # udev-trigger-generator
 systemd_generator_template(systemd_udev_trigger_generator)
+# vsftpd-generator
+systemd_generator_template(systemd_vsftpd_generator)
 # zram-generator
 systemd_generator_template(systemd_zram_generator)
 type systemd_zram_generator_conf_t;
@@ -646,6 +650,7 @@ corenet_udp_bind_dhcpc_port(systemd_networkd_t)
 corenet_tcp_bind_dhcpd_port(systemd_networkd_t)
 corenet_udp_bind_dhcpd_port(systemd_networkd_t)
 
+fs_list_cgroup_dirs(systemd_networkd_t)
 fs_read_xenfs_files(systemd_networkd_t)
 fs_read_nsfs_files(systemd_networkd_t)
 fs_cgroup_write_memory_pressure(systemd_networkd_t)
@@ -1452,6 +1457,9 @@ optional_policy(`
 
 permissive systemd_status_mail_generator_t;
 
+### systemd import generator
+permissive systemd_import_generator_t;
+
 ### ssh generator
 allow systemd_ssh_generator_t self:vsock_socket create;
 allow systemd_ssh_generator_t vsock_device_t:chr_file { read_chr_file_perms };
@@ -1484,6 +1492,16 @@ optional_policy(`
 ')
 
 permissive systemd_udev_trigger_generator_t;
+
+### vsftpd generator
+permissive systemd_vsftpd_generator_t;
+
+corecmd_exec_bin(systemd_vsftpd_generator_t)
+corecmd_exec_shell(systemd_vsftpd_generator_t)
+
+optional_policy(`
+	auth_dontaudit_read_passwd_file(systemd_vsftpd_generator_t)
+')
 
 ### zram generator
 allow systemd_zram_generator_t systemd_fstab_generator_unit_file_t:file write_file_perms;

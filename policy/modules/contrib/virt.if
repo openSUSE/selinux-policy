@@ -2200,3 +2200,22 @@ interface(`virt_read_virtqemud_pid_files',`
 	list_dirs_pattern($1, virtqemud_var_run_t, virtqemud_var_run_t)
 	read_files_pattern($1, virtqemud_var_run_t, virtqemud_var_run_t)
 ')
+
+########################################
+## <summary>
+##	Allow the specified domain to ioctl
+##	virtqemud over a unix domain stream socket.
+## </summary>
+## <param name="domain">
+## <summary>
+##	Domain allowed access.
+## </summary>
+## </param>
+#
+interface(`virt_virtqemud_ioctl_stream_sockets',`
+	gen_require(`
+		type virtqemud_t;
+	')
+
+	allow $1 virtqemud_t:unix_stream_socket ioctl;
+')
