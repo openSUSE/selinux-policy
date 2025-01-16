@@ -41,6 +41,42 @@ interface(`snapper_dbus_chat',`
 	allow snapperd_t $1:dbus send_msg;
 ')
 
+#######################################
+## <summary>
+##      Allow domain to manage snapper temporary files
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`snapper_manage_tmp_files',`
+    gen_require(`
+        type snapperd_tmp_t;
+    ')
+
+    allow $1 snapperd_tmp_t:file manage_file_perms;
+')
+
+#######################################
+## <summary>
+##      Allow domain to manage snapper temporary directories
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`snapper_manage_tmp_dirs',`
+    gen_require(`
+        type snapperd_tmp_t;
+    ')
+
+    allow $1 snapperd_tmp_t:dir manage_dir_perms;
+')
+
 ########################################
 ## <summary>
 ##	Allow a domain to read inherited snapper pipe.
