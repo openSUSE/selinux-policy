@@ -115,6 +115,8 @@ optional_policy(`
 
 optional_policy(`
     systemd_exec_systemctl(snapperd_t)
+    systemd_domtrans_pcrlock(snapperd_t)
+    systemd_manage_pcrlock_files(snapperd_t)
 ')
 
 ########################################
