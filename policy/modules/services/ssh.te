@@ -496,6 +496,10 @@ optional_policy(`
 ')
 
 optional_policy(`
+	auth_use_wtmpdbd_varlink_sockets(sshd_t)
+')
+
+optional_policy(`
     tunable_policy(`ssh_use_tcpd',`
         tcpd_wrapped_domain(sshd_t,sshd_exec_t)
         tcpd_rw_tcp_sockets(sshd_net_t)
