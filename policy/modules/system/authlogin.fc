@@ -71,6 +71,8 @@ ifdef(`distro_redhat', `
 
 /var/lib/wtmpdb(/.*)?           gen_context(system_u:object_r:wtmpdb_t,s0)
 /var/lib/wtmpdb/wtmp.db-journal --      gen_context(system_u:object_r:wtmpdb_journal_t,s0)
+/run/wtmpdb(/.*)?		gen_context(system_u:object_r:wtmpdbd_var_run_t,s0)
+/usr/libexec/wtmpdbd	--	gen_context(system_u:object_r:wtmpdbd_exec_t,s0)
 
 /var/lib/rsa(/.*)? 		gen_context(system_u:object_r:var_auth_t,s0)
 /var/rsa(/.*)?	 		gen_context(system_u:object_r:var_auth_t,s0)
