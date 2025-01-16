@@ -737,6 +737,12 @@ optional_policy(`
 # wtmpdb Program local policy
 #
 
-allow wtmpdbd_t self:unix_dgram_socket { create getopt setopt };
+allow wtmpdbd_t self:unix_dgram_socket { create write getopt setopt };
 allow wtmpdbd_t wtmpdbd_var_run_t:dir getattr;
+
+kernel_dgram_send(wtmpdbd_t)
+
 auth_rw_wtmpdb_login_records(wtmpdbd_t)
+logging_dgram_send(wtmpdbd_t)
+logging_read_syslog_pid(wtmpdbd_t)
+logging_write_syslog_pid_socket(wtmpdbd_t)
