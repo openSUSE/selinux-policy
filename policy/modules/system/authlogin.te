@@ -739,6 +739,7 @@ optional_policy(`
 
 allow wtmpdbd_t self:unix_dgram_socket { create write getopt setopt };
 allow wtmpdbd_t wtmpdbd_var_run_t:dir getattr;
+allow wtmpdbd_t wtmpdb_t:file manage_file_perms;
 
 kernel_dgram_send(wtmpdbd_t)
 
