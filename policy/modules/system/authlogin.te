@@ -119,6 +119,13 @@ logging_log_file(wtmpdb_t)
 type wtmpdb_journal_t;
 logging_log_file(wtmpdb_journal_t)
 
+type wtmpdbd_t;
+type wtmpdbd_exec_t;
+init_daemon_domain(wtmpdbd_t, wtmpdbd_exec_t)
+
+type wtmpdbd_var_run_t;
+files_pid_file(wtmpdbd_var_run_t)
+
 ########################################
 #
 # Check password local policy
@@ -724,3 +731,19 @@ optional_policy(`
 	ssh_agent_exec(login_pgm)
 	ssh_read_user_home_files(login_pgm)
 ')
+
+#######################################
+#
+# wtmpdb Program local policy
+#
+
+allow wtmpdbd_t self:unix_dgram_socket { create write getopt setopt };
+allow wtmpdbd_t wtmpdbd_var_run_t:dir getattr;
+allow wtmpdbd_t wtmpdb_t:file manage_file_perms;
+
+kernel_dgram_send(wtmpdbd_t)
+
+auth_rw_wtmpdb_login_records(wtmpdbd_t)
+logging_dgram_send(wtmpdbd_t)
+logging_read_syslog_pid(wtmpdbd_t)
+logging_write_syslog_pid_socket(wtmpdbd_t)

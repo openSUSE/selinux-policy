@@ -2067,6 +2067,26 @@ interface(`auth_rw_wtmpdb_login_records',`
 
 ########################################
 ## <summary>
+##      Use wtmpdbd varlink sockets.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`auth_use_wtmpdbd_varlink_sockets',`
+        gen_require(`
+                type wtmpdbd_var_run_t;
+                type wtmpdbd_t;
+        ')
+
+	allow $1 wtmpdbd_var_run_t:sock_file write;
+	allow $1 wtmpdbd_t:unix_stream_socket connectto;
+')
+
+########################################
+## <summary>
 ##	Read access to the authlogin module.
 ## </summary>
 ## <desc>
