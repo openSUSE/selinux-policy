@@ -11,6 +11,13 @@ require {
 #
 attribute unconfined_services;
 
+## <desc>
+## <p>
+## allow unconfined_service_t transition to the unconfined user domain
+## </p>
+## </desc>
+gen_tunable(unconfined_service_transition_to_unconfined_user, false)
+
 type unconfined_service_t;
 domain_type(unconfined_service_t)
 role system_r types unconfined_service_t;
@@ -56,4 +63,10 @@ optional_policy(`
 
 optional_policy(`
     gpg_manage_admin_home_content(unconfined_service_t)
+')
+
+optional_policy(`
+	tunable_policy(`unconfined_service_transition_to_unconfined_user',`
+		unconfined_domtrans(unconfined_service_t)
+	')
 ')
