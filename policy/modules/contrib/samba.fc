@@ -66,6 +66,8 @@
 /run/samba/smbd\.pid	--	gen_context(system_u:object_r:smbd_var_run_t,s0)
 /run/samba/unexpected\.tdb	--	gen_context(system_u:object_r:nmbd_var_run_t,s0)
 
+/run/samba/samba-dcerpcd.pid    --      gen_context(system_u:object_r:winbind_rpcd_var_run_t,s0)
+
 /run/samba/winbindd(/.*)?		gen_context(system_u:object_r:winbind_var_run_t,s0)
 /run/winbindd(/.*)?			gen_context(system_u:object_r:winbind_var_run_t,s0)
 /run/samba-bgqd.pid	--	gen_context(system_u:object_r:samba_bgqd_var_run_t,s0)
