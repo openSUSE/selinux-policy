@@ -1272,6 +1272,7 @@ write_sock_files_pattern(winbind_rpcd_t, winbind_var_run_t, winbind_var_run_t)
 
 manage_files_pattern(winbind_rpcd_t, winbind_rpcd_var_run_t, winbind_rpcd_var_run_t)
 files_pid_filetrans(winbind_rpcd_t, winbind_rpcd_var_run_t, { dir file })
+filetrans_pattern(winbind_rpcd_t, smbd_var_run_t, winbind_rpcd_var_run_t, file)
 
 manage_files_pattern(winbind_rpcd_t, winbind_rpcd_tmp_t, winbind_rpcd_tmp_t)
 files_tmp_filetrans(winbind_rpcd_t, winbind_rpcd_tmp_t, file)
