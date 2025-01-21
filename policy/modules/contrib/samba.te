@@ -731,7 +731,7 @@ manage_dirs_pattern(nmbd_t, { smbd_var_run_t nmbd_var_run_t }, nmbd_var_run_t)
 manage_files_pattern(nmbd_t, nmbd_var_run_t, nmbd_var_run_t)
 manage_sock_files_pattern(nmbd_t, nmbd_var_run_t, nmbd_var_run_t)
 files_pid_filetrans(nmbd_t, nmbd_var_run_t, { dir file sock_file })
-filetrans_pattern(nmbd_t, smbd_var_run_t, nmbd_var_run_t, dir)
+filetrans_pattern(nmbd_t, smbd_var_run_t, nmbd_var_run_t, { file dir })
 
 read_files_pattern(nmbd_t, samba_etc_t, samba_etc_t)
 read_lnk_files_pattern(nmbd_t, samba_etc_t, samba_etc_t)
@@ -1272,6 +1272,7 @@ write_sock_files_pattern(winbind_rpcd_t, winbind_var_run_t, winbind_var_run_t)
 
 manage_files_pattern(winbind_rpcd_t, winbind_rpcd_var_run_t, winbind_rpcd_var_run_t)
 files_pid_filetrans(winbind_rpcd_t, winbind_rpcd_var_run_t, { dir file })
+filetrans_pattern(winbind_rpcd_t, smbd_var_run_t, winbind_rpcd_var_run_t, file)
 
 manage_files_pattern(winbind_rpcd_t, winbind_rpcd_tmp_t, winbind_rpcd_tmp_t)
 files_tmp_filetrans(winbind_rpcd_t, winbind_rpcd_tmp_t, file)
