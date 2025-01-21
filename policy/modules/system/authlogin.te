@@ -122,6 +122,7 @@ logging_log_file(wtmpdb_journal_t)
 type wtmpdbd_t;
 type wtmpdbd_exec_t;
 init_daemon_domain(wtmpdbd_t, wtmpdbd_exec_t)
+init_nnp_daemon_domain(wtmpdbd_t)
 
 type wtmpdbd_var_run_t;
 files_pid_file(wtmpdbd_var_run_t)
