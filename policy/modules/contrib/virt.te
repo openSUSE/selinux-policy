@@ -112,8 +112,14 @@ gen_tunable(virt_use_pcscd, false)
 
 ## <desc>
 ## <p>
-## Allow sandbox containers to send audit messages
+## Allow confined virtual guests to use pulseaudio
+## </p>
+## </desc>
+gen_tunable(virt_use_pulseaudio, false)
 
+## <desc>
+## <p>
+## Allow sandbox containers to send audit messages
 ## </p>
 ## </desc>
 gen_tunable(virt_sandbox_use_audit, true)
@@ -517,6 +523,7 @@ corenet_udp_bind_all_ports(svirt_t)
 corenet_tcp_bind_all_ports(svirt_t)
 corenet_tcp_connect_all_ports(svirt_t)
 
+dev_read_sysfs(svirt_t)
 dev_rw_dma_dev(svirt_t)
 
 init_dontaudit_read_state(svirt_t)
@@ -579,6 +586,10 @@ corenet_tcp_connect_all_ports(svirt_tcg_t)
 ps_process_pattern(svirt_tcg_t, virtd_t)
 
 virt_dontaudit_read_state(svirt_tcg_t)
+
+optional_policy(`
+	nbdkit_stream_connect(svirt_tcg_t)
+')
 
 ########################################
 #
@@ -1278,6 +1289,14 @@ optional_policy(`
 optional_policy(`
 	tunable_policy(`virt_use_xserver',`
 		xserver_stream_connect(virt_domain)
+	')
+')
+
+optional_policy(`
+	tunable_policy(`virt_use_pulseaudio',`
+		pulseaudio_read_home_files(virt_domain)
+		unconfined_stream_connect(virt_domain)
+		userdom_stream_connect(virt_domain)
 	')
 ')
 
@@ -2044,6 +2063,7 @@ dev_write_sysfs_dirs(virtnodedevd_t)
 
 files_map_var_lib_files(virtnodedevd_t)
 files_etc_filetrans_mdevctl_conf(virtnodedevd_t)
+files_etc_filetrans_mdevctl_conf_scripts(virtnodedevd_t)
 files_manage_mdevctl_conf_files(virtnodedevd_t)
 files_watch_mdevctl_conf_dirs(virtnodedevd_t)
 
@@ -2288,8 +2308,7 @@ init_stream_connect_script(virtqemud_t)
 
 selinux_compute_create_context(virtqemud_t)
 
-storage_rw_fixed_disk_blk_dev(virtqemud_t)
-storage_setattr_fixed_disk_dev(virtqemud_t)
+storage_manage_fixed_disk(virtqemud_t)
 
 sysnet_exec_ifconfig(virtqemud_t)
 sysnet_manage_config(virtqemud_t)
@@ -2311,6 +2330,10 @@ optional_policy(`
 
 optional_policy(`
 	dnsmasq_filetrans_named_content_fromdir(virtqemud_t, virtqemud_var_run_t)
+')
+
+optional_policy(`
+	nbdkit_domtrans(virtqemud_t)
 ')
 
 optional_policy(`
@@ -2337,7 +2360,7 @@ optional_policy(`
 
 optional_policy(`
 	ssh_domtrans_ssh(virtqemud_t)
-	ssh_signal(virtqemud_t)
+	ssh_signal_ssh(virtqemud_t)
 ')
 
 optional_policy(`
@@ -2411,6 +2434,8 @@ kernel_io_uring_use(virtstoraged_t)
 kernel_read_vm_sysctls(virtstoraged_t)
 
 corecmd_exec_bin(virtstoraged_t)
+
+dev_write_sysfs(virtstoraged_t)
 
 fs_getattr_all_fs(virtstoraged_t)
 fs_getattr_configfs_dirs(virtstoraged_t)
