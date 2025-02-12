@@ -44,3 +44,6 @@
 
 ## for transactional systems
 /usr/etc /etc
+
+## for krb5
+/var/lib/kerberos /var/kerberos
