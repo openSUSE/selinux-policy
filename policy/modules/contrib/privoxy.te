@@ -34,7 +34,7 @@ files_pid_file(privoxy_var_run_t)
 # Local Policy
 #
 
-allow privoxy_t self:capability { setgid setuid };
+allow privoxy_t self:capability { setgid setuid sys_chroot};
 dontaudit privoxy_t self:capability sys_tty_config;
 allow privoxy_t self:tcp_socket { accept listen };
 

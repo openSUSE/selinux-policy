@@ -30,6 +30,7 @@ gen_tunable(tor_can_onion_services, false)
 type tor_t;
 type tor_exec_t;
 init_daemon_domain(tor_t, tor_exec_t)
+init_nnp_daemon_domain(tor_t)
 
 type tor_etc_t;
 files_config_file(tor_etc_t)
