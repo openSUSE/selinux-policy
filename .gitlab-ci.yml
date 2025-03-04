@@ -1,0 +1,18 @@
+# Based on https://github.com/fedora-selinux/selinux-policy/blob/6063934d9591589ad25b58adf8a54e97dbcded3f/.github/workflows/build.yml
+
+image: registry.opensuse.org/opensuse/tumbleweed:latest
+
+stages:
+    - build
+
+build:
+    stage: build
+    script:
+        - zypper install -y git-core checkpolicy policycoreutils-devel make m4 findutils
+        - git clone --depth=1 https://github.com/containers/container-selinux.git /tmp/container-selinux
+        - cp /tmp/container-selinux/container.* policy/modules/contrib
+        - cp dist/targeted/modules.conf policy
+        - make -j $(nproc) policy
+        - make -j $(nproc) validate
+        - make -j $(nproc) container.pp
+
