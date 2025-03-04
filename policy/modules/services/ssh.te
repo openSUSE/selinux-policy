@@ -563,6 +563,8 @@ seutil_domtrans_setfiles(sshd_keygen_t)
 
 ssh_domtrans_keygen(sshd_keygen_t)
 
+ssh_rw_vsock_socket(sshd_keygen_t)
+
 optional_policy(`
     plymouthd_exec_plymouth(sshd_keygen_t)
 ')
