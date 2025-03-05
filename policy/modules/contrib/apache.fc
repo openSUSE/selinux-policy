@@ -164,6 +164,7 @@ ifdef(`distro_redhat', `
 /var/log/nginx(/.*)?     gen_context(system_u:object_r:httpd_log_t,s0)
 /var/opt/rh/rh-nginx18/log(/.*)?     gen_context(system_u:object_r:httpd_log_t,s0)
 /var/log/php-fpm(/.*)?      gen_context(system_u:object_r:httpd_log_t,s0)
+/var/log/php-fpm.log		--	gen_context(system_u:object_r:httpd_log_t,s0)
 /var/log/roundcubemail(/.*)?	gen_context(system_u:object_r:httpd_log_t,s0)
 /var/log/suphp\.log.*	--	gen_context(system_u:object_r:httpd_log_t,s0)
 /var/log/thttpd\.log.*  -- gen_context(system_u:object_r:httpd_log_t,s0)
