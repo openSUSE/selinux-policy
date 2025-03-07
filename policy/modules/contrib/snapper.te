@@ -32,6 +32,9 @@ allow snapperd_t self:process setsched;
 allow snapperd_t self:fifo_file rw_fifo_file_perms;
 allow snapperd_t self:unix_stream_socket create_stream_socket_perms;
 
+# PCRE JIT, not needed, has a fallback if it's denied
+dontaudit snapperd_t self: process { execmem };
+
 manage_files_pattern(snapperd_t, snapperd_log_t, snapperd_log_t)
 logging_log_filetrans(snapperd_t, snapperd_log_t, file)
 
@@ -82,6 +85,8 @@ fs_getattr_all_pipes(snapperd_t)
 fs_getattr_all_sockets(snapperd_t)
 fs_mount_xattr_fs(snapperd_t)
 fs_unmount_xattr_fs(snapperd_t)
+
+fstools_domtrans(snapperd_t)
 
 storage_raw_read_fixed_disk(snapperd_t)
 
