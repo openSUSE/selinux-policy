@@ -11,6 +11,8 @@ init_daemon_domain(sap_unconfined_t, sap_exec_t)
 #manage_files_pattern(sap_unconfined_t, sap_tmp_t, sap_tmp_t)
 #files_tmp_filetrans(sap_unconfined_t, sap_tmp_t, { dir file })
 
+libs_legacy_use_shared_libs(sap_unconfined_t)
+
 optional_policy(`
 	unconfined_domain(sap_unconfined_t)
 ')
