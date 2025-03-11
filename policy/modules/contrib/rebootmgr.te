@@ -9,6 +9,9 @@ type rebootmgr_t;
 type rebootmgr_exec_t;
 init_daemon_domain(rebootmgr_t, rebootmgr_exec_t)
 
+type rebootmgr_var_run_t;
+files_pid_file(rebootmgr_var_run_t)
+
 ########################################
 #
 # rebootmgr local policy
@@ -37,3 +40,12 @@ optional_policy(`
 	dbus_system_bus_client(rebootmgr_t)
 	dbus_connect_system_bus(rebootmgr_t)
 ')
+
+# filetrans for /run/rebootmgr
+files_pid_filetrans(rebootmgr_t, rebootmgr_var_run_t, dir, "rebootmgr")
+# explicit for known files (i.e. sock_file, rest will inherit)
+files_pid_filetrans(rebootmgr_t, rebootmgr_var_run_t, sock_file)
+# allow the domain to manage rebootmgr_var_run_t
+create_dirs_pattern(rebootmgr_t, rebootmgr_var_run_t, rebootmgr_var_run_t)
+manage_files_pattern(rebootmgr_t, rebootmgr_var_run_t, rebootmgr_var_run_t)
+manage_sock_files_pattern(rebootmgr_t, rebootmgr_var_run_t, rebootmgr_var_run_t)
