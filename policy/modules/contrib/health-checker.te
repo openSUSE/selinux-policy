@@ -102,11 +102,9 @@ optional_policy(`
 	bootloader_run(health_checker_plugin_t, health_checker_roles)
 ')
 
-# Allow health-checker plugins to talk to rebootmgr over dbus
+# Allow health-checker plugins to talk to rebootmgr over varlink
 optional_policy(`
-	dbus_connect_system_bus(health_checker_plugin_t)
-	dbus_system_bus_client(health_checker_plugin_t)
-	rebootmgr_dbus_chat(health_checker_plugin_t)
+	rebootmgr_varlink_chat(health_checker_plugin_t)
 ')
 
 manage_files_pattern(health_checker_plugin_t, health_checker_tmp_t, health_checker_tmp_t)
