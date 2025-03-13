@@ -97,6 +97,26 @@ interface(`snapper_read_inherited_pipe',`
 
 ########################################
 ## <summary>
+##	Allow a domain to select the boot snapshot
+##
+##  Warning: should only be used for direct btrfs invocation
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`snapper_select_boot_snapshot',`
+	gen_require(`
+		type snapperd_data_t;
+	')
+
+	allow $1 snapperd_data_t:dir { ioctl read };
+')
+
+########################################
+## <summary>
 ##	Allow a domain to relabel snapshots to snapperd_data_t 
 ## </summary>
 ## <param name="domain">
