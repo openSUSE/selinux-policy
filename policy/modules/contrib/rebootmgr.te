@@ -9,6 +9,9 @@ type rebootmgr_t;
 type rebootmgr_exec_t;
 init_daemon_domain(rebootmgr_t, rebootmgr_exec_t)
 
+type rebootmgr_conf_t;
+files_config_file(rebootmgr_conf_t)
+
 type rebootmgr_var_run_t;
 files_pid_file(rebootmgr_var_run_t)
 
@@ -20,9 +23,13 @@ allow rebootmgr_t self:process { fork };
 allow rebootmgr_t self:fifo_file rw_fifo_file_perms;
 allow rebootmgr_t self:unix_stream_socket create_stream_socket_perms;
 
-domain_use_interactive_fds(rebootmgr_t)
+# handling files/folders in /etc/rebootmgr
+create_dirs_pattern(rebootmgr_t, rebootmgr_conf_t, rebootmgr_conf_t)
+manage_files_pattern(rebootmgr_t, rebootmgr_conf_t, rebootmgr_conf_t)
+read_lnk_files_pattern(rebootmgr_t, rebootmgr_conf_t, rebootmgr_conf_t)
+files_etc_filetrans(rebootmgr_t, rebootmgr_conf_t, dir, "rebootmgr")
 
-files_manage_etc_files(rebootmgr_t)
+domain_use_interactive_fds(rebootmgr_t)
 
 logging_send_syslog_msg(rebootmgr_t)
 
