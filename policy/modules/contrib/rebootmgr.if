@@ -41,21 +41,20 @@ interface(`rebootmgr_exec',`
 
 ########################################
 ## <summary>
-##	Send and receive messages from
-##	rebootmgr over dbus.
+##      Use rebootmgr varlink socket to talk to the daemon.
 ## </summary>
 ## <param name="domain">
-##	<summary>
-##	Domain allowed access.
-##	</summary>
+##      <summary>
+##      Domain allowed access.
+##      </summary>
 ## </param>
 #
-interface(`rebootmgr_dbus_chat',`
-	gen_require(`
-		type rebootmgr_t;
-		class dbus send_msg;
-	')
+interface(`rebootmgr_varlink_chat',`
+        gen_require(`
+                type rebootmgr_var_run_t;
+                type rebootmgr_t;
+        ')
 
-	allow $1 rebootmgr_t:dbus send_msg;
-	allow rebootmgr_t $1:dbus send_msg;
+	allow $1 rebootmgr_var_run_t:sock_file write;
+	allow $1 rebootmgr_t:unix_stream_socket connectto;
 ')

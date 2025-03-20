@@ -51,6 +51,23 @@ files_var_lib_filetrans(health_checker_t, health_checker_var_lib_t, file)
 
 fs_getattr_xattr_fs(health_checker_t)
 
+# permissions for health checker: rollback()
+## to execute 'mount'
+mount_exec(health_checker_t)
+mount_manage_pid_files(health_checker_t)
+## mount accessing block device information 
+storage_getattr_fixed_disk_dev(health_checker_t)
+## mount able to remount
+fs_remount_xattr_fs(health_checker_t)
+## for 'systemctl reboot'
+dbus_connect_system_bus(health_checker_t)
+dbus_system_bus_client(health_checker_t)
+systemd_dbus_chat_logind(health_checker_t)
+## for 'btrfs subvolume set-default ${LAST_WORKING_BTRFS_ID} /.snapshots'
+optional_policy(`
+	snapper_select_boot_snapshot(health_checker_t)
+')
+
 optional_policy(`
 	# ignore #!/bin/bash reading passwd file
 	auth_dontaudit_read_passwd_file(health_checker_t)
@@ -85,11 +102,9 @@ optional_policy(`
 	bootloader_run(health_checker_plugin_t, health_checker_roles)
 ')
 
-# Allow health-checker plugins to talk to rebootmgr over dbus
+# Allow health-checker plugins to talk to rebootmgr over varlink
 optional_policy(`
-	dbus_connect_system_bus(health_checker_plugin_t)
-	dbus_system_bus_client(health_checker_plugin_t)
-	rebootmgr_dbus_chat(health_checker_plugin_t)
+	rebootmgr_varlink_chat(health_checker_plugin_t)
 ')
 
 manage_files_pattern(health_checker_plugin_t, health_checker_tmp_t, health_checker_tmp_t)

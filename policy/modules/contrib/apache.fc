@@ -66,6 +66,10 @@ HOME_DIR/((www)|(web)|(public_html))(/.*)?/logs(/.*)?	gen_context(system_u:objec
 /usr/bin/cherokee		--	gen_context(system_u:object_r:httpd_exec_t,s0)
 /usr/bin/httpd\.event		--	gen_context(system_u:object_r:httpd_exec_t,s0)
 /usr/bin/httpd(\.worker)?	--	gen_context(system_u:object_r:httpd_exec_t,s0)
+/usr/bin/httpd-prefork		--	gen_context(system_u:object_r:httpd_exec_t,s0)
+/usr/bin/httpd-worker		--	gen_context(system_u:object_r:httpd_exec_t,s0)
+# this is necessary since this script changes the configuration before it starts the real binary
+/usr/bin/start_apache2		--	gen_context(system_u:object_r:httpd_initrc_exec_t,s0)
 /usr/bin/htcacheclean      --  gen_context(system_u:object_r:httpd_exec_t,s0)
 /usr/bin/lighttpd		--	gen_context(system_u:object_r:httpd_exec_t,s0)
 /usr/bin/nginx         --  gen_context(system_u:object_r:httpd_exec_t,s0)
@@ -160,6 +164,7 @@ ifdef(`distro_redhat', `
 /var/log/nginx(/.*)?     gen_context(system_u:object_r:httpd_log_t,s0)
 /var/opt/rh/rh-nginx18/log(/.*)?     gen_context(system_u:object_r:httpd_log_t,s0)
 /var/log/php-fpm(/.*)?      gen_context(system_u:object_r:httpd_log_t,s0)
+/var/log/php-fpm.log		--	gen_context(system_u:object_r:httpd_log_t,s0)
 /var/log/roundcubemail(/.*)?	gen_context(system_u:object_r:httpd_log_t,s0)
 /var/log/suphp\.log.*	--	gen_context(system_u:object_r:httpd_log_t,s0)
 /var/log/thttpd\.log.*  -- gen_context(system_u:object_r:httpd_log_t,s0)

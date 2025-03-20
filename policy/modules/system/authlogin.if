@@ -58,6 +58,8 @@ interface(`auth_use_pam',`
 	auth_dontaudit_read_shadow($1)
 	auth_read_login_records($1)
 	auth_append_login_records($1)
+	# fallback if wtmpdbd is not running
+	auth_create_wtmpdb($1)
 	auth_rw_wtmpdb_login_records($1)
 	auth_rw_lastlog($1)
 	auth_create_lastlog($1)
@@ -2082,6 +2084,27 @@ interface(`auth_rw_wtmpdb_login_records',`
         # handle sqlite journal file
         allow $1 wtmpdb_journal_t:file manage_file_perms;
         filetrans_pattern($1, wtmpdb_t, wtmpdb_journal_t, file, "wtmp.db-journal")
+')
+
+########################################
+## <summary>
+##      Create wtmpdb directory and files.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`auth_create_wtmpdb',`
+        gen_require(`
+                type wtmpdb_t;
+        ')
+
+        allow $1 wtmpdb_t:dir create_dir_perms;
+        allow $1 wtmpdb_t:file create_file_perms;
+        files_var_lib_filetrans($1, wtmpdb_t, dir, "wtmpdb")
+        files_var_lib_filetrans($1, wtmpdb_t, file, "wtmp.db")
 ')
 
 ########################################
