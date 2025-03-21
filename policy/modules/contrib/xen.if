@@ -115,6 +115,25 @@ interface(`xen_read_lib_files',`
 
 ########################################
 ## <summary>
+##	Manage xend lib files.
+## </summary>
+## <param name="domain">
+## 	<summary>
+##	Domain allowed access.
+## 	</summary>
+## </param>
+#
+interface(`xen_manage_lib_files',`
+	gen_require(`
+		type xend_var_lib_t;
+	')
+
+	files_list_var_lib($1)
+	manage_files_pattern($1, xend_var_lib_t, xend_var_lib_t)
+')
+
+########################################
+## <summary>
 ##	Read xend image files.
 ## </summary>
 ## <param name="domain">
