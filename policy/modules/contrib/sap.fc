@@ -279,3 +279,5 @@
 /usr/sap(/.*)?/exe/sldreg                         gen_context(system_u:object_r:sap_exec_t,s0)
 /usr/sap(/.*)?/exe/wdispmon                       gen_context(system_u:object_r:sap_exec_t,s0)
 /usr/sap/sapservices.*                            gen_context(system_u:object_r:sap_exec_t,s0)
+
+/usr/sap/[^/]+/HDB[^/]+/HDB                       gen_context(system_u:object_r:sap_exec_t,s0)
