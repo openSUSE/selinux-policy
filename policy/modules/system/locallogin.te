@@ -5,6 +5,13 @@ policy_module(locallogin, 1.12.0)
 # Declarations
 #
 
+## <desc>
+##  <p>
+##  Allow login console run podman
+##  </p>
+## </desc>
+gen_tunable(local_login_containers, false)
+
 type local_login_t;
 domain_interactive_fd(local_login_t)
 auth_login_pgm_domain(local_login_t)
@@ -299,4 +306,12 @@ ifdef(`sulogin_no_pam', `
 
 optional_policy(`
 	plymouthd_exec_plymouth(sulogin_t)
+')
+
+# Enable login to podman containers via tty
+
+optional_policy(`
+        tunable_policy(`local_login_containers',`
+               container_runtime_domtrans(local_login_t)
+        ')
 ')
