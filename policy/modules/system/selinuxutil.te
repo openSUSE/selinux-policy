@@ -836,6 +836,8 @@ allow selinux_autorelabel_generator_t selinux_autorelabel_generator_unit_file_t:
 allow selinux_autorelabel_generator_t selinux_autorelabel_generator_unit_file_t:file manage_file_perms;
 allow selinux_autorelabel_generator_t selinux_autorelabel_generator_unit_file_t:lnk_file manage_lnk_file_perms;
 
+allow selinux_autorelabel_generator_t self:capability { dac_read_search };
+
 # src:elif grep -sqE "\bautorelabel\b" /proc/cmdline; then
 kernel_read_proc_files(selinux_autorelabel_generator_t)
 
