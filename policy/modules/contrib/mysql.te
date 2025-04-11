@@ -62,6 +62,11 @@ init_script_file(mysqlmanagerd_initrc_exec_t)
 type mysqlmanagerd_var_run_t;
 files_pid_file(mysqlmanagerd_var_run_t)
 
+# (open)SUSE only
+type mysqld_systemd_helper_exec_t;
+type mysqld_systemd_helper_t;
+init_daemon_domain(mysqld_systemd_helper_t, mysqld_systemd_helper_exec_t)
+
 ########################################
 #
 # Local policy
@@ -304,3 +309,14 @@ corenet_sendrecv_mysqlmanagerd_client_packets(mysqlmanagerd_t)
 dev_read_urand(mysqlmanagerd_t)
 
 userdom_getattr_user_home_dirs(mysqlmanagerd_t)
+
+########################################
+#
+# MySQL systemd helper script Policy (open)SUSE only
+#
+
+domtrans_pattern(mysqld_systemd_helper_t, mysqld_exec_t, mysqld_t)
+
+optional_policy(`
+	unconfined_domain(mysqld_systemd_helper_t)
+')
