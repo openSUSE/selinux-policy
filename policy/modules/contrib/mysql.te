@@ -198,6 +198,8 @@ optional_policy(`
 	rsync_exec(mysqld_t)
 ')
 
+permissive mysqld_t;
+
 #######################################
 #
 # Local mysqld_safe policy
