@@ -1,10 +1,11 @@
-# Based on https://github.com/fedora-selinux/selinux-policy/blob/6063934d9591589ad25b58adf8a54e97dbcded3f/.github/workflows/build.yml
 
 image: registry.opensuse.org/opensuse/tumbleweed:latest
 
 stages:
     - build
+    - rpmbuild
 
+# Based on https://github.com/fedora-selinux/selinux-policy/blob/6063934d9591589ad25b58adf8a54e97dbcded3f/.github/workflows/build.yml
 build:
     stage: build
     script:
@@ -15,4 +16,30 @@ build:
         - make -j $(nproc) policy
         - make -j $(nproc) validate
         - make -j $(nproc) container.pp
+
+rpmbuild:
+    stage: rpmbuild
+    script:
+        # Install dependencies
+        - zypper install -y wget rpm-build python-rpm-macros
+        # Download the source RPM
+        - cd ..
+        - wget -r -nd -np -A "selinux-policy-*.src.rpm" https://download.opensuse.org/repositories/security:/SELinux/openSUSE_Factory/src/
+        # Set the rpmbuild dir location
+        - echo "%_topdir %(pwd)/rpmbuild" > ~/.rpmmacros
+        # Unpack the source RPM and adjust the spec file
+        - rpm -i selinux-policy-*.src.rpm
+        - sed -i 's/%{name}-%{version}/%{name}/g' rpmbuild/SPECS/selinux-policy.spec
+        # Replace the source tarball with the current git state
+        - rm rpmbuild/SOURCES/selinux-policy-*.tar.xz
+        - tar -cJf rpmbuild/SOURCES/selinux-policy.tar.xz selinux-policy
+        # Install the build dependencies
+        - zypper -n source-install -d selinux-policy-*.src.rpm
+        # Build and move the RPMs into the artifacts dir
+        - rpmbuild -bb rpmbuild/SPECS/selinux-policy.spec
+        - mkdir selinux-policy/artifacts
+        - mv rpmbuild/RPMS/noarch/* selinux-policy/artifacts
+    artifacts:
+        paths:
+            - artifacts/
 

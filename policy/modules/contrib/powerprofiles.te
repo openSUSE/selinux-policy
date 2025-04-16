@@ -20,9 +20,12 @@ allow powerprofiles_t self:netlink_kobject_uevent_socket create_socket_perms;
 
 manage_files_pattern(powerprofiles_t, powerprofiles_var_lib_t, powerprofiles_var_lib_t)
 
+auth_dontaudit_read_passwd_file(powerprofiles_t)
+
 kernel_read_proc_files(powerprofiles_t)
 
 dev_rw_sysfs(powerprofiles_t)
+dev_watch_sysfs_dirs(powerprofiles_t)
 
 optional_policy(`
 	dbus_connect_system_bus(powerprofiles_t)

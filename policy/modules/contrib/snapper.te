@@ -140,6 +140,7 @@ optional_policy(`
 attribute snapper_plugin;
 
 snapper_plugin_template(grub);
+snapper_plugin_template(tu_etc);
 
 ### snapper grub plugin
 bootloader_exec(snapper_grub_plugin_t)
@@ -157,3 +158,32 @@ optional_policy(`
 	auth_dontaudit_read_passwd_file(snapper_grub_plugin_t)
 	nscd_dontaudit_search_pid(snapper_grub_plugin_t)
 ')
+
+
+### snapper transactional-update 50-etc plugin
+allow snapper_tu_etc_plugin_t self:capability { chown fsetid sys_admin };
+allow snapper_tu_etc_plugin_t self:process setfscreate;
+
+# needed because its a shell script
+corecmd_exec_bin(snapper_tu_etc_plugin_t)
+optional_policy(`
+	auth_dontaudit_read_passwd_file(snapper_tu_etc_plugin_t)
+')
+
+# needed for copying different file types and setting labels correctly during migration
+admin_pattern(snapper_tu_etc_plugin_t, file_type)
+domain_obj_id_change_exemption(snapper_tu_etc_plugin_t)
+fs_getattr_xattr_fs(snapper_tu_etc_plugin_t)
+
+# exception for neverallow rules, since we need to copy and relabel shadow_t and semanage_conf_t as well
+auth_rw_shadow(snapper_tu_etc_plugin_t)
+auth_relabelto_shadow(snapper_tu_etc_plugin_t)
+seutil_relabelto_bin_policy(snapper_tu_etc_plugin_t)
+
+# needed for mount
+mount_domtrans(snapper_tu_etc_plugin_t)
+mount_rw_pid_files(snapper_tu_etc_plugin_t)
+files_mounton_etc(snapper_tu_etc_plugin_t)
+
+# needed for systemd dynamicuser
+kernel_stream_connect(snapper_tu_etc_plugin_t)
