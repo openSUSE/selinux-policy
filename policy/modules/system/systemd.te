@@ -201,6 +201,8 @@ systemd_domain_template(systemd_sysctl)
 ### domains and file types for systemd generators
 # bless-boot-generator
 systemd_generator_template(systemd_bless_boot_generator)
+# bootc-generator
+systemd_generator_template(systemd_bootc_generator)
 # btrfs-soft-reboot-generator
 systemd_generator_template(systemd_btrfs_soft_reboot_generator)
 # cryptsetup-generator
@@ -317,6 +319,8 @@ allow systemd_logind_t self:capability2 block_suspend;
 allow systemd_logind_t self:process getcap;
 allow systemd_logind_t self:netlink_kobject_uevent_socket create_socket_perms;
 allow systemd_logind_t self:unix_dgram_socket create_socket_perms;
+
+kernel_rw_psi(systemd_logind_t)
 
 mls_file_read_all_levels(systemd_logind_t)
 mls_file_write_all_levels(systemd_logind_t)
@@ -548,6 +552,7 @@ init_var_lib_filetrans(systemd_machined_t, systemd_machined_var_lib_t, dir, "mac
 kernel_dgram_send(systemd_machined_t)
 # This is a bug, but need for now.
 kernel_read_unlabeled_state(systemd_machined_t)
+kernel_rw_psi(systemd_machined_t)
 
 dev_read_vsock(systemd_machined_t)
 
@@ -654,6 +659,7 @@ kernel_read_sysctl(systemd_networkd_t)
 kernel_rw_net_sysctls(systemd_networkd_t)
 kernel_read_xen_state(systemd_networkd_t)
 kernel_read_network_state(systemd_networkd_t)
+kernel_rw_psi(systemd_networkd_t)
 
 corenet_rw_tun_tap_dev(systemd_networkd_t)
 corenet_tcp_bind_all_nodes(systemd_networkd_t)
@@ -1148,6 +1154,8 @@ allow systemd_timedated_t systemd_networkd_var_run_t:dir watch_dir_perms;
 list_dirs_pattern(systemd_timedated_t, systemd_networkd_var_run_t, systemd_networkd_var_run_t)
 read_files_pattern(systemd_timedated_t, systemd_networkd_var_run_t, systemd_networkd_var_run_t)
 
+kernel_rw_psi(systemd_timedated_t)
+
 corecmd_exec_bin(systemd_timedated_t)
 corecmd_exec_shell(systemd_timedated_t)
 corecmd_dontaudit_access_check_bin(systemd_timedated_t)
@@ -1356,6 +1364,17 @@ optional_policy(`
 
 ### bless-boot generator
 fs_read_efivarfs_files(systemd_bless_boot_generator_t)
+
+### bootc generator
+corecmd_exec_shell(systemd_bootc_generator_t)
+
+optional_policy(`
+	anaconda_domtrans_install(systemd_bootc_generator_t)
+')
+
+optional_policy(`
+	auth_dontaudit_read_passwd_file(systemd_bootc_generator_t)
+')
 
 ### systemd-btrfs-soft-reboot generator
 mount_read_pid_files(systemd_btrfs_soft_reboot_generator_t)
@@ -1592,6 +1611,7 @@ allow systemd_resolved_t systemd_networkd_var_run_t:dir watch_dir_perms;
 kernel_dgram_send(systemd_resolved_t)
 kernel_read_net_sysctls(systemd_resolved_t)
 kernel_read_network_state(systemd_resolved_t)
+kernel_rw_psi(systemd_resolved_t)
 
 auth_read_passwd(systemd_resolved_t)
 
@@ -1851,6 +1871,7 @@ manage_sock_files_pattern(systemd_userdbd_t, systemd_userdbd_runtime_t, systemd_
 init_named_pid_filetrans(systemd_userdbd_t, systemd_userdbd_runtime_t, dir, "userdb")
 
 kernel_dgram_send(systemd_userdbd_t)
+kernel_rw_psi(systemd_userdbd_t)
 
 auth_read_shadow(systemd_userdbd_t)
 auth_use_nsswitch(systemd_userdbd_t)
