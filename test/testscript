@@ -1,0 +1,122 @@
+#!/bin/bash
+set -euo pipefail
+exec &> /dev/ttyS0
+
+cat /proc/cmdline
+
+#######################################################
+
+cat >>/usr/bin/selinux-test <<'EOF'
+#!/bin/bash
+set -uo pipefail
+exec &> /dev/ttyS0
+
+trap "echo 'selinux-test' exited" EXIT
+
+function print ()
+{
+    printf " \n\033[%d;1m%s\033[0m\n" $1 "$2"
+}
+
+function docstate ()
+{
+    print 32 "# Documenting the state..."
+
+    print 36 "## Looking for mislabeled files with 'restorecon $1'..."
+    restorecon $1 / | grep "Would relabel" | tee $2/restorecon
+    if [ "$?" -eq 1 ] || [ "$?" -eq 0 ]; then
+        echo "<no matches>" | tee $2/restorecon
+    fi
+
+    print 36 "## Looking for AVCs in the journal..."
+    journalctl -b | grep -e avc -e denied || echo "<no matches>" | tee $2/journal
+
+    print 36 "## Checking for AVCs and SELinux errors with ausearch..."
+    ausearch -m avc,user_avc,selinux_err,user_selinux_err | tee $2/ausearch
+
+    print 36 "## Looking for unconfined services..."
+    ps -eo label,command | grep -v "/bin/bash /usr/bin/selinux-test\|ps -eo label,command\|grep unconfined" | grep unconfined || echo "<no matches>" | tee $2/unconfined
+}
+
+mount -t 9p -o trans=virtio tmpdir /mnt
+chown -R root:root /mnt
+
+if [ ! -e /mnt/installed ]; then
+    printf " \n \n \n\033[36;1mThis smoke test will do the following:\033[0m \
+        \n  1. Check for AVCs, SELinux errors and unconfined services aka document the state. \
+        \n  2. Install the newly built policy. \
+        \n  3. Reboot and document the state again.\n \n"
+
+    # Create AVC for testing (uncomment to enable)
+    #runcon -u system_u -r system_r -t kernel_t /bin/bash
+
+    mkdir /mnt/stage-1
+    docstate -nvR /mnt/stage-1
+
+    print 32 "# Listing installed selinux packages..."
+    rpm -qa *selinux*
+
+    print 32 "# Installing the new selinux policy..."
+    zypper --non-interactive --quiet install --allow-unsigned-rpm /mnt/artifacts/selinux-policy-2*rpm /mnt/artifacts/selinux-policy-targeted*rpm &&
+    touch /mnt/installed
+    umount /mnt
+    print 32 "# Rebooting..."
+    reboot -f
+else
+    printf " \n"
+
+    # Create another AVC for testing (uncomment to enable)
+    #runcon -u system_u -r system_r -t kernel_t /bin/bash
+
+    mkdir /mnt/stage-2
+    docstate -vR /mnt/stage-2
+
+    print 32 "# Comparing documented states"
+
+    print 36 "## Comparing restorecon output"
+    diff /mnt/stage-1/restorecon /mnt/stage-2/restorecon
+
+    print 36 "## Comparing journal output"
+    diff /mnt/stage-1/journal /mnt/stage-2/journal
+
+    print 36 "## Comparing ausearch output"
+    diff /mnt/stage-1/ausearch /mnt/stage-2/ausearch
+
+    print 36 "## Comparing unconfined output"
+    diff /mnt/stage-1/unconfined /mnt/stage-2/unconfined
+
+    printf " \n"
+
+    touch /mnt/done
+    umount /mnt
+    poweroff
+fi
+EOF
+
+chmod a+x /usr/bin/selinux-test
+
+#######################################################
+
+cat >>/etc/systemd/system/selinux-test.service <<'EOF'
+[Unit]
+RefuseManualStart=yes
+
+[Service]
+Type=oneshot
+StandardOutput=tty
+ExecStart=/usr/bin/selinux-test
+EOF
+
+#######################################################
+
+cat >>/etc/systemd/system/selinux-test.timer <<'EOF'
+[Unit]
+
+[Timer]
+OnBootSec=30s
+
+[Install]
+WantedBy=timers.target
+EOF
+
+systemctl enable selinux-test.timer
