@@ -51,6 +51,10 @@ files_var_lib_filetrans(health_checker_t, health_checker_var_lib_t, file)
 
 fs_getattr_xattr_fs(health_checker_t)
 
+# findmnt with encrypted disks
+dev_list_sysfs(health_checker_t)
+dev_read_sysfs(health_checker_t)
+
 # permissions for health checker: rollback()
 ## to execute 'mount'
 mount_exec(health_checker_t)
