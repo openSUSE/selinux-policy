@@ -722,6 +722,8 @@ template(`networkmanager_dispatcher_plugin_template',`
 	application_domain(NetworkManager_dispatcher_$1_t, NetworkManager_dispatcher_$1_script_t)
 	role system_r types NetworkManager_dispatcher_$1_t;
 
+	dontaudit NetworkManager_dispatcher_$1_t self:capability { sys_resource };
+
 	domtrans_pattern(NetworkManager_dispatcher_t, NetworkManager_dispatcher_$1_script_t, NetworkManager_dispatcher_$1_t)
 ')
 
