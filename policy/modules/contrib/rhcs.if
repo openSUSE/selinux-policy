@@ -24,6 +24,7 @@ template(`rhcs_domain_template',`
 	type $1_t, cluster_domain;
 	type $1_exec_t;
 	init_daemon_domain($1_t, $1_exec_t)
+	init_nnp_daemon_domain($1_t)
 
 	type $1_tmpfs_t, cluster_tmpfs;
 	files_tmpfs_file($1_tmpfs_t)
