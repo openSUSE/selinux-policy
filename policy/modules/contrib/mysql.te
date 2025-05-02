@@ -19,6 +19,14 @@ gen_tunable(mysql_connect_any, false)
 ## </desc>
 gen_tunable(mysql_connect_http, false)
 
+## <desc>
+## <p>
+## Allow mysqld to run under a different user
+## via --user
+## </p>
+## </desc>
+gen_tunable(mysql_run_under_different_user, false)
+
 type mysqld_t;
 type mysqld_exec_t;
 init_daemon_domain(mysqld_t, mysqld_exec_t)
@@ -177,6 +185,12 @@ tunable_policy(`mysql_connect_any',`
 
 tunable_policy(`mysql_connect_http',`
 	corenet_tcp_connect_http_port(mysqld_t)
+')
+
+tunable_policy(`mysql_run_under_different_user',`
+	# needs setuid/setgid to privilege drop from root to specified user
+	# needs dac_override to write into 700 mysql:root folders
+	allow mysqld_t self:capability { dac_override setgid setuid };
 ')
 
 optional_policy(`
