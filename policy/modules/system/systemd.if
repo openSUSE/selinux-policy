@@ -2486,25 +2486,6 @@ interface(`systemd_machined_read_lib_files',`
         read_files_pattern($1, systemd_machined_var_lib_t, systemd_machined_var_lib_t)
 ')
 
-#########################################
-## <summary>
-##      List systemd-machined lib dirs.
-## </summary>
-## <param name="domain">
-##      <summary>
-##      Domain allowed access.
-##      </summary>
-## </param>
-#
-interface(`systemd_machined_list_lib_dirs',`
-        gen_require(`
-                type systemd_machined_var_lib_t;
-        ')
-
-        files_search_var_lib($1)
-        list_dirs_pattern($1, systemd_machined_var_lib_t, systemd_machined_var_lib_t)
-')
-
 ########################################
 ## <summary>
 ##      Manage systemd-machined lib files.
