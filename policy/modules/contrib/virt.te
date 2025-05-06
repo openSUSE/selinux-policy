@@ -1118,7 +1118,7 @@ manage_dirs_pattern(virt_domain, virt_cache_t, virt_cache_t)
 manage_files_pattern(virt_domain, virt_cache_t, virt_cache_t)
 files_var_filetrans(virt_domain, virt_cache_t, { file dir })
 
-read_files_pattern(virt_domain, virt_image_t, virt_image_t)
+rw_files_pattern(virt_domain, virt_image_t, virt_image_t)
 read_lnk_files_pattern(virt_domain, virt_image_t, virt_image_t)
 
 manage_dirs_pattern(virt_domain, svirt_image_t, svirt_image_t)
@@ -2312,6 +2312,7 @@ fs_create_tmpfs_chr_blk_files(virtqemud_t)
 fs_setattr_tmpfs_chr_blk_files(virtqemud_t)
 fs_relabel_tmpfs_blk_file(virtqemud_t)
 fs_relabel_tmpfs_chr_file(virtqemud_t)
+fs_relabelfrom_tmpfs_lnk_files(virtqemud_t)
 fs_unmount_xattr_fs(virtqemud_t)
 
 seutil_read_default_contexts(virtqemud_t)
@@ -2378,6 +2379,10 @@ optional_policy(`
 ')
 
 optional_policy(`
+	sblim_read_gatherd_state(virtqemud_t)
+')
+
+optional_policy(`
 	ssh_domtrans_ssh(virtqemud_t)
 	ssh_signal_ssh(virtqemud_t)
 ')
@@ -2423,7 +2428,8 @@ optional_policy(`
 #
 # virtstoraged local policy
 #
-allow virtstoraged_t self:capability { dac_override dac_read_search ipc_lock };
+allow virtstoraged_t self:capability { dac_override dac_read_search fsetid ipc_lock };
+
 allow virtstoraged_t self:process { setsched };
 
 files_tmp_filetrans(virtstoraged_t, virtstoraged_tmp_t, { file dir })
