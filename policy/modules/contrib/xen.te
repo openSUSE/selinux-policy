@@ -480,10 +480,6 @@ init_use_script_ptys(xenstored_t)
 logging_send_syslog_msg(xenstored_t)
 
 xen_append_log(xenstored_t)
-# init-xenstore-domain runs as xenstored_t
-# and writes userdata-*.libxl-json and
-# handles userdata lock files in /var/lib/xen
-xen_manage_lib_files(xenstored_t)
 
 optional_policy(`
 	virt_read_config(xenstored_t)
