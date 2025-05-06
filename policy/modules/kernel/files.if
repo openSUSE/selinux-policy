@@ -5753,6 +5753,24 @@ interface(`files_mounton_mnt',`
 
 ########################################
 ## <summary>
+##	Watch a mnt directory.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_watch_mnt_dirs',`
+	gen_require(`
+		type mnt_t;
+	')
+
+	allow $1 mnt_t:dir watch_dir_perms;
+')
+
+########################################
+## <summary>
 ##	Create, read, write, and delete directories in /mnt.
 ## </summary>
 ## <param name="domain">
@@ -10555,7 +10573,7 @@ interface(`files_dontaudit_delete_all_files',`
 
 ########################################
 ## <summary>
-##	Do not audit attempts to read all directories.
+##	Do not audit attempts to list all directories.
 ## </summary>
 ## <param name="domain">
 ##	<summary>
@@ -10563,12 +10581,12 @@ interface(`files_dontaudit_delete_all_files',`
 ##	</summary>
 ## </param>
 #
-interface(`files_dontaudit_read_all_dirs',`
+interface(`files_dontaudit_list_all_dirs',`
 	gen_require(`
 		attribute file_type;
 	')
 
-	dontaudit $1 file_type:dir read;
+	dontaudit $1 file_type:dir list_dir_perms;
 ')
 
 ########################################
