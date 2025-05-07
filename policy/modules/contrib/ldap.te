@@ -8,6 +8,7 @@ policy_module(ldap, 1.11.1)
 type slapd_t;
 type slapd_exec_t;
 init_daemon_domain(slapd_t, slapd_exec_t)
+init_nnp_daemon_domain(slapd_t)
 
 type slapd_cert_t;
 miscfiles_cert_type(slapd_cert_t)
