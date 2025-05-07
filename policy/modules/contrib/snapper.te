@@ -161,7 +161,7 @@ optional_policy(`
 
 
 ### snapper transactional-update 50-etc plugin
-allow snapper_tu_etc_plugin_t self:capability { chown dac_override fsetid sys_admin };
+allow snapper_tu_etc_plugin_t self:capability { chown dac_override fowner fsetid sys_admin };
 allow snapper_tu_etc_plugin_t self:process setfscreate;
 
 # needed because its a shell script
