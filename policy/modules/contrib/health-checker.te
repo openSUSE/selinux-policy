@@ -32,6 +32,9 @@ systemd_unit_file(health_checker_unit_file_t)
 # health-checker policy
 #
 
+# needed for 'btrfs subvolume'
+allow health_checker_t self:capability sys_admin;
+
 # Allow health-checker to execute plugins under /usr/libexec/health-checker/
 domtrans_pattern(health_checker_t, health_checker_plugin_exec_t, health_checker_plugin_t)
 
