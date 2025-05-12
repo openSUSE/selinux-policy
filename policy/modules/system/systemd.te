@@ -34,6 +34,7 @@ read_files_pattern(systemd_read_efivarfs_type, init_var_run_t, init_var_run_t)
 
 systemd_domain_template(systemd_logger)
 systemd_domain_template(systemd_logind)
+systemd_domain_template(systemd_user_runtimedir)
 
 type systemd_conf_t;
 files_config_file(systemd_conf_t)
@@ -209,6 +210,8 @@ systemd_generator_template(systemd_btrfs_soft_reboot_generator)
 systemd_generator_template(systemd_cryptsetup_generator)
 # debug-generator
 systemd_generator_template(systemd_debug_generator)
+# factory-reset-generator
+systemd_generator_template(systemd_factory_reset_generator)
 # fstab-generator
 systemd_generator_template(systemd_fstab_generator)
 # getty-generator
@@ -328,8 +331,6 @@ mls_dbus_send_all_levels(systemd_logind_t)
 
 files_delete_tmpfs_files(systemd_logind_t)
 fs_delete_tmpfs_dirs(systemd_logind_t)
-files_dontaudit_delete_all_files(systemd_logind_t)
-files_dontaudit_read_all_dirs(systemd_logind_t)
 
 fs_mount_tmpfs(systemd_logind_t)
 fs_unmount_tmpfs(systemd_logind_t)
@@ -351,6 +352,9 @@ manage_fifo_files_pattern(systemd_logind_t, systemd_logind_sessions_t, { systemd
 init_named_pid_filetrans(systemd_logind_t, systemd_logind_sessions_t, dir, "sessions")
 init_pid_filetrans(systemd_logind_t, systemd_logind_var_run_t, dir)
 files_pid_filetrans(systemd_logind_t, systemd_logind_var_run_t, file)
+
+allow systemd_logind_t systemd_logind_var_run_t:sock_file manage_sock_file_perms;
+init_pid_filetrans(systemd_logind_t, systemd_logind_var_run_t, sock_file)
 
 manage_dirs_pattern(systemd_logind_t, systemd_logind_inhibit_var_run_t, systemd_logind_inhibit_var_run_t)
 manage_files_pattern(systemd_logind_t, systemd_logind_inhibit_var_run_t, systemd_logind_inhibit_var_run_t)
@@ -1116,6 +1120,7 @@ dev_read_sysfs(systemd_rfkill_t)
 dev_rw_wireless(systemd_rfkill_t)
 dev_write_kmsg(systemd_rfkill_t)
 
+fs_read_nsfs_files(systemd_rfkill_t)
 
 init_search_var_lib_dirs(systemd_rfkill_t)
 
@@ -1376,6 +1381,10 @@ optional_policy(`
 	auth_dontaudit_read_passwd_file(systemd_bootc_generator_t)
 ')
 
+optional_policy(`
+	sssd_dontaudit_search_lib(systemd_bootc_generator_t)
+')
+
 ### systemd-btrfs-soft-reboot generator
 mount_read_pid_files(systemd_btrfs_soft_reboot_generator_t)
 
@@ -1385,6 +1394,9 @@ permissive systemd_btrfs_soft_reboot_generator_t;
 manage_dirs_pattern(systemd_cryptsetup_generator_t, systemd_fstab_generator_unit_file_t, systemd_fstab_generator_unit_file_t)
 
 manage_files_pattern(systemd_cryptsetup_generator_t, systemd_fstab_generator_unit_file_t, systemd_fstab_generator_unit_file_t)
+
+### debug generator
+fs_read_tmpfs_files(systemd_debug_generator_t)
 
 ### fstab generator
 allow systemd_fstab_generator_t self:capability { dac_override dac_read_search };
@@ -1405,6 +1417,9 @@ fs_read_tmpfs_files(systemd_fstab_generator_t)
 optional_policy(`
 	fstools_exec(systemd_fstab_generator_t)
 ')
+
+### factory-reset generator
+systemd_read_efivarfs(systemd_factory_reset_generator_t)
 
 ### getty generator
 dontaudit systemd_getty_generator_t self:capability dac_override;
@@ -2014,7 +2029,17 @@ init_named_pid_filetrans(systemd_nsresourced_t, systemd_nsresourced_runtime_t, f
 
 permissive systemd_pcrextend_t;
 
+kernel_dgram_send(systemd_pcrextend_t)
+
+dev_read_sysfs(systemd_pcrextend_t)
+dev_rw_tpm(systemd_pcrextend_t)
+
+fs_read_efivarfs_files(systemd_pcrextend_t)
+
+storage_rw_fixed_disk_blk_dev(systemd_pcrextend_t)
+
 optional_policy(`
+	logging_read_syslog_pid(systemd_pcrextend_t)
 	logging_write_journal_files(systemd_pcrextend_t)
 ')
 
@@ -2045,3 +2070,46 @@ optional_policy(`
 ')
 # still keep it permissive for now. Failure to run can prevent booting
 permissive systemd_pcrlock_t;
+
+#######################################
+#
+# systemd_user_runtimedir local policy
+#
+
+permissive systemd_user_runtimedir_t;
+
+allow systemd_user_runtimedir_t self:capability { dac_override dac_read_search fowner sys_admin };
+allow systemd_user_runtimedir_t self:netlink_selinux_socket create_socket_perms;
+allow systemd_user_runtimedir_t self:unix_dgram_socket create_socket_perms;
+
+systemd_dbus_chat_logind(systemd_user_runtimedir_t)
+
+kernel_dgram_send(systemd_user_runtimedir_t)
+
+domain_obj_id_change_exemption(systemd_user_runtimedir_t)
+
+files_dontaudit_delete_all_files(systemd_user_runtimedir_t)
+files_dontaudit_list_all_dirs(systemd_user_runtimedir_t)
+
+fs_get_tmpfs_quotas(systemd_user_runtimedir_t)
+fs_set_tmpfs_quotas(systemd_user_runtimedir_t)
+fs_mount_tmpfs(systemd_user_runtimedir_t)
+fs_unmount_tmpfs(systemd_user_runtimedir_t)
+fs_relabel_tmpfs_dirs(systemd_user_runtimedir_t)
+
+optional_policy(`
+	dbus_delete_session_tmp_sock_files(systemd_user_runtimedir_t)
+')
+
+optional_policy(`
+	gnome_delete_home_config_dirs(systemd_user_runtimedir_t)
+')
+
+optional_policy(`
+	userdom_manage_tmp_dirs(systemd_user_runtimedir_t)
+	userdom_mounton_tmp_dirs(systemd_user_runtimedir_t)
+	userdom_relabel_user_tmp_dirs(systemd_user_runtimedir_t)
+	userdom_delete_all_user_tmp_content(systemd_user_runtimedir_t)
+	userdom_delete_user_tmp_blk_files(systemd_user_runtimedir_t)
+	userdom_delete_user_tmp_chr_files(systemd_user_runtimedir_t)
+')

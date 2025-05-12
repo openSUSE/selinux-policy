@@ -8,6 +8,7 @@ policy_module(ldap, 1.11.1)
 type slapd_t;
 type slapd_exec_t;
 init_daemon_domain(slapd_t, slapd_exec_t)
+init_nnp_daemon_domain(slapd_t)
 
 type slapd_cert_t;
 miscfiles_cert_type(slapd_cert_t)
@@ -50,7 +51,7 @@ files_pid_file(slapd_var_run_t)
 # Local policy
 #
 
-allow slapd_t self:capability { kill setgid setuid net_raw  dac_read_search };
+allow slapd_t self:capability { kill setgid setuid net_raw dac_override dac_read_search };
 dontaudit slapd_t self:capability sys_tty_config;
 dontaudit slapd_t self:capability2 block_suspend;
 allow slapd_t self:process { setsched signal } ;
