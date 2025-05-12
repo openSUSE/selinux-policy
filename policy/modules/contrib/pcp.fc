@@ -1,5 +1,6 @@
 /etc/rc\.d/init\.d/pmcd		--	gen_context(system_u:object_r:pcp_pmcd_initrc_exec_t,s0)
 /etc/rc\.d/init\.d/pmlogger 	--      gen_context(system_u:object_r:pcp_pmlogger_initrc_exec_t,s0)
+/etc/pcp/pmlogger/rc 		--      gen_context(system_u:object_r:pcp_pmlogger_initrc_exec_t,s0)
 /etc/rc\.d/init\.d/pmproxy 	--	gen_context(system_u:object_r:pcp_pmproxy_initrc_exec_t,s0)
 /etc/rc\.d/init\.d/pmie      --       gen_context(system_u:object_r:pcp_pmie_initrc_exec_t,s0)
 

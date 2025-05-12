@@ -32,6 +32,9 @@ systemd_unit_file(health_checker_unit_file_t)
 # health-checker policy
 #
 
+# needed for 'btrfs subvolume'
+allow health_checker_t self:capability sys_admin;
+
 # Allow health-checker to execute plugins under /usr/libexec/health-checker/
 domtrans_pattern(health_checker_t, health_checker_plugin_exec_t, health_checker_plugin_t)
 
@@ -50,6 +53,10 @@ manage_files_pattern(health_checker_t, health_checker_var_lib_t, health_checker_
 files_var_lib_filetrans(health_checker_t, health_checker_var_lib_t, file)
 
 fs_getattr_xattr_fs(health_checker_t)
+
+# findmnt with encrypted disks
+dev_list_sysfs(health_checker_t)
+dev_read_sysfs(health_checker_t)
 
 # permissions for health checker: rollback()
 ## to execute 'mount'
