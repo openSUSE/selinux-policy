@@ -1819,6 +1819,8 @@ userdom_use_user_ptys(virt_qemu_ga_t)
 
 usermanage_domtrans_passwd(virt_qemu_ga_t)
 
+storage_getattr_fixed_disk_dev(virt_qemu_ga_t)
+
 tunable_policy(`virt_qemu_ga_read_nonsecurity_files',`
 	files_read_non_security_files(virt_qemu_ga_t)
 ')
