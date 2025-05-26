@@ -1,0 +1,45 @@
+## <summary>policy for salt</summary>
+
+########################################
+## <summary>
+##	Transition to salt.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed transition.
+##	</summary>
+## </param>
+#
+interface(`salt_domtrans',`
+        gen_require(`
+                type salt_t, salt_exec_t;
+        ')
+
+        corecmd_search_bin($1)
+        domtrans_pattern($1, salt_exec_t, salt_t)
+')
+
+
+########################################
+## <summary>
+##	Execute salt in salt domain with specified role
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+## <param name="role">
+##	<summary>
+##	Role allowed access.
+##	</summary>
+## </param>
+#
+interface(`salt_run',`
+    gen_require(`
+        attribute_role salt_roles;
+    ')
+
+    salt_domtrans($1)
+    roleattribute $2 salt_roles;
+')

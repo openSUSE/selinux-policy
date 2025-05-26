@@ -1,0 +1,20 @@
+policy_module(salt, 1.0.0)
+########################################
+#
+# Declarations
+#
+
+attribute_role salt_roles;
+roleattribute system_r salt_roles;
+
+type salt_t;
+type salt_exec_t;
+init_daemon_domain(salt_t, salt_exec_t)
+role salt_roles types salt_t;
+
+########################################
+#
+# Local policy for salt
+#
+
+unconfined_domain(salt_t)

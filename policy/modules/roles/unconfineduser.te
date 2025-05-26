@@ -183,6 +183,11 @@ optional_policy(`
 		thumb_role(unconfined_r, unconfined_t)
 	')
 
+        optional_policy(`
+                salt_domtrans(unconfined_t, unconfined_r)
+                salt_run(unconfined_t, unconfined_r)
+        ')
+
 	optional_policy(`
 		setroubleshoot_dbus_chat(unconfined_t)
 		setroubleshoot_dbus_chat_fixit(unconfined_t)
