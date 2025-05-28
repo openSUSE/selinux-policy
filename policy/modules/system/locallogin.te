@@ -145,7 +145,6 @@ auth_rw_faillog(local_login_t)
 auth_manage_pam_console_data(local_login_t)
 auth_domtrans_pam_console(local_login_t)
 auth_use_nsswitch(local_login_t)
-auth_read_shadow(local_login_t)
 
 init_dontaudit_use_fds(local_login_t)
 init_stream_connect(local_login_t)
