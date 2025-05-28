@@ -258,6 +258,11 @@ systemd_domain_template(systemd_machined)
 type systemd_machined_unit_file_t;
 systemd_unit_file(systemd_machined_unit_file_t)
 
+type systemd_machined_tmp_t;
+files_tmp_file(systemd_machined_tmp_t)
+type systemd_machined_tmpfs_t;
+files_tmpfs_file(systemd_machined_tmpfs_t)
+
 # /run/systemd/machines
 type systemd_machined_var_run_t;
 files_pid_file(systemd_machined_var_run_t)
@@ -536,10 +541,16 @@ optional_policy(`
 # systemd_machined local policy
 #
 
-allow systemd_machined_t self:capability { dac_read_search dac_override setgid sys_admin sys_chroot sys_ptrace kill };
+allow systemd_machined_t self:capability { chown dac_read_search dac_override fowner fsetid setgid sys_admin sys_chroot sys_ptrace kill };
 allow systemd_machined_t systemd_unit_file_t:service { status start stop };
 allow systemd_machined_t self:unix_dgram_socket create_socket_perms;
 allow systemd_machined_t self:cap_userns { kill setgid setuid sys_admin sys_chroot sys_ptrace };
+
+allow systemd_machined_t systemd_machined_tmp_t:file { create setattr write_file_perms };
+files_tmp_filetrans(systemd_machined_t, systemd_machined_tmp_t, file)
+
+allow systemd_machined_t systemd_machined_tmpfs_t:file { create setattr write_file_perms };
+fs_tmpfs_filetrans(systemd_machined_t, systemd_machined_tmpfs_t, file)
 
 manage_dirs_pattern(systemd_machined_t, systemd_machined_var_run_t, systemd_machined_var_run_t)
 manage_files_pattern(systemd_machined_t, systemd_machined_var_run_t, systemd_machined_var_run_t)
@@ -1352,8 +1363,12 @@ allow systemd_generator systemd_unit_file_type:file getattr_file_perms;
 allow systemd_generator systemd_unit_file_type:lnk_file getattr_lnk_file_perms;
 
 kernel_read_proc_files(systemd_generator)
+kernel_read_sysctl(systemd_generator)
+kernel_read_net_sysctls(systemd_generator)
 dev_write_kmsg(systemd_generator)
 
+corecmd_exec_bin(systemd_generator)
+dev_read_sysfs(systemd_generator)
 dev_write_kmsg(systemd_generator)
 files_map_read_etc_files(systemd_generator)
 fs_getattr_all_fs(systemd_generator)
@@ -1362,7 +1377,15 @@ fs_search_cgroup_dirs(systemd_generator)
 init_read_state(systemd_generator)
 
 optional_policy(`
+	auth_dontaudit_read_passwd_file(systemd_generator)
+')
+
+optional_policy(`
 	logging_stream_connect_syslog(systemd_generator)
+')
+
+optional_policy(`
+	sssd_dontaudit_search_lib(systemd_generator)
 ')
 
 ### Rules for individual systemd generator domains
@@ -1435,7 +1458,6 @@ allow systemd_gpt_generator_t self:capability sys_rawio;
 dontaudit systemd_gpt_generator_t self:capability sys_admin;
 allow systemd_gpt_generator_t self:netlink_kobject_uevent_socket create_socket_perms;
 
-dev_read_sysfs(systemd_gpt_generator_t)
 dev_read_rand(systemd_gpt_generator_t)
 
 files_list_boot(systemd_gpt_generator_t)
@@ -1529,7 +1551,7 @@ optional_policy(`
 init_read_script_files(systemd_sysv_generator_t)
 
 ### tpm2 generator
-dev_read_sysfs(systemd_tpm2_generator_t)
+permissive systemd_tpm2_generator_t;
 
 ### udev trigger generator
 corecmd_exec_bin(systemd_udev_trigger_generator_t)
@@ -1545,14 +1567,7 @@ optional_policy(`
 permissive systemd_udev_trigger_generator_t;
 
 ### vsftpd generator
-permissive systemd_vsftpd_generator_t;
-
-corecmd_exec_bin(systemd_vsftpd_generator_t)
 corecmd_exec_shell(systemd_vsftpd_generator_t)
-
-optional_policy(`
-	auth_dontaudit_read_passwd_file(systemd_vsftpd_generator_t)
-')
 
 ### zram generator
 allow systemd_zram_generator_t systemd_fstab_generator_unit_file_t:file write_file_perms;
@@ -1563,9 +1578,6 @@ filetrans_pattern(systemd_zram_generator_t, systemd_unit_file_t, systemd_zram_ge
 dev_create_sysfs_files(systemd_zram_generator_t)
 dev_rw_sysfs(systemd_zram_generator_t)
 
-# for systemd-detect-virt - needs to be confined
-corecmd_exec_bin(systemd_zram_generator_t)
-dev_read_sysfs(systemd_zram_generator_t)
 storage_getattr_fixed_disk_dev(systemd_zram_generator_t)
 
 optional_policy(`
@@ -2085,6 +2097,7 @@ allow systemd_user_runtimedir_t self:unix_dgram_socket create_socket_perms;
 systemd_dbus_chat_logind(systemd_user_runtimedir_t)
 
 kernel_dgram_send(systemd_user_runtimedir_t)
+kernel_stream_connect(systemd_user_runtimedir_t)
 
 domain_obj_id_change_exemption(systemd_user_runtimedir_t)
 
