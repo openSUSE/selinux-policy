@@ -457,6 +457,9 @@ optional_policy(`
 	systemd_dbus_chat_logind(wicked_t)
 	systemd_dbus_chat_hostnamed(wicked_t)
     systemd_hostnamed_manage_config(wicked_t)
+    systemd_start_systemd_services(wicked_t)
+    systemd_config_generic_services(wicked_t)
+
 ')
 
 optional_policy(`
