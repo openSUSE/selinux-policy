@@ -6457,6 +6457,26 @@ interface(`fs_exec_tmpfs_files',`
 
 ########################################
 ## <summary>
+##     Do not audit attempts to execute files on
+##     tmpfs filesystem.
+## </summary>
+## <param name="domain">
+##     <summary>
+##     Domain allowed access.
+##     </summary>
+## </param>
+## <rolecap/>
+#
+interface(`fs_dontaudit_exec_tmpfs_files',`
+       gen_require(`
+               type tmpfs_t;
+       ')
+
+       dontaudit $1 tmpfs_t:file { execute };
+')
+
+########################################
+## <summary>
 ##	Read and write, create and delete symbolic
 ##	links on tmpfs filesystems.
 ## </summary>
