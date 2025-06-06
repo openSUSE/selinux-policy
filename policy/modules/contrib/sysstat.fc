@@ -9,3 +9,5 @@
 /var/log/atsar(/.*)?	gen_context(system_u:object_r:sysstat_log_t,s0)
 /var/log/sa(/.*)?	gen_context(system_u:object_r:sysstat_log_t,s0)
 /var/log/sysstat(/.*)?	gen_context(system_u:object_r:sysstat_log_t,s0)
+
+/var/run/sysstat(/.*)?          system_u:object_r:sysstat_var_run_t:s0
