@@ -265,6 +265,7 @@ optional_policy(`
 
 optional_policy(`
     firewalld_dbus_chat(wicked_t)
+    firewalld_systemctl(wicked_t)
 ')
 
 optional_policy(`
