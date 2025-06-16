@@ -11,6 +11,7 @@ image: registry.opensuse.org/opensuse/tumbleweed:latest
 stages:
     - build
     - rpmbuild
+    - test
 
 # Based on https://github.com/fedora-selinux/selinux-policy/blob/6063934d9591589ad25b58adf8a54e97dbcded3f/.github/workflows/build.yml
 build:
@@ -50,3 +51,12 @@ rpmbuild:
         paths:
             - artifacts/
 
+test:
+    stage: test
+    script:
+        - set +e
+        - zypper --non-interactive --quiet install qemu-img qemu-x86 rpm-devel wget
+        - bash test/test.sh
+    allow_failure:
+        exit_codes:
+            - 100
