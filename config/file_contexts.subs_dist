@@ -38,6 +38,9 @@
 /var/run/lock /var/lock
 /usr/local /usr
 
+## for apache
+/srv/www /var/www
+
 ## for netconfig
 /var/run/netconfig /etc
 /var/adm/netconfig/md5/etc /etc
