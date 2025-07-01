@@ -49,6 +49,13 @@ gen_tunable(cluster_use_execmem, false)
 ## </desc>
 gen_tunable(haproxy_connect_any, false)
 
+## <desc>
+## <p>
+## allow cluster_t transition to the unconfined user domain
+## </p>
+## </desc>
+gen_tunable(cluster_service_transition_to_unconfined_user, false)
+
 attribute cluster_domain;
 attribute cluster_log;
 attribute cluster_pid;
@@ -368,6 +375,12 @@ optional_policy(`
 
 optional_policy(`
     xen_domtrans_xm(cluster_t)
+')
+
+optional_policy(`
+        tunable_policy(`cluster_service_transition_to_unconfined_user',`
+                unconfined_domtrans(cluster_t)
+        ')
 ')
 
 #####################################
