@@ -69,6 +69,8 @@ files_tmpfs_file(systemd_coredump_tmpfs_t)
 type systemd_coredump_var_lib_t;
 files_type(systemd_coredump_var_lib_t)
 
+systemd_domain_template(systemd_hibernate_resume)
+
 systemd_domain_template(systemd_hwdb)
 
 type systemd_hwdb_unit_file_t;
@@ -1334,6 +1336,15 @@ optional_policy(`
 
 #######################################
 #
+# systemd_hibernate domain
+#
+permissive systemd_hibernate_resume_t;
+
+#allow systemd_hibernate_resume_t efivarfs_t:file unlink;
+
+
+#######################################
+#
 # systemd_hwdb domain
 #
 dontaudit systemd_hwdb_t self:capability dac_override;
@@ -1385,6 +1396,7 @@ optional_policy(`
 ')
 
 optional_policy(`
+	sssd_dontaudit_read_public_files(systemd_generator)
 	sssd_dontaudit_search_lib(systemd_generator)
 ')
 
@@ -2116,6 +2128,10 @@ optional_policy(`
 
 optional_policy(`
 	gnome_delete_home_config_dirs(systemd_user_runtimedir_t)
+')
+
+optional_policy(`
+	logging_dgram_send(systemd_user_runtimedir_t)
 ')
 
 optional_policy(`

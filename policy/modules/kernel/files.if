@@ -5659,6 +5659,7 @@ interface(`files_search_mnt',`
 	')
 
 	allow $1 mnt_t:dir search_dir_perms;
+	allow $1 mnt_t:lnk_file read_lnk_file_perms;
 ')
 
 ########################################
@@ -6195,6 +6196,25 @@ interface(`files_manage_mdevctl_conf_files',`
 
 	files_search_etc(mdevctl_conf_t)
 	manage_files_pattern($1, mdevctl_conf_t, mdevctl_conf_t)
+')
+
+#######################################
+## <summary>
+##	Create mdevctl configuration dirs
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_create_mdevctl_conf_dirs',`
+	gen_require(`
+		type mdevctl_conf_t;
+	')
+
+	files_search_etc(mdevctl_conf_t)
+	allow $1 mdevctl_conf_t:dir create_dir_perms;
 ')
 
 #######################################
