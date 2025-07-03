@@ -1572,6 +1572,24 @@ interface(`systemd_start_all_services',`
 	allow $1 systemd_unit_file_type:service start;
 ')
 
+########################################
+## <summary>
+##	Allow the specified domain to stop all systemd services.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`systemd_stop_all_services',`
+	gen_require(`
+		attribute systemd_unit_file_type;
+	')
+
+	allow $1 systemd_unit_file_type:service stop;
+')
+
 #######################################
 ## <summary>
 ##  Allow the specified domain to reload all systemd services.
@@ -1718,7 +1736,7 @@ interface(`systemd_manage_random_seed',`
 	')
 
 	allow $1 random_seed_t:file manage_file_perms;
-	files_var_lib_filetrans($1, random_seed_t, file, "random_seed")
+	init_var_lib_filetrans($1, random_seed_t, file, "random-seed");
 ')
 
 ########################################
