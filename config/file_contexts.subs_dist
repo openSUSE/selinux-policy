@@ -47,8 +47,5 @@
 /var/adm/netconfig/md5/etc /etc
 /var/adm/netconfig/md5/var /var
 
-## for transactional systems
-/usr/etc /etc
-
 ## for krb5
 /var/lib/kerberos /var/kerberos
