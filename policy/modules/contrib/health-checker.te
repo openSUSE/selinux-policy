@@ -59,17 +59,26 @@ dev_list_sysfs(health_checker_t)
 dev_read_sysfs(health_checker_t)
 
 # permissions for health checker: rollback()
-## to execute 'mount'
-mount_exec(health_checker_t)
-mount_manage_pid_files(health_checker_t)
 ## mount accessing block device information 
 storage_getattr_fixed_disk_dev(health_checker_t)
 ## mount able to remount
 fs_remount_xattr_fs(health_checker_t)
+
+## to execute 'mount'
+optional_policy(`
+    mount_exec(health_checker_t)
+    mount_manage_pid_files(health_checker_t)
+')
+
 ## for 'systemctl reboot'
-dbus_connect_system_bus(health_checker_t)
-dbus_system_bus_client(health_checker_t)
-systemd_dbus_chat_logind(health_checker_t)
+optional_policy(`
+    dbus_connect_system_bus(health_checker_t)
+    dbus_system_bus_client(health_checker_t)
+    optional_policy(`
+        systemd_dbus_chat_logind(health_checker_t)
+    ')
+')
+
 ## for 'btrfs subvolume set-default ${LAST_WORKING_BTRFS_ID} /.snapshots'
 optional_policy(`
 	snapper_select_boot_snapshot(health_checker_t)
