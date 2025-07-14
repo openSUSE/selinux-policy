@@ -57,12 +57,8 @@ files_tmp_filetrans(snapperd_t, snapperd_tmp_t, { file dir })
 
 kernel_setsched(snapperd_t)
 kernel_stream_connect(snapperd_t)
-kernel_view_key(snapperd_t)
 
 domain_read_all_domains_state(snapperd_t)
-domain_read_view_all_domains_keyrings(snapperd_t)
-
-userdom_view_all_users_keys(snapperd_t)
 
 corecmd_exec_shell(snapperd_t)
 corecmd_exec_bin(snapperd_t)
@@ -91,10 +87,6 @@ fstools_domtrans(snapperd_t)
 storage_raw_read_fixed_disk(snapperd_t)
 
 auth_use_nsswitch(snapperd_t)
-
-optional_policy(`
-    init_view_key(snapperd_t)
-')
 
 optional_policy(`
 	packagekit_dbus_chat(snapperd_t)
@@ -200,8 +192,18 @@ manage_dirs_pattern(snapper_sdbootutil_plugin_t, snapper_sdbootutil_plugin_tmp_t
 manage_files_pattern(snapper_sdbootutil_plugin_t, snapper_sdbootutil_plugin_tmp_t, snapper_sdbootutil_plugin_tmp_t)
 files_tmp_filetrans(snapper_sdbootutil_plugin_t, snapper_sdbootutil_plugin_tmp_t, { file dir })
 
+kernel_view_key(snapper_sdbootutil_plugin_t)
+
 corecmd_exec_bin(snapper_sdbootutil_plugin_t)
+
+domain_read_view_all_domains_keyrings(snapper_sdbootutil_plugin_t)
+
+userdom_view_all_users_keys(snapper_sdbootutil_plugin_t)
 
 optional_policy(`
         auth_dontaudit_read_passwd_file(snapper_sdbootutil_plugin_t)
+')
+
+optional_policy(`
+	init_view_key(snapper_sdbootutil_plugin_t)
 ')
