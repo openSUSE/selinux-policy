@@ -193,6 +193,7 @@ kernel_view_key(snapper_sdbootutil_plugin_t)
 
 corecmd_exec_bin(snapper_sdbootutil_plugin_t)
 
+dev_rw_tpm(snapper_sdbootutil_plugin_t)
 domain_read_view_all_domains_keyrings(snapper_sdbootutil_plugin_t)
 
 fstools_domtrans(snapper_sdbootutil_plugin_t)
