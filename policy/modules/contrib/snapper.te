@@ -200,6 +200,7 @@ dev_read_sysfs(snapper_sdbootutil_plugin_t)
 dev_rw_tpm(snapper_sdbootutil_plugin_t)
 domain_read_view_all_domains_keyrings(snapper_sdbootutil_plugin_t)
 
+files_list_kernel_modules(snapper_sdbootutil_plugin_t)
 files_search_all(snapper_sdbootutil_plugin_t)
 
 fs_getattr_all_fs(snapper_sdbootutil_plugin_t)
