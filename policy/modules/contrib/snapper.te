@@ -182,6 +182,8 @@ kernel_stream_connect(snapper_tu_etc_plugin_t)
 
 ### snapper sdbootutil plugin
 
+# for btrfs
+allow snapper_sdbootutil_plugin_t self:capability sys_admin;
 # PCRE JIT for grep, not needed, has a fallback if it's denied
 dontaudit snapper_sdbootutil_plugin_t self:process execmem;
 
