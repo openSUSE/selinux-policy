@@ -120,8 +120,6 @@ optional_policy(`
 
 optional_policy(`
     systemd_exec_systemctl(snapperd_t)
-    systemd_domtrans_pcrlock(snapperd_t)
-    systemd_manage_pcrlock_files(snapperd_t)
 ')
 
 ########################################
@@ -206,4 +204,9 @@ optional_policy(`
 
 optional_policy(`
 	init_view_key(snapper_sdbootutil_plugin_t)
+')
+
+optional_policy(`
+	systemd_domtrans_pcrlock(snapper_sdbootutil_plugin_t)
+	systemd_manage_pcrlock_files(snapper_sdbootutil_plugin_t)
 ')
