@@ -187,6 +187,8 @@ allow snapper_sdbootutil_plugin_t self:capability sys_admin;
 # PCRE JIT for grep, not needed, has a fallback if it's denied
 dontaudit snapper_sdbootutil_plugin_t self:process execmem;
 
+read_files_pattern(snapper_sdbootutil_plugin_t, snapperd_conf_t, snapperd_conf_t)
+read_files_pattern(snapper_sdbootutil_plugin_t, snapperd_data_t, snapperd_data_t)
 manage_dirs_pattern(snapper_sdbootutil_plugin_t, snapper_sdbootutil_plugin_tmp_t, snapper_sdbootutil_plugin_tmp_t)
 manage_files_pattern(snapper_sdbootutil_plugin_t, snapper_sdbootutil_plugin_tmp_t, snapper_sdbootutil_plugin_tmp_t)
 files_tmp_filetrans(snapper_sdbootutil_plugin_t, snapper_sdbootutil_plugin_tmp_t, { file dir })
@@ -212,6 +214,10 @@ fs_manage_efivarfs_files(snapper_sdbootutil_plugin_t)
 fstools_domtrans(snapper_sdbootutil_plugin_t)
 
 init_read_state(snapper_sdbootutil_plugin_t)
+
+seutil_read_file_contexts(snapper_sdbootutil_plugin_t)
+
+snapper_select_boot_snapshot(snapper_sdbootutil_plugin_t)
 
 storage_raw_read_fixed_disk_blk_device(snapper_sdbootutil_plugin_t)
 
