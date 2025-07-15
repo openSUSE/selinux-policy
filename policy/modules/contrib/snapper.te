@@ -204,7 +204,17 @@ dev_read_sysfs(snapper_sdbootutil_plugin_t)
 dev_rw_tpm(snapper_sdbootutil_plugin_t)
 domain_read_view_all_domains_keyrings(snapper_sdbootutil_plugin_t)
 
+# to delete /etc/systemd/tpm2-pcr-signature.json,
+# maybe this should have its own label
+files_delete_etc_dir_entry(snapper_sdbootutil_plugin_t)
+files_delete_etc_files(snapper_sdbootutil_plugin_t)
+
 files_list_kernel_modules(snapper_sdbootutil_plugin_t)
+
+# grep through /var/lib/sdbootutil, maybe label it in the future
+# and then this would be better
+files_read_var_lib_files(snapper_sdbootutil_plugin_t)
+
 files_search_all(snapper_sdbootutil_plugin_t)
 
 fs_getattr_all_fs(snapper_sdbootutil_plugin_t)
@@ -231,10 +241,27 @@ optional_policy(`
 ')
 
 optional_policy(`
+	# to allow tpm2_getcap connect to system bus
+	dbus_stream_connect_system_dbusd(snapper_sdbootutil_plugin_t)
+	dbus_write_pid_sock_files(snapper_sdbootutil_plugin_t)
+')
+
+optional_policy(`
 	init_view_key(snapper_sdbootutil_plugin_t)
+')
+
+optional_policy(`
+	# for cryptsetup
+	lvm_domtrans(snapper_sdbootutil_plugin_t)
 ')
 
 optional_policy(`
 	systemd_domtrans_pcrlock(snapper_sdbootutil_plugin_t)
 	systemd_manage_pcrlock_files(snapper_sdbootutil_plugin_t)
+')
+
+optional_policy(`
+	# if tpm2.0-abrmd is installed, tpm2_getcap will use it
+	tabrmd_rw_unix_stream_sockets(snapper_sdbootutil_plugin_t)
+	tabrmd_dbus_chat(snapper_sdbootutil_plugin_t)
 ')
