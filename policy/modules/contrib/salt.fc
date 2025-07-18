@@ -1,0 +1,1 @@
+/usr/libexec/salt/salt-minion(-[0-9._-]+)?	--	gen_context(system_u:object_r:salt_exec_t,s0)
