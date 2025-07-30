@@ -39,6 +39,9 @@
 /var/run/lock /var/lock
 /usr/local /usr
 
+## for tftp
+/srv/tftpboot /var/lib/tftpboot
+
 ## for apache
 /srv/www /var/www
 
