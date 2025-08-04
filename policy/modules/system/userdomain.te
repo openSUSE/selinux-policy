@@ -213,6 +213,7 @@ optional_policy(`
 ')
 
 optional_policy(`
+	systemd_oomd_stream_connect(userdomain)
 	systemd_userdbd_stream_connect(userdomain)
 ')
 
@@ -468,6 +469,7 @@ optional_policy(`
 optional_policy(`
 	logging_mmap_journal(login_userdomain)
 	logging_read_syslog_pid(login_userdomain)
+	logging_watch_journal_dir(login_userdomain)
 ')
 
 optional_policy(`
@@ -492,6 +494,10 @@ optional_policy(`
 ')
 
 optional_policy(`
+	switcheroo_dbus_chat(login_userdomain)
+')
+
+optional_policy(`
 	systemd_login_watch_pid_dirs(login_userdomain)
 	systemd_login_watch_session_dirs(login_userdomain)
 	systemd_machined_watch_pid_dirs(login_userdomain)
@@ -506,6 +512,10 @@ optional_policy(`
 
 optional_policy(`
 	thumb_read_tmp_files(login_userdomain)
+')
+
+optional_policy(`
+	tuned_dbus_chat_ppd(login_userdomain)
 ')
 
 optional_policy(`
@@ -656,6 +666,11 @@ optional_policy(`
 
 optional_policy(`
 	kerberos_read_keytab(confined_admindomain)
+')
+
+optional_policy(`
+	logging_read_generic_logs(confined_admindomain)
+	logging_mmap_generic_logs(confined_admindomain)
 ')
 
 optional_policy(`

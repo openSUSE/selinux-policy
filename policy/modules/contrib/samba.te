@@ -550,6 +550,7 @@ tunable_policy(`samba_domain_controller',`
 	allow smbd_t self:passwd passwd;
 
 	usermanage_domtrans_passwd(samba_dcerpcd_t)
+	usermanage_kill_passwd(samba_dcerpcd_t)
 	allow samba_dcerpcd_t self:passwd passwd;
 ')
 
@@ -1388,6 +1389,7 @@ optional_policy(`
 allow smbd_t samba_dcerpcd_t:process noatsecure;
 allow smbd_t samba_dcerpcd_t:unix_stream_socket connectto;
 allow winbind_t samba_dcerpcd_t:unix_stream_socket connectto;
+allow samba_bgqd_t smbd_t: unix_dgram_socket sendto;
 allow samba_dcerpcd_t samba_bgqd_t:unix_dgram_socket sendto;
 allow samba_dcerpcd_t nmbd_t:unix_dgram_socket sendto;
 allow samba_dcerpcd_t smbd_t:unix_dgram_socket sendto;
