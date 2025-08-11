@@ -51,5 +51,9 @@
 /var/adm/netconfig/md5/etc /etc
 /var/adm/netconfig/md5/var /var
 
+## for postfix
+## since we have `distro_redhat` set, this will use /usr/libexec (see postfix module)
+/usr/lib/postfix/bin /usr/libexec/postfix
+
 ## for krb5
 /var/lib/kerberos /var/kerberos
