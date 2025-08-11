@@ -77,7 +77,7 @@ type systemd_hwdb_unit_file_t;
 systemd_unit_file(systemd_hwdb_unit_file_t)
 
 systemd_domain_template(systemd_networkd)
-init_nnp_daemon_domain(systemd_networkd_t)
+dev_map_sysfs(systemd_networkd_t)
 
 type systemd_networkd_tmpfs_t;
 files_tmpfs_file(systemd_networkd_tmpfs_t)
@@ -114,7 +114,6 @@ type systemd_journal_upload_var_lib_t;
 files_type(systemd_journal_upload_var_lib_t);
 
 systemd_domain_template(systemd_resolved)
-init_nnp_daemon_domain(systemd_resolved_t)
 
 type systemd_resolved_var_run_t;
 files_pid_file(systemd_resolved_var_run_t)
@@ -185,7 +184,6 @@ type systemd_socket_proxyd_unit_file_t;
 systemd_unit_file(systemd_socket_proxyd_unit_file_t)
 
 systemd_domain_template(systemd_timedated)
-init_nnp_daemon_domain(systemd_timedated_t)
 typeattribute systemd_timedated_t systemd_domain;
 typealias systemd_timedated_t alias gnomeclock_t;
 
@@ -232,6 +230,8 @@ systemd_generator_template(systemd_nfs_generator)
 systemd_generator_template(systemd_rc_local_generator)
 # systemd-status-mail
 systemd_generator_template(systemd_status_mail_generator)
+# selinux_autorelabel generator
+systemd_generator_template(systemd_selinux_autorelabel_generator)
 # ssh-generator
 systemd_generator_template(systemd_ssh_generator)
 # sysv-generator
@@ -278,7 +278,6 @@ type systemd_machined_var_lib_t;
 files_type(systemd_machined_var_lib_t)
 
 systemd_domain_template(systemd_importd)
-init_nnp_daemon_domain(systemd_importd_t)
 
 type systemd_importd_var_lib_t;
 files_type(systemd_importd_var_lib_t)
@@ -309,11 +308,13 @@ type systemd_pstore_var_lib_t;
 files_type(systemd_pstore_var_lib_t)
 
 systemd_domain_template(systemd_nsresourced)
+dev_map_sysfs(systemd_nsresourced_t)
 
 type systemd_nsresourced_runtime_t;
 files_pid_file(systemd_nsresourced_runtime_t)
 
 systemd_domain_template(systemd_mountfsd)
+dev_map_sysfs(systemd_mountfsd_t)
 
 systemd_domain_template(systemd_oomd)
 
@@ -671,7 +672,7 @@ allow systemd_networkd_t self:tun_socket { relabelfrom relabelto create_socket_p
 
 allow init_t systemd_networkd_t:netlink_route_socket create_netlink_socket_perms;
 
-allow systemd_networkd_t systemd_networkd_var_lib_t:dir list_dir_perms;
+allow systemd_networkd_t systemd_networkd_var_lib_t:dir {create_dir_perms list_dir_perms};
 create_files_pattern(systemd_networkd_t, systemd_networkd_var_lib_t, systemd_networkd_var_lib_t)
 
 manage_files_pattern(systemd_networkd_t, systemd_networkd_tmpfs_t, systemd_networkd_tmpfs_t)
@@ -1565,6 +1566,11 @@ optional_policy(`
 ')
 
 permissive systemd_status_mail_generator_t;
+
+### selinux_autorelabel generator
+optional_policy(`
+	seutil_read_config(systemd_selinux_autorelabel_generator_t)
+')
 
 ### systemd import generator
 permissive systemd_import_generator_t;
