@@ -2187,7 +2187,7 @@ allow virtqemud_t self:udp_socket { connect create_socket_perms };
 allow virtqemud_t qemu_var_run_t:{ dir file sock_file } relabelfrom;
 
 allow virtqemud_t svirt_t:netlink_route_socket create_netlink_socket_perms;
-allow virtqemud_t svirt_t:process { getattr getrlimit setsched signal signull transition };
+allow virtqemud_t svirt_t:process { getattr getrlimit setrlimit setsched signal signull transition };
 allow virtqemud_t svirt_t:tcp_socket create_stream_socket_perms;
 allow virtqemud_t svirt_t:udp_socket create_socket_perms;
 allow virtqemud_t svirt_t:unix_stream_socket { connectto create_stream_socket_perms };
@@ -2248,6 +2248,7 @@ filetrans_pattern(virtqemud_t, virt_var_run_t, qemu_var_run_t, dir, "qemu")
 
 allow virtqemud_t svirt_image_t:file map;
 allow virtqemud_t svirt_image_t:blk_file setattr;
+allow virtqemud_t svirt_image_t:chr_file unlink;
 rw_blk_files_pattern(virtqemud_t, svirt_image_t, svirt_image_t)
 rw_chr_files_pattern(virtqemud_t, svirt_image_t, svirt_image_t)
 setattr_chr_files_pattern(virtqemud_t, svirt_image_t, svirt_image_t)
@@ -2293,7 +2294,7 @@ dev_delete_urand(virtqemud_t)
 dev_getattr_fs(virtqemud_t)
 dev_read_cpuid(virtqemud_t)
 dev_rw_sysfs(virtqemud_t)
-
+dev_rw_inherited_dri(virtqemud_t)
 dev_read_urand(virtqemud_t)
 dev_rw_sgx_vepc(virtqemud_t)
 dev_rw_vfio_dev(virtqemud_t)
@@ -2308,6 +2309,7 @@ dev_setattr_sev(virtqemud_t)
 dev_setattr_urand(virtqemud_t)
 dev_setattr_userfaultfd(virtqemud_t)
 dev_unmount_fs(virtqemud_t)
+dev_unlink_vfio_dev(virtqemud_t)
 
 files_mounton_non_security(virtqemud_t)
 files_read_all_symlinks(virtqemud_t)
@@ -2491,6 +2493,7 @@ manage_files_pattern(virtstoraged_t, virt_var_lib_t, virt_var_lib_t)
 manage_lnk_files_pattern(virtstoraged_t, virt_etc_rw_t, virt_etc_rw_t)
 
 write_files_pattern(virtstoraged_t, qemu_var_run_t, qemu_var_run_t)
+create_files_pattern(virtstoraged_t, qemu_var_run_t, qemu_var_run_t)
 
 kernel_get_sysvipc_info(virtstoraged_t)
 kernel_io_uring_use(virtstoraged_t)
