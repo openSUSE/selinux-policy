@@ -242,6 +242,7 @@ optional_policy(`
 
 optional_policy(`
 	# to allow tpm2_getcap connect to system bus
+	dbus_send_system_bus(snapper_sdbootutil_plugin_t)
 	dbus_stream_connect_system_dbusd(snapper_sdbootutil_plugin_t)
 	dbus_write_pid_sock_files(snapper_sdbootutil_plugin_t)
 ')
