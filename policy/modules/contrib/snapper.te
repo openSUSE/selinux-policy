@@ -236,6 +236,8 @@ udev_search_pids(snapper_sdbootutil_plugin_t)
 
 userdom_view_all_users_keys(snapper_sdbootutil_plugin_t)
 
+permissive snapper_sdbootutil_plugin_t;
+
 optional_policy(`
         auth_dontaudit_read_passwd_file(snapper_sdbootutil_plugin_t)
 ')
