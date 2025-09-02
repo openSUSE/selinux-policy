@@ -183,6 +183,8 @@ corenet_port(systemd_socket_proxyd_port_t)
 type systemd_socket_proxyd_unit_file_t;
 systemd_unit_file(systemd_socket_proxyd_unit_file_t)
 
+systemd_domain_template(systemd_ssh_issue)
+
 systemd_domain_template(systemd_timedated)
 typeattribute systemd_timedated_t systemd_domain;
 typealias systemd_timedated_t alias gnomeclock_t;
@@ -1160,6 +1162,20 @@ optional_policy(`
 
 #######################################
 #
+# systemd-ssh-issue local policy
+#
+
+permissive systemd_ssh_issue_t;
+
+allow systemd_ssh_issue_t self:vsock_socket create_socket_perms;
+
+kernel_dgram_send(systemd_ssh_issue_t)
+
+dev_read_sysfs(systemd_ssh_issue_t)
+dev_read_vsock(systemd_ssh_issue_t);
+
+#######################################
+#
 # Timedated policy
 #
 
@@ -1311,7 +1327,7 @@ allow systemd_sysctl_t modules_object_t:dir search;
 # setpcap - to drop capabilities
 allow systemd_coredump_t self:capability { dac_read_search net_admin setgid setpcap setuid sys_admin sys_chroot sys_ptrace };
 dontaudit systemd_coredump_t self:capability sys_resource;
-allow systemd_coredump_t self:cap_userns { dac_read_search dac_override sys_admin sys_ptrace };
+allow systemd_coredump_t self:cap_userns { dac_read_search dac_override setgid setuid sys_admin sys_chroot sys_ptrace };
 
 # To set its capability set
 allow systemd_coredump_t self:process setcap;
