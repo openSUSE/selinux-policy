@@ -523,6 +523,9 @@ interface(`rpm_named_filetrans',`
 	files_var_lib_filetrans($1, rpm_var_lib_t, dir, "yum")
 	files_var_lib_filetrans($1, rpm_var_lib_t, dir, "rpm")
 	files_var_lib_filetrans($1, rpm_var_lib_t, dir, "rpmrebuilddb")
+	# for zypper only because it writes into /var/tmp and moves to /var/cache/zypp/
+	files_tmp_filetrans($1, rpm_var_cache_t, dir, "zypp.tmp")
+	userdom_user_tmp_filetrans($1, rpm_var_cache_t, dir, "zypp.tmp")
 ')
 
 ########################################
