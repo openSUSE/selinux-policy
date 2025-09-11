@@ -116,6 +116,8 @@ HOME_DIR/\.config/systemd/user(/.*)?		gen_context(system_u:object_r:systemd_unit
 /usr/lib/systemd/resolv.*   --   gen_context(system_u:object_r:lib_t,s0)
 /usr/var/lib/random-seed 	gen_context(system_u:object_r:random_seed_t,mls_systemhigh)
 
+/run/issue.d(/.*)?	gen_context(system_u:object_r:systemd_ssh_issue_var_run_t,s0)
+
 /run/systemd/.+\.conf	--	gen_context(system_u:object_r:systemd_conf_t,s0)
 /run/systemd/.+\.conf\.d	-d	gen_context(system_u:object_r:systemd_conf_t,s0)
 /run/systemd/.+\.conf\.d/.+\.conf	--	gen_context(system_u:object_r:systemd_conf_t,s0)
