@@ -34,6 +34,7 @@ ifdef(`distro_redhat',`
 /run/systemd/resolve/resolv\.conf   --  gen_context(system_u:object_r:net_conf_t,s0)
 /run/systemd/resolve/stub-resolv\.conf  gen_context(system_u:object_r:net_conf_t,s0)
 ')
+/etc/sysconfig/network/scripts/functions.netconfig  gen_context(system_u:object_r:net_conf_t,s0)
 /run/NetworkManager/resolv\.conf.*   --  gen_context(system_u:object_r:net_conf_t,s0)
 /run/NetworkManager/no-stub-resolv\.conf.*   --  gen_context(system_u:object_r:net_conf_t,s0)
 
