@@ -24,6 +24,12 @@ files_config_file(wicked_etc_rw_t)
 #type wicked_log_t;
 #logging_log_file(wicked_log_t)
 
+type wicked_script_exec_t;
+type wicked_script_t;
+application_domain(wicked_script_t, wicked_script_exec_t)
+role system_r types wicked_script_t;
+domtrans_pattern(wicked_t, wicked_script_exec_t, wicked_script_t)
+
 type wicked_tmp_t;
 files_tmp_file(wicked_tmp_t)
 
@@ -109,6 +115,10 @@ filetrans_pattern(wicked_t, wicked_etc_t, wicked_etc_rw_t, { dir file })
 #create_files_pattern(wicked_t, wicked_log_t, wicked_log_t)
 #setattr_files_pattern(wicked_t, wicked_log_t, wicked_log_t)
 #logging_log_filetrans(wicked_t, wicked_log_t, file)
+
+list_dirs_pattern(wicked_t, wicked_script_exec_t, wicked_script_exec_t)
+read_files_pattern(wicked_t, wicked_script_exec_t, wicked_script_exec_t)
+read_lnk_files_pattern(wicked_t, wicked_script_exec_t, wicked_script_exec_t)
 
 can_exec(wicked_t, wicked_tmp_t)
 manage_files_pattern(wicked_t, wicked_tmp_t, wicked_tmp_t)
@@ -501,6 +511,10 @@ optional_policy(`
 #tunable_policy(`use_ecryptfs_home_dirs',`
 #fs_manage_ecryptfs_files(wicked_t)
 #')
+
+optional_policy(`
+        unconfined_domain(wicked_script_t)
+')
 
 ########################################
 #

@@ -29,6 +29,7 @@
 #/usr/share/wicked/schema/wireless.xml
 /var/lib/wicked(/.*)?				gen_context(system_u:object_r:wicked_var_lib_t,s0)
 #/etc/sysconfig/network/ifcfg-lo
+/etc/sysconfig/network/scripts/.* gen_context(system_u:object_r:wicked_script_exec_t,s0)
 
 #/usr/sbin/wpa_cli	--	gen_context(system_u:object_r:wpa_cli_exec_t,s0)
 #/usr/bin/wpa_supplicant	--	gen_context(system_u:object_r:wicked_exec_t,s0)
