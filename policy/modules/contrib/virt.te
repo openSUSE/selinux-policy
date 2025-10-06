@@ -1124,7 +1124,7 @@ manage_dirs_pattern(virt_domain, virt_cache_t, virt_cache_t)
 manage_files_pattern(virt_domain, virt_cache_t, virt_cache_t)
 files_var_filetrans(virt_domain, virt_cache_t, { file dir })
 
-rw_files_pattern(virt_domain, virt_image_t, virt_image_t)
+read_files_pattern(virt_domain, virt_image_t, virt_image_t)
 read_lnk_files_pattern(virt_domain, virt_image_t, virt_image_t)
 
 manage_dirs_pattern(virt_domain, svirt_image_t, svirt_image_t)
@@ -1285,6 +1285,7 @@ optional_policy(`
 ')
 
 optional_policy(`
+	userdom_read_home_certs_tunable(virt_use_pcscd, virt_domain)
 	tunable_policy(`virt_use_pcscd',`
 		pcscd_stream_connect(virt_domain)
 	')

@@ -101,6 +101,10 @@ template(`sudo_role_template',`
 	')
 
 	optional_policy(`
+		iotop_domtrans($1_sudo_t)
+	')
+
+	optional_policy(`
 	    	kerberos_manage_host_rcache($1_sudo_t)
 		kerberos_read_config($1_sudo_t)
 	')
@@ -112,6 +116,7 @@ template(`sudo_role_template',`
 
 	optional_policy(`
 		systemd_domtrans_systemctl($1_sudo_t, $3)
+		systemd_logind_stream_connect($1_sudo_t)
 		systemd_systemctl_entrypoint($3)
 	')
 
