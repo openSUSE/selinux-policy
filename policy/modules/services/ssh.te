@@ -120,6 +120,10 @@ optional_policy(`
 ')
 
 optional_policy(`
+	auth_use_wtmpdbd_varlink_sockets(sshd_session_t)
+')
+
+optional_policy(`
 	cockpit_read_pid_files(sshd_session_t)
 ')
 
