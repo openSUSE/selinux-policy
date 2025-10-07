@@ -46,6 +46,9 @@
 ## for apache
 /srv/www /var/www
 
+## for tomcat
+/srv/tomcat /var/lib/tomcat
+
 ## for netconfig
 /var/run/netconfig /etc
 /var/adm/netconfig/md5/etc /etc
