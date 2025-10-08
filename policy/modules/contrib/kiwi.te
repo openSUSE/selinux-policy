@@ -1,0 +1,26 @@
+policy_module(kiwi, 1.0.0)
+
+########################################
+#
+# Declarations
+#
+
+gen_require(`
+	type unconfined_t;
+	role unconfined_r;
+')
+
+attribute_role kiwi_roles;
+roleattribute system_r kiwi_roles;
+
+type kiwi_t;
+type kiwi_exec_t;
+application_domain(kiwi_t, kiwi_exec_t)
+role kiwi_roles types kiwi_t;
+
+unconfined_domain(kiwi_t)
+
+kiwi_domtrans(unconfined_t, unconfined_r)
+
+#domain_obj_id_change_exemption(kiwi_t)
+#domain_system_change_exemption(kiwi_t)
