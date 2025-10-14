@@ -97,6 +97,8 @@ can_exec(wicked_t, wicked_exec_t)
 #wicd
 # can_exec(wicked_t, wpa_cli_exec_t)
 
+manage_dirs_pattern(wicked_t, wicked_t, wicked_t)
+
 list_dirs_pattern(wicked_t, wicked_initrc_exec_t, wicked_initrc_exec_t)
 read_files_pattern(wicked_t, wicked_initrc_exec_t, wicked_initrc_exec_t)
 read_lnk_files_pattern(wicked_t, wicked_initrc_exec_t, wicked_initrc_exec_t)
