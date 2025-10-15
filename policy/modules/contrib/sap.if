@@ -37,3 +37,21 @@ interface(`sap_unconfined_domtrans',`
        corecmd_search_bin($1)
        domtrans_pattern($1, sap_exec_t, sap_unconfined_t)
 ')
+
+#######################################
+## <summary>
+##      Read SAP lnk_files.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`sap_read_lnk_files',`
+        gen_require(`
+                type sap_exec_t;
+        ')
+
+        read_lnk_files_pattern($1, sap_exec_t, sap_exec_t)
+')
