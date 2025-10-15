@@ -243,7 +243,7 @@ interface(`fail2ban_read_pid_files',`
 
 ########################################
 ## <summary>
-##	dontaudit read and write an leaked file descriptors
+##	dontaudit read and write leaked file descriptors
 ## </summary>
 ## <param name="domain">
 ##	<summary>
@@ -264,7 +264,7 @@ interface(`fail2ban_dontaudit_leaks',`
 ########################################
 ## <summary>
 ##	All of the rules required to administrate 
-##	an fail2ban environment
+##	a fail2ban environment
 ## </summary>
 ## <param name="domain">
 ##	<summary>
