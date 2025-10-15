@@ -91,6 +91,8 @@ can_exec(wicked_t, wicked_exec_t)
 #wicd
 # can_exec(wicked_t, wpa_cli_exec_t)
 
+manage_dirs_pattern(wicked_t, wicked_t, wicked_t)
+
 list_dirs_pattern(wicked_t, wicked_initrc_exec_t, wicked_initrc_exec_t)
 read_files_pattern(wicked_t, wicked_initrc_exec_t, wicked_initrc_exec_t)
 read_lnk_files_pattern(wicked_t, wicked_initrc_exec_t, wicked_initrc_exec_t)
@@ -496,6 +498,9 @@ optional_policy(`
 
 optional_policy(`
 	networkmanager_dbus_chat(wicked_t)
+    networkmanager_manage_pid_files(wicked_t)
+    networkmanager_stream_connect(wicked_t)
+
 ')
 
 #tunable_policy(`use_ecryptfs_home_dirs',`

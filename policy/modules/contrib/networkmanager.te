@@ -265,6 +265,7 @@ systemd_login_watch_pid_dirs(NetworkManager_t)
 systemd_login_watch_session_dirs(NetworkManager_t)
 systemd_machined_read_pid_files(NetworkManager_t)
 systemd_machined_watch_pid_dirs(NetworkManager_t)
+systemd_read_unit_files(NetworkManager_t)
 
 term_use_unallocated_ttys(NetworkManager_t)
 
@@ -553,6 +554,9 @@ optional_policy(`
 	unconfined_signal(NetworkManager_t)
 ')
 
+optional_policy(`
+	wicked_manage_pid_files(NetworkManager_t)
+')
 
 tunable_policy(`use_ecryptfs_home_dirs',`
 	fs_manage_ecryptfs_files(NetworkManager_t)
