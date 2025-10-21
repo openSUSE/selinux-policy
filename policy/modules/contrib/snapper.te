@@ -32,9 +32,6 @@ allow snapperd_t self:process setsched;
 allow snapperd_t self:fifo_file rw_fifo_file_perms;
 allow snapperd_t self:unix_stream_socket create_stream_socket_perms;
 
-# PCRE JIT, not needed, has a fallback if it's denied
-dontaudit snapperd_t self: process { execmem };
-
 manage_files_pattern(snapperd_t, snapperd_log_t, snapperd_log_t)
 logging_log_filetrans(snapperd_t, snapperd_log_t, file)
 
@@ -57,12 +54,8 @@ files_tmp_filetrans(snapperd_t, snapperd_tmp_t, { file dir })
 
 kernel_setsched(snapperd_t)
 kernel_stream_connect(snapperd_t)
-kernel_view_key(snapperd_t)
 
 domain_read_all_domains_state(snapperd_t)
-domain_read_view_all_domains_keyrings(snapperd_t)
-
-userdom_view_all_users_keys(snapperd_t)
 
 corecmd_exec_shell(snapperd_t)
 corecmd_exec_bin(snapperd_t)
@@ -86,15 +79,9 @@ fs_getattr_all_sockets(snapperd_t)
 fs_mount_xattr_fs(snapperd_t)
 fs_unmount_xattr_fs(snapperd_t)
 
-fstools_domtrans(snapperd_t)
-
 storage_raw_read_fixed_disk(snapperd_t)
 
 auth_use_nsswitch(snapperd_t)
-
-optional_policy(`
-    init_view_key(snapperd_t)
-')
 
 optional_policy(`
 	packagekit_dbus_chat(snapperd_t)
@@ -128,8 +115,6 @@ optional_policy(`
 
 optional_policy(`
     systemd_exec_systemctl(snapperd_t)
-    systemd_domtrans_pcrlock(snapperd_t)
-    systemd_manage_pcrlock_files(snapperd_t)
 ')
 
 ########################################
@@ -141,6 +126,10 @@ attribute snapper_plugin;
 
 snapper_plugin_template(grub);
 snapper_plugin_template(tu_etc);
+snapper_plugin_template(sdbootutil);
+
+type snapper_sdbootutil_plugin_tmp_t;
+files_tmp_file(snapper_sdbootutil_plugin_tmp_t)
 
 ### snapper grub plugin
 bootloader_domtrans(snapper_grub_plugin_t)
@@ -189,3 +178,95 @@ files_mounton_etc(snapper_tu_etc_plugin_t)
 
 # needed for systemd dynamicuser
 kernel_stream_connect(snapper_tu_etc_plugin_t)
+
+
+### snapper sdbootutil plugin
+
+# for btrfs
+allow snapper_sdbootutil_plugin_t self:capability sys_admin;
+# PCRE JIT for grep, not needed, has a fallback if it's denied
+dontaudit snapper_sdbootutil_plugin_t self:process execmem;
+
+read_files_pattern(snapper_sdbootutil_plugin_t, snapperd_conf_t, snapperd_conf_t)
+read_files_pattern(snapper_sdbootutil_plugin_t, snapperd_data_t, snapperd_data_t)
+manage_dirs_pattern(snapper_sdbootutil_plugin_t, snapper_sdbootutil_plugin_tmp_t, snapper_sdbootutil_plugin_tmp_t)
+manage_files_pattern(snapper_sdbootutil_plugin_t, snapper_sdbootutil_plugin_tmp_t, snapper_sdbootutil_plugin_tmp_t)
+files_tmp_filetrans(snapper_sdbootutil_plugin_t, snapper_sdbootutil_plugin_tmp_t, { file dir })
+
+# grep /proc/stat
+kernel_read_proc_files(snapper_sdbootutil_plugin_t)
+kernel_view_key(snapper_sdbootutil_plugin_t)
+
+corecmd_exec_bin(snapper_sdbootutil_plugin_t)
+
+dev_list_sysfs(snapper_sdbootutil_plugin_t)
+dev_read_sysfs(snapper_sdbootutil_plugin_t)
+dev_rw_tpm(snapper_sdbootutil_plugin_t)
+domain_read_view_all_domains_keyrings(snapper_sdbootutil_plugin_t)
+
+# to delete /etc/systemd/tpm2-pcr-signature.json,
+# maybe this should have its own label
+files_delete_etc_dir_entry(snapper_sdbootutil_plugin_t)
+files_delete_etc_files(snapper_sdbootutil_plugin_t)
+
+files_list_kernel_modules(snapper_sdbootutil_plugin_t)
+
+# grep through /var/lib/sdbootutil, maybe label it in the future
+# and then this would be better
+files_read_var_lib_files(snapper_sdbootutil_plugin_t)
+
+files_search_all(snapper_sdbootutil_plugin_t)
+
+fs_getattr_all_fs(snapper_sdbootutil_plugin_t)
+fs_getattr_all_files(snapper_sdbootutil_plugin_t)
+fs_manage_dos_files(snapper_sdbootutil_plugin_t)
+fs_manage_efivarfs_files(snapper_sdbootutil_plugin_t)
+fstools_domtrans(snapper_sdbootutil_plugin_t)
+
+init_read_state(snapper_sdbootutil_plugin_t)
+
+seutil_read_file_contexts(snapper_sdbootutil_plugin_t)
+
+snapper_select_boot_snapshot(snapper_sdbootutil_plugin_t)
+
+storage_raw_read_fixed_disk_blk_device(snapper_sdbootutil_plugin_t)
+# for emmc devices, might be revisited though
+storage_raw_read_removable_device(snapper_sdbootutil_plugin_t)
+
+udev_read_db(snapper_sdbootutil_plugin_t)
+udev_search_pids(snapper_sdbootutil_plugin_t)
+
+userdom_view_all_users_keys(snapper_sdbootutil_plugin_t)
+
+permissive snapper_sdbootutil_plugin_t;
+
+optional_policy(`
+        auth_dontaudit_read_passwd_file(snapper_sdbootutil_plugin_t)
+')
+
+optional_policy(`
+	# to allow tpm2_getcap connect to system bus
+	dbus_send_system_bus(snapper_sdbootutil_plugin_t)
+	dbus_stream_connect_system_dbusd(snapper_sdbootutil_plugin_t)
+	dbus_write_pid_sock_files(snapper_sdbootutil_plugin_t)
+')
+
+optional_policy(`
+	init_view_key(snapper_sdbootutil_plugin_t)
+')
+
+optional_policy(`
+	# for cryptsetup
+	lvm_domtrans(snapper_sdbootutil_plugin_t)
+')
+
+optional_policy(`
+	systemd_domtrans_pcrlock(snapper_sdbootutil_plugin_t)
+	systemd_manage_pcrlock_files(snapper_sdbootutil_plugin_t)
+')
+
+optional_policy(`
+	# if tpm2.0-abrmd is installed, tpm2_getcap will use it
+	tabrmd_rw_unix_stream_sockets(snapper_sdbootutil_plugin_t)
+	tabrmd_dbus_chat(snapper_sdbootutil_plugin_t)
+')

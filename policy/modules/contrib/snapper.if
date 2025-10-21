@@ -97,6 +97,24 @@ interface(`snapper_read_inherited_pipe',`
 
 ########################################
 ## <summary>
+##	Allow a domain to write to snapper pipe
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`snapper_write_inherited_pipe',`
+	gen_require(`
+		type snapperd_t;
+	')
+
+	allow $1 snapperd_t:fifo_file write_fifo_file_perms;
+')
+
+########################################
+## <summary>
 ##	Allow a domain to select the boot snapshot
 ##
 ##  Warning: should only be used for direct btrfs invocation
@@ -180,3 +198,40 @@ template(`snapper_plugin_template',`
 	dontaudit snapperd_t snapper_$1_plugin_t:process { noatsecure rlimitinh siginh };
 ')
 
+#######################################
+## <summary>
+##      Allow domain to manage snapper 
+##      sdbootutil plugin temporary files
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`snapper_sdbootutil_plugin_manage_tmp_files',`
+    gen_require(`
+        type snapper_sdbootutil_plugin_tmp_t;
+    ')
+
+    allow $1 snapper_sdbootutil_plugin_tmp_t:file manage_file_perms;
+')
+
+#######################################
+## <summary>
+##      Allow domain to manage snapper 
+##      sdbootutil plugin temporary directories
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`snapper_sdbootutil_plugin_manage_tmp_dirs',`
+    gen_require(`
+        type snapper_sdbootutil_plugin_tmp_t;
+    ')
+
+    allow $1 snapper_sdbootutil_plugin_tmp_t:dir manage_dir_perms;
+')
