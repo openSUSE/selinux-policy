@@ -147,6 +147,8 @@ bootloader_domtrans(snapper_grub_plugin_t)
 corecmd_exec_bin(snapper_grub_plugin_t)
 files_manage_isid_type_dirs(snapper_grub_plugin_t)
 files_manage_isid_type_files(snapper_grub_plugin_t)
+# sort reads cpu.max
+fs_read_cgroup_files(snapper_grub_plugin_t)
 snapper_filetrans_named_content(snapper_grub_plugin_t)
 kernel_read_unlabeled_lnk_files(snapper_grub_plugin_t)
 
