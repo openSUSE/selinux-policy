@@ -600,6 +600,7 @@ files_write_root_dirs(systemd_machined_t)
 fs_read_nsfs_files(systemd_machined_t)
 fs_read_tmpfs_symlinks(systemd_machined_t)
 fs_cgroup_write_memory_pressure(systemd_machined_t)
+fs_watch_cgroup_files(systemd_machined_t)
 fs_write_tmpfs_socket_files(systemd_machined_t)
 
 init_dbus_chat(systemd_machined_t)
@@ -678,7 +679,7 @@ allow systemd_networkd_t self:tun_socket { relabelfrom relabelto create_socket_p
 allow init_t systemd_networkd_t:netlink_route_socket create_netlink_socket_perms;
 
 allow systemd_networkd_t systemd_networkd_var_lib_t:dir {create_dir_perms list_dir_perms};
-create_files_pattern(systemd_networkd_t, systemd_networkd_var_lib_t, systemd_networkd_var_lib_t)
+manage_files_pattern(systemd_networkd_t, systemd_networkd_var_lib_t, systemd_networkd_var_lib_t)
 
 manage_files_pattern(systemd_networkd_t, systemd_networkd_tmpfs_t, systemd_networkd_tmpfs_t)
 fs_tmpfs_filetrans(systemd_networkd_t, systemd_networkd_tmpfs_t, file)
@@ -1314,6 +1315,9 @@ kernel_read_security_state(systemd_sysctl_t)
 kernel_write_security_state(systemd_sysctl_t)
 
 files_read_system_conf_files(systemd_sysctl_t)
+
+# fs.binfmt_misc.status
+fs_register_binary_executable_type(systemd_sysctl_t)
 
 dev_write_kmsg(systemd_sysctl_t)
 
