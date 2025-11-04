@@ -229,6 +229,7 @@ interface(`mta_sendmail_mailserver',`
 	')
 
 	init_system_domain($1, sendmail_exec_t)
+	init_nnp_daemon_domain($1)
 	typeattribute $1 mailserver_domain;
 ')
 
