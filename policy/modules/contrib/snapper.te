@@ -198,6 +198,9 @@ kernel_read_proc_files(snapper_sdbootutil_plugin_t)
 kernel_view_key(snapper_sdbootutil_plugin_t)
 
 corecmd_exec_bin(snapper_sdbootutil_plugin_t)
+files_manage_isid_type_files(snapper_sdbootutil_plugin_t)
+files_manage_isid_type_dirs(snapper_sdbootutil_plugin_t)
+files_manage_isid_type_symlinks(snapper_sdbootutil_plugin_t)
 
 dev_list_sysfs(snapper_sdbootutil_plugin_t)
 dev_read_sysfs(snapper_sdbootutil_plugin_t)
