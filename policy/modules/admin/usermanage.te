@@ -412,6 +412,11 @@ userdom_manage_user_tmp_sockets(passwd_t)
 userdom_manage_user_tmp_dirs(passwd_t)
 
 optional_policy(`
+	accountutils_pwaccessd_varlink_socket_connect(passwd_t)
+	accountutils_pwupdd_varlink_socket_connect(passwd_t)
+')
+
+optional_policy(`
 	gnome_exec_keyringd(passwd_t)
 	gnome_manage_cache_home_dir(passwd_t)
 	gnome_manage_generic_cache_sockets(passwd_t)
