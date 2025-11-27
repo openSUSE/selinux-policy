@@ -654,6 +654,7 @@ optional_policy(`
 	virt_rw_svirt_dev(systemd_machined_t)
 	virt_getattr_sandbox_filesystem(systemd_machined_t)
 	virt_read_sandbox_files(systemd_machined_t)
+	virt_svirt_read_state(systemd_machined_t)
 ')
 
 #######################################
@@ -1182,6 +1183,7 @@ manage_files_pattern(systemd_ssh_issue_t, systemd_ssh_issue_var_run_t, systemd_s
 files_pid_filetrans(systemd_ssh_issue_t, systemd_ssh_issue_var_run_t, dir)
 
 kernel_dgram_send(systemd_ssh_issue_t)
+kernel_read_sysctl(systemd_ssh_issue_t)
 
 dev_read_sysfs(systemd_ssh_issue_t)
 dev_read_vsock(systemd_ssh_issue_t);
@@ -1444,8 +1446,7 @@ optional_policy(`
 ')
 
 optional_policy(`
-	sssd_dontaudit_read_public_files(systemd_generator)
-	sssd_dontaudit_search_lib(systemd_generator)
+	sssd_dontaudit_stream_connect(systemd_generator)
 ')
 
 ### Rules for individual systemd generator domains
