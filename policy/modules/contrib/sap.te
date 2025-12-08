@@ -1,5 +1,12 @@
 policy_module(sap, 1.0)
 
+## <desc>
+## <p>
+## allow unconfined_service_t transition to the unconfined user domain
+## </p>
+## </desc>
+gen_tunable(sap_service_transition_to_unconfined_user, false)
+
 type sap_unconfined_t;
 type sap_exec_t;
 files_type(sap_exec_t);
@@ -11,8 +18,16 @@ init_daemon_domain(sap_unconfined_t, sap_exec_t)
 #manage_files_pattern(sap_unconfined_t, sap_tmp_t, sap_tmp_t)
 #files_tmp_filetrans(sap_unconfined_t, sap_tmp_t, { dir file })
 
+files_execmod_all_files(sap_unconfined_t)
+
 libs_legacy_use_shared_libs(sap_unconfined_t)
 
 optional_policy(`
 	unconfined_domain(sap_unconfined_t)
+')
+
+optional_policy(`
+        tunable_policy(`sap_service_transition_to_unconfined_user',`
+                unconfined_domtrans(sap_unconfined_t)
+        ')
 ')
