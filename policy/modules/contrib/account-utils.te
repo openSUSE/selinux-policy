@@ -56,6 +56,7 @@ optional_policy(`
 	container_read_state(newidmapd_t)
 ')
 
+permissive newidmapd_t;
 
 ########################################
 #
@@ -80,6 +81,8 @@ logging_write_syslog_pid_socket(pwaccessd_t)
 optional_policy(`
 	systemd_userdbd_stream_connect(pwaccessd_t)
 ')
+
+permissive pwaccessd_t;
 
 ########################################
 #
@@ -115,3 +118,5 @@ selinux_read_security_files(pwupdd_t)
 selinux_set_enforce_mode(pwupdd_t)
 
 accountutils_pwaccessd_varlink_socket_connect(pwupdd_t)
+
+permissive pwupdd_t;
