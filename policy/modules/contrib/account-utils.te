@@ -1,0 +1,134 @@
+policy_module(account-utils, 0.0.1)
+
+########################################
+#
+# Declarations
+#
+
+type newidmapd_t;
+type newidmapd_exec_t;
+init_daemon_domain(newidmapd_t, newidmapd_exec_t)
+init_nnp_daemon_domain(newidmapd_t)
+
+type pwaccessd_t;
+type pwaccessd_exec_t;
+init_daemon_domain(pwaccessd_t, pwaccessd_exec_t)
+init_nnp_daemon_domain(pwaccessd_t)
+
+type pwupdd_t;
+type pwupdd_exec_t;
+init_daemon_domain(pwupdd_t, pwupdd_exec_t)
+init_nnp_daemon_domain(pwupdd_t)
+
+type accountutils_var_run_t;
+files_pid_file(accountutils_var_run_t)
+
+type newidmapd_var_run_t;
+files_pid_file(newidmapd_var_run_t)
+
+type pwaccessd_var_run_t;
+files_pid_file(pwaccessd_var_run_t)
+
+type pwupd_var_run_t;
+files_pid_file(pwupd_var_run_t)
+
+########################################
+#
+# newidmap local policy
+#
+
+# https://github.com/thkukuk/account-utils/blob/bf57c14f254570b4e5ad24925d8e481bff2ab828/src/newidmapd.c#L216
+allow newidmapd_t self:capability { dac_override setgid setuid };
+allow newidmapd_t self:cap_userns sys_admin;
+
+allow newidmapd_t self:unix_dgram_socket { create getopt setopt write };
+
+kernel_dgram_send(newidmapd_t)
+
+auth_read_passwd_file(newidmapd_t)
+
+create_dirs_pattern(newidmapd_t, accountutils_var_run_t, accountutils_var_run_t)
+rw_dirs_pattern(newidmapd_t, accountutils_var_run_t, accountutils_var_run_t)
+files_pid_filetrans(newidmapd_t, accountutils_var_run_t, { dir file fifo_file sock_file })
+filetrans_pattern(newidmapd_t, accountutils_var_run_t, newidmapd_var_run_t, file, "newidmapd-socket")
+
+fs_getattr_pidfs(newidmapd_t)
+
+logging_read_syslog_pid(newidmapd_t)
+logging_write_syslog_pid_socket(newidmapd_t)
+
+optional_policy(`
+	container_write_proc_files(newidmapd_t)
+	container_read_state(newidmapd_t)
+')
+
+permissive newidmapd_t;
+
+########################################
+#
+# pwaccessd local policy
+#
+
+allow pwaccessd_t self:unix_dgram_socket { create getopt setopt write };
+
+kernel_dgram_send(pwaccessd_t)
+
+auth_read_passwd_file(pwaccessd_t)
+auth_read_shadow(pwaccessd_t)
+
+create_dirs_pattern(pwaccessd_t, accountutils_var_run_t, accountutils_var_run_t)
+rw_dirs_pattern(pwaccessd_t, accountutils_var_run_t, accountutils_var_run_t)
+files_pid_filetrans(pwaccessd_t, accountutils_var_run_t, { dir file fifo_file sock_file })
+filetrans_pattern(pwaccessd_t, accountutils_var_run_t, pwaccessd_var_run_t, file, "pwaccess-socket")
+
+fs_getattr_pidfs(pwaccessd_t)
+
+logging_read_syslog_pid(pwaccessd_t)
+logging_write_syslog_pid_socket(pwaccessd_t)
+
+
+optional_policy(`
+	systemd_userdbd_stream_connect(pwaccessd_t)
+')
+
+permissive pwaccessd_t;
+
+########################################
+#
+# pwupd local policy
+#
+
+allow pwupdd_t self:capability chown;
+
+# https://github.com/thkukuk/account-utils/pull/13#discussion_r2557314252
+allow pwupdd_t self:capability setuid;
+
+allow pwupdd_t self:process setfscreate;
+allow pwupdd_t self:unix_dgram_socket { create connect getopt setopt write };
+
+kernel_dgram_send(pwupdd_t)
+
+auth_etc_filetrans_shadow(pwupdd_t)
+auth_manage_passwd(pwupdd_t)
+auth_manage_shadow(pwupdd_t)
+
+corecmd_check_exec_shell(pwupdd_t)
+
+create_dirs_pattern(pwupdd_t, accountutils_var_run_t, accountutils_var_run_t)
+rw_dirs_pattern(pwupdd_t, accountutils_var_run_t, accountutils_var_run_t)
+files_pid_filetrans(pwupdd_t, accountutils_var_run_t, { dir file fifo_file sock_file })
+filetrans_pattern(pwupdd_t, accountutils_var_run_t, pwupd_var_run_t, file, "pwupd-socket")
+
+fs_getattr_pidfs(pwupdd_t)
+
+logging_create_devlog_dev(pwupdd_t)
+logging_read_syslog_pid(pwupdd_t)
+logging_write_syslog_pid_socket(pwupdd_t)
+
+selinux_compute_access_vector(pwupdd_t)
+selinux_read_security_files(pwupdd_t)
+selinux_set_enforce_mode(pwupdd_t)
+
+accountutils_pwaccessd_varlink_socket_connect(pwupdd_t)
+
+permissive pwupdd_t;

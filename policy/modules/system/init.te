@@ -970,6 +970,10 @@ optional_policy(`
 	userdom_rw_stream(init_t)
 ')
 
+optional_policy(`
+	accountutils_pwaccessd_varlink_socket_connect(init_t)
+')
+
 ########################################
 #
 # Init script local policy

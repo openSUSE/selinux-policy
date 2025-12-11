@@ -1,0 +1,41 @@
+## <summary>Policy for account-utils.</summary>
+
+########################################
+## <summary>
+##	Allow the specified domain to connect to
+##	pwaccessd_t varlink socket.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`accountutils_pwaccessd_varlink_socket_connect',`
+	gen_require(`
+		type pwaccessd_t;
+		type pwaccessd_var_run_t;
+	')
+
+	stream_connect_pattern($1, pwaccessd_var_run_t, pwaccessd_var_run_t, pwaccessd_t)
+')
+
+########################################
+## <summary>
+##	Allow the specified domain to connect to
+##	pwupdd_t varlink socket.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`accountutils_pwupdd_varlink_socket_connect',`
+	gen_require(`
+		type pwupdd_t;
+		type pwupd_var_run_t;
+	')
+
+	stream_connect_pattern($1, pwupd_var_run_t, pwupd_var_run_t, pwupdd_t)
+')
