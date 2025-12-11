@@ -20,6 +20,9 @@ type pwupdd_exec_t;
 init_daemon_domain(pwupdd_t, pwupdd_exec_t)
 init_nnp_daemon_domain(pwupdd_t)
 
+type accountutils_var_run_t;
+files_pid_file(accountutils_var_run_t)
+
 type newidmapd_var_run_t;
 files_pid_file(newidmapd_var_run_t)
 
@@ -44,7 +47,10 @@ kernel_dgram_send(newidmapd_t)
 
 auth_read_passwd_file(newidmapd_t)
 
-files_pid_filetrans(newidmapd_t, newidmapd_var_run_t, file, "newidmapd-socket")
+create_dirs_pattern(newidmapd_t, accountutils_var_run_t, accountutils_var_run_t)
+rw_dirs_pattern(newidmapd_t, accountutils_var_run_t, accountutils_var_run_t)
+files_pid_filetrans(newidmapd_t, accountutils_var_run_t, { dir file fifo_file sock_file })
+filetrans_pattern(newidmapd_t, accountutils_var_run_t, newidmapd_var_run_t, file, "newidmapd-socket")
 
 fs_getattr_pidfs(newidmapd_t)
 
@@ -70,7 +76,10 @@ kernel_dgram_send(pwaccessd_t)
 auth_read_passwd_file(pwaccessd_t)
 auth_read_shadow(pwaccessd_t)
 
-files_pid_filetrans(pwaccessd_t, pwaccessd_var_run_t, file, "pwaccess-socket")
+create_dirs_pattern(pwaccessd_t, accountutils_var_run_t, accountutils_var_run_t)
+rw_dirs_pattern(pwaccessd_t, accountutils_var_run_t, accountutils_var_run_t)
+files_pid_filetrans(pwaccessd_t, accountutils_var_run_t, { dir file fifo_file sock_file })
+filetrans_pattern(pwaccessd_t, accountutils_var_run_t, pwaccessd_var_run_t, file, "pwaccess-socket")
 
 fs_getattr_pidfs(pwaccessd_t)
 
@@ -105,7 +114,10 @@ auth_manage_shadow(pwupdd_t)
 
 corecmd_check_exec_shell(pwupdd_t)
 
-files_pid_filetrans(pwupdd_t, pwupd_var_run_t, file, "pwupd-socket")
+create_dirs_pattern(pwupdd_t, accountutils_var_run_t, accountutils_var_run_t)
+rw_dirs_pattern(pwupdd_t, accountutils_var_run_t, accountutils_var_run_t)
+files_pid_filetrans(pwupdd_t, accountutils_var_run_t, { dir file fifo_file sock_file })
+filetrans_pattern(pwupdd_t, accountutils_var_run_t, pwupd_var_run_t, file, "pwupd-socket")
 
 fs_getattr_pidfs(pwupdd_t)
 

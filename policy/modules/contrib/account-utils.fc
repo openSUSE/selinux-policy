@@ -2,6 +2,8 @@
 /usr/libexec/pwaccessd		--	gen_context(system_u:object_r:pwaccessd_exec_t,s0)
 /usr/libexec/pwupdd		--	gen_context(system_u:object_r:pwupdd_exec_t,s0)
 
+/run/account(/.*)?			gen_context(system_u:object_r:accountutils_var_run_t,s0)
+
 # account-utils varlink sockets
 /run/account/pwaccess-socket	-s	gen_context(system_u:object_r:pwaccessd_var_run_t,s0)
 /run/account/pwupd-socket	-s 	gen_context(system_u:object_r:pwupd_var_run_t,s0)
