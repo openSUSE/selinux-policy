@@ -175,6 +175,8 @@ corenet_port(systemd_socket_proxyd_port_t)
 type systemd_socket_proxyd_unit_file_t;
 systemd_unit_file(systemd_socket_proxyd_unit_file_t)
 
+systemd_domain_template(systemd_ssh_issue)
+
 systemd_domain_template(systemd_timedated)
 init_nnp_daemon_domain(systemd_timedated_t)
 typeattribute systemd_timedated_t systemd_domain;
@@ -1084,6 +1086,28 @@ systemd_read_efivarfs(systemd_rfkill_t)
 optional_policy(`
     udev_read_db(systemd_rfkill_t)
 ')
+
+#######################################
+#
+# systemd-ssh-issue local policy
+#
+
+permissive systemd_ssh_issue_t;
+
+type systemd_ssh_issue_var_run_t;
+files_pid_file(systemd_ssh_issue_var_run_t)
+
+allow systemd_ssh_issue_t self:vsock_socket create_socket_perms;
+
+# /run/issue.d/50-ssh-vsock.issue
+manage_dirs_pattern(systemd_ssh_issue_t, systemd_ssh_issue_var_run_t, systemd_ssh_issue_var_run_t)
+manage_files_pattern(systemd_ssh_issue_t, systemd_ssh_issue_var_run_t, systemd_ssh_issue_var_run_t)
+files_pid_filetrans(systemd_ssh_issue_t, systemd_ssh_issue_var_run_t, dir)
+
+kernel_dgram_send(systemd_ssh_issue_t)
+
+dev_read_sysfs(systemd_ssh_issue_t)
+dev_read_vsock(systemd_ssh_issue_t);
 
 #######################################
 #
