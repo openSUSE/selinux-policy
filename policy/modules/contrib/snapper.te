@@ -179,6 +179,10 @@ files_mounton_etc(snapper_tu_etc_plugin_t)
 # needed for systemd dynamicuser
 kernel_stream_connect(snapper_tu_etc_plugin_t)
 
+optional_policy(`
+	# rsync needs it to access nsswitch in enabled systems
+	systemd_machined_stream_connect(snapper_tu_etc_plugin_t)
+')
 
 ### snapper sdbootutil plugin
 
