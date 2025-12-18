@@ -1634,6 +1634,8 @@ init_read_script_files(systemd_sysv_generator_t)
 permissive systemd_tpm2_generator_t;
 
 ### udev trigger generator
+allow systemd_udev_trigger_generator_t self:capability sys_resource;
+
 corecmd_exec_bin(systemd_udev_trigger_generator_t)
 
 dev_list_sysfs(systemd_udev_trigger_generator_t)
