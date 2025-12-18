@@ -329,6 +329,8 @@ userdom_getattr_user_home_dirs(mysqlmanagerd_t)
 
 domtrans_pattern(mysqld_systemd_helper_t, mysqld_exec_t, mysqld_t)
 
+mysql_stream_connect(mysqld_t)
+
 optional_policy(`
 	unconfined_domain(mysqld_systemd_helper_t)
 ')
