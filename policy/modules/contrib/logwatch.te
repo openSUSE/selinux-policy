@@ -30,6 +30,9 @@ files_tmp_file(logwatch_tmp_t)
 type logwatch_var_run_t;
 files_pid_file(logwatch_var_run_t)
 
+type logwatch_var_lib_t;
+files_type(logwatch_var_lib_t)
+
 mta_base_mail_template(logwatch)
 role system_r types logwatch_mail_t;
 
@@ -53,6 +56,9 @@ files_lock_filetrans(logwatch_t, logwatch_lock_t, file)
 manage_dirs_pattern(logwatch_t, logwatch_tmp_t, logwatch_tmp_t)
 manage_files_pattern(logwatch_t, logwatch_tmp_t, logwatch_tmp_t)
 files_tmp_filetrans(logwatch_t, logwatch_tmp_t, { file dir })
+
+manage_dirs_pattern(logwatch_t, logwatch_var_lib_t, logwatch_var_lib_t)
+manage_files_pattern(logwatch_t, logwatch_var_lib_t, logwatch_var_lib_t)
 
 allow logwatch_t logwatch_var_run_t:file manage_file_perms;
 files_pid_filetrans(logwatch_t, logwatch_var_run_t, file)
