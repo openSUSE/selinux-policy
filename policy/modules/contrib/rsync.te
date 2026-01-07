@@ -44,6 +44,15 @@ gen_tunable(rsync_full_access, false)
 ## </desc>
 gen_tunable(rsync_sys_admin, false)
 
+## <desc>
+##	<p>
+##	Allow rsync to execute commands
+##	This is needed on SUSE systems in general and on other systems
+##	in more complex configurations where e.g. pre-xfer exec is used
+##	</p>
+## </desc>
+gen_tunable(rsync_exec_commands, true)
+
 type rsync_t;
 type rsync_exec_t;
 application_executable_file(rsync_exec_t)
@@ -196,4 +205,9 @@ optional_policy(`
 	swift_manage_data_files(rsync_t)
     swift_manage_lock(rsync_t)
     swift_filetrans_named_lock(rsync_t)
+')
+
+tunable_policy(`rsync_exec_commands',`
+	corecmd_exec_shell(rsync_t)
+	corecmd_exec_bin(rsync_t)
 ')
