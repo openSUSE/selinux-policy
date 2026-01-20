@@ -158,6 +158,7 @@ systemd_dbus_chat_hostnamed(bluetooth_t)
 
 optional_policy(`
 	alsa_read_lib(bluetooth_t)
+	alsa_read_rw_config(bluetooth_t)
 ')
 
 optional_policy(`
