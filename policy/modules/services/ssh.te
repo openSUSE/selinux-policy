@@ -90,9 +90,10 @@ allow sshd_session_t self:netlink_audit_socket { create nlmsg_relay };
 allow sshd_session_t self:netlink_route_socket { bind create getattr nlmsg_read };
 allow sshd_session_t self:udp_socket { connect create getattr };
 
+allow sshd_t sshd_session_t:process noatsecure;
 allow sshd_net_t sshd_t:vsock_socket { read write };
 allow sshd_net_t sshd_session_t:fifo_file write;
-allow sshd_net_t sshd_session_t:unix_stream_socket { read write };
+allow sshd_net_t sshd_session_t:unix_stream_socket { ioctl read write };
 allow sshd_session_t sshd_t:tcp_socket { getattr getopt read setopt write };
 allow sshd_session_t sshd_t:unix_stream_socket { read write };
 allow sshd_session_t sshd_t:vsock_socket { getattr };
@@ -127,6 +128,10 @@ optional_policy(`
 
 optional_policy(`
 	cockpit_read_pid_files(sshd_session_t)
+')
+
+optional_policy(`
+	ica_rw_map_tmpfs_files(sshd_session_t)
 ')
 
 optional_policy(`
