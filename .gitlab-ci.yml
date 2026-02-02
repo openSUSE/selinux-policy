@@ -28,6 +28,8 @@ build:
 rpmbuild:
     stage: rpmbuild
     script:
+        - zypper ar -p 98 https://download.opensuse.org/repositories/security:/SELinux/openSUSE_Factory/ selinux
+        - zypper --non-interactive --gpg-auto-import-keys dup --from selinux --allow-vendor-change
         # Install dependencies
         - zypper install -y wget rpm-build python-rpm-macros
         # Download the source RPM
