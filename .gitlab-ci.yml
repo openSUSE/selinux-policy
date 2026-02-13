@@ -57,7 +57,7 @@ test:
     stage: test
     script:
         - set +e
-        - zypper --non-interactive --quiet install qemu-img qemu-x86 rpm-devel wget
+        - zypper --non-interactive --quiet install qemu-img qemu-x86 rpm-devel wget diffutils
         - bash test/test.sh
     allow_failure:
         exit_codes:
