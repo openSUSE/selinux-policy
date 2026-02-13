@@ -28,6 +28,8 @@ build:
 rpmbuild:
     stage: rpmbuild
     script:
+        - zypper ar -p 98 https://download.opensuse.org/repositories/security:/SELinux/openSUSE_Factory/ selinux
+        - zypper --non-interactive --gpg-auto-import-keys dup --from selinux --allow-vendor-change
         # Install dependencies
         - zypper install -y wget rpm-build python-rpm-macros
         # Download the source RPM
@@ -55,7 +57,7 @@ test:
     stage: test
     script:
         - set +e
-        - zypper --non-interactive --quiet install qemu-img qemu-x86 rpm-devel wget
+        - zypper --non-interactive --quiet install qemu-img qemu-x86 rpm-devel wget diffutils
         - bash test/test.sh
     allow_failure:
         exit_codes:
