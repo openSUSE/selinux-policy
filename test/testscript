@@ -32,7 +32,7 @@ function docstate ()
     journalctl -b | grep -e avc -e denied || echo "<no matches>" | tee $2/journal
 
     print 36 "## Checking for AVCs and SELinux errors with ausearch..."
-    ausearch -m avc,user_avc,selinux_err,user_selinux_err | tee $2/ausearch
+    ausearch -m avc,user_avc,selinux_err,user_selinux_err |& tee $2/ausearch
 
     print 36 "## Looking for unconfined services..."
     ps -eo label,command | grep -v "/bin/bash /usr/bin/selinux-test\|ps -eo label,command\|grep unconfined" | grep unconfined || echo "<no matches>" | tee $2/unconfined
