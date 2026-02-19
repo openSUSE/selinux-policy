@@ -7,3 +7,10 @@
 /var/log/privoxy(/.*)?	gen_context(system_u:object_r:privoxy_log_t,s0)
 
 /run/privoxy\.pid	--	gen_context(system_u:object_r:privoxy_var_run_t,s0)
+
+# openSUSE privoxy chroot configuration
+# privoxy.service runs privoxy --chroot under /var/lib/privoxy
+/var/lib/privoxy/log(/.*)?			gen_context(system_u:object_r:privoxy_log_t,s0)
+/var/lib/privoxy/run(/.*)?			gen_context(system_u:object_r:privoxy_var_run_t,s0)
+/var/lib/privoxy/etc(/.*)?			gen_context(system_u:object_r:etc_t,s0)
+/var/lib/privoxy/etc/[^/]*\.action	--	gen_context(system_u:object_r:privoxy_etc_rw_t,s0)
