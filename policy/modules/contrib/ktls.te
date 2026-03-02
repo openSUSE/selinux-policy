@@ -36,8 +36,14 @@ optional_policy(`
 optional_policy(`
 	miscfiles_read_generic_certs(ktlshd_t)
 	miscfiles_map_generic_certs(ktlshd_t)
+	miscfiles_write_generic_certs(ktlshd_t)
+	miscfiles_write_generic_cert_dirs(ktlshd_t)
 ')
 
 optional_policy(`
 	sysnet_read_config(ktlshd_t)
+')
+
+optional_policy(`
+	unconfined_connected_tcp_sockets(ktlshd_t)
 ')

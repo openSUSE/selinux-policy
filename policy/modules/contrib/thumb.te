@@ -157,6 +157,10 @@ xserver_stream_connect(thumb_t)
 xserver_use_user_fonts(thumb_t)
 
 optional_policy(`
+	abrt_stream_connect(thumb_t)
+')
+
+optional_policy(`
     bumblebee_stream_connect(thumb_t)
 ')
 
@@ -189,6 +193,10 @@ optional_policy(`
 
 optional_policy(`
 	sssd_dontaudit_stream_connect(thumb_t)
+')
+
+optional_policy(`
+	miscfiles_mounton_fonts_cache_dirs(thumb_t)
 ')
 
 optional_policy(`

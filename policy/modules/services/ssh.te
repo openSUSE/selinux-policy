@@ -85,12 +85,12 @@ domtrans_pattern(sshd_t, sshd_session_exec_t, sshd_session_t)
 ssh_session_dyntransition_to(sshd_net_t)
 
 allow sshd_session_t self:capability { audit_write chown dac_read_search setgid setuid sys_resource };
-allow sshd_session_t self:process { rlimitinh setcurrent setexec setkeycreate setrlimit setsched };
+allow sshd_session_t self:process { setcurrent setexec setkeycreate setrlimit setsched };
 allow sshd_session_t self:netlink_audit_socket { create nlmsg_relay };
 allow sshd_session_t self:netlink_route_socket { bind create getattr nlmsg_read };
 allow sshd_session_t self:udp_socket { connect create getattr };
 
-allow sshd_t sshd_session_t:process noatsecure;
+allow sshd_t sshd_session_t:process { noatsecure rlimitinh };
 allow sshd_net_t sshd_t:vsock_socket { read write };
 allow sshd_net_t sshd_session_t:fifo_file write;
 allow sshd_net_t sshd_session_t:unix_stream_socket { ioctl read write };
@@ -104,6 +104,7 @@ manage_dirs_pattern(sshd_session_t, ssh_home_t, ssh_home_t)
 manage_files_pattern(sshd_session_t, ssh_home_t, ssh_home_t)
 
 kernel_stream_connect(sshd_session_t)
+kernel_read_net_sysctls(sshd_session_t)
 
 fs_getattr_all_fs(sshd_session_t)
 
