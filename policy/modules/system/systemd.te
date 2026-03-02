@@ -949,7 +949,7 @@ allow systemd_notify_t self:unix_dgram_socket create_socket_perms;
 # objects created before the policy is loaded, this should be removed and
 # systemd fixed to relabel the socket appropriately.
 # Tracked by [systemd PR](https://github.com/systemd/systemd/pull/31336).
-allow systemd_notify_t kernel_t:unix_dgram_socket sendto;
+kernel_dgram_send(systemd_notify_t)
 
 dev_write_kmsg(systemd_notify_t)
 
@@ -1076,6 +1076,8 @@ fs_read_xenfs_files(systemd_hostnamed_t)
 init_delete_pid_dir_entry(systemd_hostnamed_t)
 init_status(systemd_hostnamed_t)
 init_stream_connect(systemd_hostnamed_t)
+
+init_create_pid_socket(systemd_hostnamed_t)
 
 logging_send_syslog_msg(systemd_hostnamed_t)
 
@@ -1345,7 +1347,7 @@ allow systemd_sysctl_t modules_object_t:dir search;
 # setpcap - to drop capabilities
 allow systemd_coredump_t self:capability { dac_read_search net_admin setgid setpcap setuid sys_admin sys_chroot sys_ptrace };
 dontaudit systemd_coredump_t self:capability sys_resource;
-allow systemd_coredump_t self:cap_userns { dac_read_search dac_override setgid setuid sys_admin sys_chroot sys_ptrace };
+allow systemd_coredump_t self:cap_userns { dac_read_search dac_override kill setgid setuid sys_admin sys_chroot sys_ptrace };
 
 # To set its capability set
 allow systemd_coredump_t self:process setcap;
