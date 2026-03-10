@@ -29,6 +29,12 @@ allow tlp_t self:udp_socket create_socket_perms;
 allow tlp_t self:unix_dgram_socket create_socket_perms;
 allow tlp_t self:netlink_generic_socket create_socket_perms;
 
+# tlp uses ps aux to check the process list and then
+# greps for only tuned-ppd, power-profiles-daemon and
+# tlp-pd. ps does not need those two necessarily to work:
+dontaudit tlp_t self:cap_userns sys_ptrace;
+dontaudit tlp_t self:capability2 perfmon;
+
 allow tlp_t tlp_unit_file_t:file read_file_perms;
 
 manage_dirs_pattern(tlp_t, tlp_var_run_t, tlp_var_run_t)
@@ -59,6 +65,11 @@ dev_list_sysfs(tlp_t)
 dev_manage_sysfs(tlp_t)
 dev_rw_cpu_microcode(tlp_t)
 dev_rw_wireless(tlp_t)
+
+# tlp uses ps aux to check the process list and then
+# greps for only tuned-ppd, power-profiles-daemon and
+# tlp-pd. Dontauditing the rest.
+domain_dontaudit_search_all_domains_state(tlp_t)
 
 files_read_kernel_modules(tlp_t)
 files_map_kernel_modules(tlp_t)
@@ -106,6 +117,10 @@ ifdef(`snappy_search_lib',`
 ')
 
 optional_policy(`
+	powerprofiles_read_state(tlp_t)
+')
+
+optional_policy(`
     sssd_read_public_files(tlp_t)
     sssd_stream_connect(tlp_t)
 ')
@@ -119,5 +134,14 @@ optional_policy(`
 ')
 
 optional_policy(`
+	tuned_ppd_read_state(tlp_t)
+')
+
+optional_policy(`
 	udev_domtrans(tlp_t)
+')
+
+optional_policy(`
+	# tlp-pd is not confined ATM
+	unconfined_server_read_state(tlp_t)
 ')
