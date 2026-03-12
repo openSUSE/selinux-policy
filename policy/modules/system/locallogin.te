@@ -6,6 +6,16 @@ policy_module(locallogin, 1.12.0)
 #
 
 ## <desc>
+## <p>
+## Allow accountutils fallback to be able to directly access /etc/shadow.
+## This will cause older pam_unix to fail the login as they are checking
+## if an caller's domain is confined by checking the access to /etc/shadow.
+## See also: https://github.com/linux-pam/linux-pam/blob/d74c4294d32cffcf5dbc7a4491142877471b98a0/modules/pam_unix/passverify.c#L557
+## </p>
+## </desc>
+gen_tunable(local_login_allow_accountutils_fallback_mode, true)
+
+## <desc>
 ##  <p>
 ##  Allow login console run podman
 ##  </p>
@@ -170,6 +180,13 @@ ifdef(`distro_ubuntu',`
 userdom_home_reader(local_login_t)
 userdom_manage_tmp_files(local_login_t)
 userdom_tmp_filetrans_user_tmp(local_login_t, file)
+
+# This needs to be outside the "local_login_allow_accountutils_fallback_mode"
+# tunable as we can not assign attributes to domains in a tunable
+auth_can_read_shadow_passwords(local_login_t)
+tunable_policy(`local_login_allow_accountutils_fallback_mode',`
+	auth_tunable_read_shadow(local_login_t)
+')
 
 tunable_policy(`login_console_enabled',`
      term_use_console(local_login_t)
