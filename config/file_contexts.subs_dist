@@ -35,7 +35,6 @@
 /bin                 /usr/bin
 /usr/etc             /etc
 /usr/sbin            /usr/bin
-/var/opt             /opt
 
 # SUSE-specific section
 /var/run/lock /var/lock
