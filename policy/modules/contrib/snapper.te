@@ -219,6 +219,7 @@ files_delete_etc_dir_entry(snapper_sdbootutil_plugin_t)
 files_delete_etc_files(snapper_sdbootutil_plugin_t)
 
 files_list_kernel_modules(snapper_sdbootutil_plugin_t)
+files_read_kernel_modules(snapper_sdbootutil_plugin_t)
 
 # grep through /var/lib/sdbootutil, maybe label it in the future
 # and then this would be better
