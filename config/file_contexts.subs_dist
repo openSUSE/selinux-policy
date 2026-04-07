@@ -45,6 +45,7 @@
 
 ## for apache
 /srv/www /var/www
+/srv/www/htdocs /var/www/html
 
 ## for tomcat
 /srv/tomcat /var/lib/tomcat
