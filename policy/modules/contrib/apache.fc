@@ -121,7 +121,7 @@ ifdef(`distro_redhat', `
 /var/lib/dav(/.*)?			gen_context(system_u:object_r:httpd_var_lib_t,s0)
 /var/lib/ganglia(/.*)?			gen_context(system_u:object_r:httpd_var_lib_t,s0)
 /var/lib/glpi(/.*)?			gen_context(system_u:object_r:httpd_var_lib_t,s0)
-/var/lib/php(/.*)?			gen_context(system_u:object_r:httpd_var_lib_t,s0)
+/var/lib/php[0-9]*(/.*)?		gen_context(system_u:object_r:httpd_var_lib_t,s0)
 /var/lib/graphite-web(/.*)?     gen_context(system_u:object_r:httpd_sys_rw_content_t,s0)
 /var/lib/dokuwiki(/.*)?			gen_context(system_u:object_r:httpd_sys_rw_content_t,s0)
 /var/lib/drupal.*			gen_context(system_u:object_r:httpd_sys_rw_content_t,s0)
