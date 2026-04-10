@@ -34,6 +34,7 @@ kernel_io_uring_use(staff_t)
 kernel_read_ring_buffer(staff_t)
 kernel_getattr_core_if(staff_t)
 kernel_getattr_message_if(staff_t)
+kernel_mount_proc(staff_t)
 kernel_read_software_raid_state(staff_t)
 kernel_read_fs_sysctls(staff_t)
 kernel_read_numa_state(staff_t)
@@ -334,6 +335,8 @@ optional_policy(`
 	systemd_hwdb_mmap_config(staff_t)
 	systemd_manage_all_unit_files(staff_t)
 	systemd_manage_unit_dirs(staff_t)
+
+	systemd_logind_stream_connect(staff_t)
 ')
 
 optional_policy(`
@@ -352,9 +355,19 @@ optional_policy(`
 
 optional_policy(`
 	sudo_role_template(staff, staff_r, staff_t)
+
+	init_read_state(staff_sudo_t)
+
 	optional_policy(`
 		crontab_domtrans(staff_sudo_t)
 	')
+	optional_policy(`
+		systemd_read_logind_sessions_files(staff_sudo_t)
+	')
+')
+
+optional_policy(`
+	thumb_delete_tmp_files(staff_t)
 ')
 
 optional_policy(`

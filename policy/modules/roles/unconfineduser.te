@@ -62,6 +62,7 @@ typealias unconfined_t alias unconfined_crontab_t;
 # Local policy
 #
 
+allow unconfined_t self:{dir file} mounton;
 dontaudit unconfined_t self:dir write;
 dontaudit unconfined_t self:file setattr;
 
@@ -155,6 +156,10 @@ optional_policy(`
 		devicekit_dbus_chat(unconfined_t)
 		devicekit_dbus_chat_disk(unconfined_t)
 		devicekit_dbus_chat_power(unconfined_t)
+	')
+
+	optional_policy(`
+		fedoratp_entrypoint(unconfined_t)
 	')
 
 	optional_policy(`
