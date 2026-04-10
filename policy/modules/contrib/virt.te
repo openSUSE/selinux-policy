@@ -2022,6 +2022,8 @@ corenet_rw_tun_tap_dev(virtnetworkd_t)
 
 dev_rw_sysfs(virtnetworkd_t)
 
+fs_getattr_xattr_fs(virtnetworkd_t)
+
 sysnet_domtrans_ifconfig(virtnetworkd_t)
 sysnet_read_config(virtnetworkd_t)
 
@@ -2189,12 +2191,12 @@ allow virtqemud_t self:udp_socket { connect create_socket_perms };
 allow virtqemud_t qemu_var_run_t:{ dir file sock_file } relabelfrom;
 
 allow virtqemud_t svirt_t:netlink_route_socket create_netlink_socket_perms;
-allow virtqemud_t svirt_t:process { getattr getrlimit setrlimit setsched signal signull transition };
+allow virtqemud_t svirt_t:process { getattr getrlimit getsched setrlimit setsched signal signull transition };
 allow virtqemud_t svirt_t:tcp_socket create_stream_socket_perms;
 allow virtqemud_t svirt_t:udp_socket create_socket_perms;
 allow virtqemud_t svirt_t:unix_stream_socket { connectto create_stream_socket_perms };
 allow virtqemud_t svirt_socket_t:unix_stream_socket connectto;
-allow virtqemud_t svirt_tcg_t:process { getrlimit getsched setsched signal signull transition };
+allow virtqemud_t svirt_tcg_t:process { getrlimit getsched setsched sigkill signal signull transition };
 allow virtqemud_t svirt_tcg_t:unix_stream_socket { connectto create_stream_socket_perms };
 
 allow virtqemud_t svirt_devpts_t:chr_file open;
@@ -2306,7 +2308,7 @@ dev_rw_generic_chr_files(virtqemud_t)
 dev_rw_input_dev(virtqemud_t)
 dev_rw_kvm(virtqemud_t)
 dev_rw_lvm_control(virtqemud_t)
-dev_rw_vhost(virtqemud_t)
+dev_rw_map_vhost(virtqemud_t)
 dev_rw_sev(virtqemud_t)
 dev_setattr_input_dev(virtqemud_t)
 dev_setattr_sev(virtqemud_t)

@@ -74,7 +74,7 @@ interface(`mysql_signull',`
 
 ########################################
 ## <summary>
-##	Allow the specified domain to connect to postgresql with a tcp socket.
+##	Allow the specified domain to connect to mysql with a tcp socket.
 ## </summary>
 ## <param name="domain">
 ##	<summary>
@@ -585,6 +585,39 @@ interface(`mysql_filetrans_named_content',`
 	userdom_user_home_dir_filetrans($1, mysqld_home_t, file, ".my.cnf")
     files_pid_filetrans($1, mysqld_var_run_t, {dir}, "mysqld")
     files_pid_filetrans($1, mysqld_var_run_t, {dir}, "mysql")
+')
+
+########################################
+## <summary>
+##	Create private objects at mysql db directory.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+## <param name="private type">
+##	<summary>
+##	The type of the object to be created.
+##	</summary>
+## </param>
+## <param name="object">
+##	<summary>
+##	The object class of the object being created.
+##	</summary>
+## </param>
+## <param name="name" optional="true">
+##	<summary>
+##	The name of the object being created.
+##	</summary>
+## </param>
+#
+interface(`mysql_db_filetrans',`
+	gen_require(`
+		type mysqld_db_t;
+	')
+
+	filetrans_pattern($1, mysqld_db_t, $2, $3, $4)
 ')
 
 ########################################

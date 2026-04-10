@@ -1408,6 +1408,10 @@ fs_read_nsfs_files(systemd_coredump_t)
 fs_mounton_tmpfs(systemd_coredump_t)
 
 optional_policy(`
+	container_signull(systemd_coredump_t)
+')
+
+optional_policy(`
 	logging_send_syslog_msg(systemd_coredump_t)
 ')
 
@@ -1625,6 +1629,7 @@ corecmd_exec_shell(systemd_kdump_dep_generator_t)
 
 ### nfs generator
 permissive systemd_nfs_generator_t;
+allow systemd_nfs_generator_t self:capability dac_read_search;
 allow systemd_nfs_generator_t self:udp_socket create_socket_perms;
 allow systemd_nfs_generator_t self:netlink_route_socket { create_netlink_socket_perms };
 
@@ -1769,9 +1774,12 @@ manage_lnk_files_pattern(systemd_resolved_t, systemd_resolved_var_run_t, systemd
 manage_sock_files_pattern(systemd_resolved_t, systemd_resolved_var_run_t, systemd_resolved_var_run_t)
 init_pid_filetrans(systemd_resolved_t, systemd_resolved_var_run_t, dir)
 
+allow systemd_resolved_t systemd_machined_var_run_t:sock_file write;
+
 list_dirs_pattern(systemd_resolved_t, systemd_networkd_var_run_t, systemd_networkd_var_run_t)
 read_files_pattern(systemd_resolved_t, systemd_networkd_var_run_t, systemd_networkd_var_run_t)
 allow systemd_resolved_t systemd_networkd_var_run_t:sock_file write;
+allow systemd_resolved_t systemd_networkd_t:unix_stream_socket connectto;
 allow systemd_resolved_t systemd_networkd_var_run_t:dir watch_dir_perms;
 
 kernel_dgram_send(systemd_resolved_t)
