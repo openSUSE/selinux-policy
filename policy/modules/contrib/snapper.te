@@ -187,8 +187,9 @@ optional_policy(`
 ### snapper sdbootutil plugin
 
 # for btrfs
-allow snapper_sdbootutil_plugin_t self:capability sys_admin;
+allow snapper_sdbootutil_plugin_t self:capability { linux_immutable sys_admin };
 allow snapper_sdbootutil_plugin_t self:process { setfscreate };
+
 # PCRE JIT for grep, not needed, has a fallback if it's denied
 dontaudit snapper_sdbootutil_plugin_t self:process execmem;
 
