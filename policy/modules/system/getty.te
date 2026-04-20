@@ -5,6 +5,13 @@ policy_module(getty, 1.10.0)
 # Declarations
 #
 
+## <desc>
+## <p>
+## Allow mgetty and sendfax to work together.
+## </p>
+## </desc>
+gen_tunable(mgetty_allow_sendfax, false)
+
 type getty_t;
 type getty_exec_t;
 init_domain(getty_t, getty_exec_t)
@@ -139,6 +146,20 @@ tunable_policy(`login_console_enabled',`
 	term_use_console(getty_t)
 ',`
 	term_dontaudit_use_console(getty_t)
+')
+
+optional_policy(`
+	tunable_policy(`mgetty_allow_sendfax',`
+		# Hack: sendfax is started as unconfined_t
+		# and named filetrans will not work out
+		# for /var/lock/LCK..*. As this use case
+		# will only affect a small amount of users,
+		# this should be fine.
+		files_manage_generic_locks(getty_t)
+		# Hack: sendfax is started as unconfined_t
+		unconfined_read_files(getty_t)
+		unconfined_signull(getty_t)
+	')
 ')
 
 optional_policy(`
