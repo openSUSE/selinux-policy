@@ -5,3 +5,6 @@
   - [ ] if N/A, add a short statement why: TODO
 - [ ] verified if a backport is needed (e.g. to branches like slfo-1.2)
 
+<!---
+NOTE: If you open the PR, then it is expected that you merge it after the review.
+-->
