@@ -123,11 +123,14 @@ fs_getattr_pidfs(pwupdd_t)
 
 logging_create_devlog_dev(pwupdd_t)
 logging_read_syslog_pid(pwupdd_t)
+logging_send_audit_msgs(pwupdd_t)
 logging_write_syslog_pid_socket(pwupdd_t)
 
 selinux_compute_access_vector(pwupdd_t)
 selinux_read_security_files(pwupdd_t)
 selinux_set_enforce_mode(pwupdd_t)
+
+usermanage_read_crack_db(pwupdd_t)
 
 accountutils_pwaccessd_varlink_socket_connect(pwupdd_t)
 
