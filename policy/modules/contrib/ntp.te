@@ -5,6 +5,14 @@ policy_module(ntp, 1.11.0)
 # Declarations
 #
 
+## <desc>
+## <p>
+## Allow ntpd to access refclock devices
+## </p>
+## </desc>
+#
+gen_tunable(ntpd_refclock_access, false)
+
 attribute_role ntpd_roles;
 
 type ntp_drift_t;
@@ -164,6 +172,19 @@ optional_policy(`
 
 optional_policy(`
 	seutil_sigchld_newrole(ntpd_t)
+')
+
+optional_policy(`
+	tunable_policy(`ntpd_refclock_access',`
+		# /dev/pps0 clock_device_t
+		dev_rw_realtime_clock(ntpd_t)
+		# /dev/ttyUSB0 usbtty_device_t
+		term_use_usb_ttys(ntpd_t)
+		# /dev/ttyS0 tty_device_t
+		term_use_unallocated_ttys(ntpd_t)
+		# also /dev/gps0 /dev/refclock-0 might be needed, but they are device_t and 
+		# people should really use chrony, so not taking that effort atm
+	')
 ')
 
 optional_policy(`
