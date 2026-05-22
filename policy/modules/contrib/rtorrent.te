@@ -96,6 +96,6 @@ optional_policy(`
 
 tunable_policy(`rtorrent_exec_scripts',`
     # execute helper scripts
-    corecmd_exec_bin(rtorrent_t)
+    corecmd_exec_bin_noattr(rtorrent_t)
     userdom_exec_user_bin_files(rtorrent_t)
 ')
