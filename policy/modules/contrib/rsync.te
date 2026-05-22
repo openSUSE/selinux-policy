@@ -209,5 +209,5 @@ optional_policy(`
 
 tunable_policy(`rsync_exec_commands',`
 	corecmd_exec_shell(rsync_t)
-	corecmd_exec_bin(rsync_t)
+	corecmd_exec_bin_noattr(rsync_t)
 ')
