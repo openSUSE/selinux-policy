@@ -12,18 +12,22 @@ function print ()
 tmpdir="$(mktemp -d)"
 trap "rm -rf '$tmpdir'" EXIT
 
-QEMU_BASEARGS=(-accel kvm -accel tcg -nographic -m 1024 -smp 4 -virtfs "local,path=${tmpdir},mount_tag=tmpdir,security_model=mapped-xattr")
+QEMU_BASEARGS=(-cpu host -accel kvm -accel tcg -nographic -m 1024 -smp 4 -virtfs "local,path=${tmpdir},mount_tag=tmpdir,security_model=mapped-xattr")
+
+# Which VM image to boot. Overridden by the CI job to point at the correct download link.
+VM_IMAGE_URL="${VM_IMAGE_URL}"
+IMAGE_FILE="$(basename "${VM_IMAGE_URL}")"
 
 # Prepare the temporary dir
 cp -r "test/testscript" "artifacts" "${tmpdir}"
 ls -la "${tmpdir}/artifacts"
 cd "$tmpdir"
 
-print 32 "# Downloading the latest Tumbleweed Minimal image..."
-wget --no-verbose --progress=bar:force:noscroll https://download.opensuse.org/tumbleweed/appliances/openSUSE-Tumbleweed-Minimal-VM.x86_64-kvm-and-xen.qcow2
+print 32 "# Downloading the VM image (${VM_IMAGE_URL})..."
+wget --no-verbose --progress=bar:force:noscroll "${VM_IMAGE_URL}"
 
 print 32 "# Starting the VM and runnig the testscript..."
-timeout 300 qemu-system-x86_64 "${QEMU_BASEARGS[@]}" -drive if=virtio,file=openSUSE-Tumbleweed-Minimal-VM.x86_64-kvm-and-xen.qcow2 \
+timeout 300 qemu-system-x86_64 "${QEMU_BASEARGS[@]}" -drive if=virtio,file="${IMAGE_FILE}" \
         -fw_cfg name=opt/org.opensuse.combustion/script,file=testscript | sed 's/\x1b\[0;30;47m//g' # sed 's/\x1b\[[0-9;]*m//g'
 
 # Exit if testscript fails to complete
