@@ -1,20 +1,62 @@
 workflow:
     rules:
-        # Only trigger for merge requests to factory. As the pipeline is currently only setup for factory.
+        # Trigger for merge requests to factory or any slfo-* maintenance branch.
         - if: $CI_PIPELINE_SOURCE == 'merge_request_event' &&
-              $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'factory'
+              ($CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'factory' ||
+               $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^slfo-/)
         # Or trigger manually in the web client under 'Build > Pipelines'.
         - if: $CI_PIPELINE_SOURCE == 'web'
-
-image: registry.opensuse.org/opensuse/tumbleweed:latest
 
 stages:
     - build
     - rpmbuild
     - test
 
+# ============================================================================
+# Codestream config templates
+# ----------------------------------------------------------------------------
+# One template per codestream. Each defines:
+#   - rules:          which MR target branch / web ref triggers it
+#   - SLFO_BRANCH:    packaging branch on src.opensuse.org/pool/selinux-policy
+#   - LEAP_VERSION:   Leap container tag to build/rpmbuild in
+#   - VM_IMAGE_URL:   minimal-VM image to boot in the test stage
+#
+# To add a new codestream (e.g. SLE 16.1 / slfo-1.3):
+#   1. Copy the .slfo-1.2 block, swap "1.2" -> "1.3" and "16.0" -> "16.1".
+#   2. Copy the three slfo-1.2 concrete-job stubs at the bottom and do the same.
+# Nothing else in this file needs to change.
+# ============================================================================
+.factory:
+    image: registry.opensuse.org/opensuse/tumbleweed:latest
+    variables:
+        VM_IMAGE_URL: https://download.opensuse.org/tumbleweed/appliances/openSUSE-Tumbleweed-Minimal-VM.x86_64-kvm-and-xen.qcow2
+    rules:
+        - if: $CI_PIPELINE_SOURCE == 'merge_request_event' &&
+              $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'factory'
+        # Web triggers on anything that isn't an slfo-* branch fall through to factory.
+        - if: $CI_PIPELINE_SOURCE == 'web' &&
+              $CI_COMMIT_REF_NAME !~ /^slfo-/
+
+.slfo-1.2:
+    variables:
+        SLFO_BRANCH: slfo-1.2
+        LEAP_VERSION: "16.0"
+        VM_IMAGE_URL: https://download.opensuse.org/distribution/leap/16.0/appliances/Leap-16.0-Minimal-VM.x86_64-kvm-and-xen.qcow2
+    rules:
+        - if: $CI_PIPELINE_SOURCE == 'merge_request_event' &&
+              $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'slfo-1.2'
+        - if: $CI_PIPELINE_SOURCE == 'web' &&
+              $CI_COMMIT_REF_NAME == 'slfo-1.2'
+
+# ============================================================================
+# Stage templates — codestream-agnostic; reference $SLFO_BRANCH / $LEAP_VERSION.
+# ============================================================================
+
+# ---- Factory (Tumbleweed) ----
+# Pulls the spec from the security:SELinux/openSUSE_Factory src.rpm and
+# container.* straight from upstream container-selinux.
 # Based on https://github.com/fedora-selinux/selinux-policy/blob/6063934d9591589ad25b58adf8a54e97dbcded3f/.github/workflows/build.yml
-build:
+.factory-build:
     stage: build
     script:
         - zypper install -y git-core checkpolicy policycoreutils-devel make m4 findutils
@@ -25,9 +67,11 @@ build:
         - make -j $(nproc) validate
         - make -j $(nproc) container.pp
 
-rpmbuild:
+.factory-rpmbuild:
     stage: rpmbuild
     script:
+        - zypper ar -p 98 https://download.opensuse.org/repositories/security:/SELinux/openSUSE_Factory/ selinux
+        - zypper --non-interactive --gpg-auto-import-keys dup --from selinux --allow-vendor-change
         # Install dependencies
         - zypper install -y wget rpm-build python-rpm-macros
         # Download the source RPM
@@ -51,12 +95,87 @@ rpmbuild:
         paths:
             - artifacts/
 
-test:
+# ---- Leap / slfo-* ----
+# Pulls the spec + container.* from src.opensuse.org/pool/selinux-policy on
+# the matching $SLFO_BRANCH, builds inside registry.opensuse.org/opensuse/leap:$LEAP_VERSION.
+.leap-build:
+    stage: build
+    image: registry.opensuse.org/opensuse/leap:$LEAP_VERSION
+    script:
+        - zypper install -y git-core checkpolicy policycoreutils-devel make m4 findutils python3
+        - git clone --depth=1 --branch="$SLFO_BRANCH" https://src.opensuse.org/pool/selinux-policy.git /tmp/selinux-policy
+        - cp /tmp/selinux-policy/container.* policy/modules/contrib
+        - cp dist/targeted/modules.conf policy
+        - make -j $(nproc) policy
+        - make -j $(nproc) validate
+        - make -j $(nproc) container.pp
+
+.leap-rpmbuild:
+    stage: rpmbuild
+    image: registry.opensuse.org/opensuse/leap:$LEAP_VERSION
+    script:
+        - zypper --non-interactive dup
+        # Install build helpers.
+        - zypper --non-interactive install git-core wget rpm-build python-rpm-macros
+        # Fetch packaging sources (spec + container.* + macros + ...) from the SLFO pool repo.
+        - cd ..
+        - git clone --depth=1 --branch="$SLFO_BRANCH" https://src.opensuse.org/pool/selinux-policy /tmp/pool-selinux-policy
+        # Lay out an rpmbuild tree.
+        - echo "%_topdir %(pwd)/rpmbuild" > ~/.rpmmacros
+        - mkdir -p rpmbuild/SOURCES rpmbuild/SPECS
+        - cp /tmp/pool-selinux-policy/selinux-policy.spec rpmbuild/SPECS/
+        # Copy every Source* except the upstream tarball, which we'll replace with the current git state.
+        - find /tmp/pool-selinux-policy -maxdepth 1 -type f ! -name "*.tar.*" ! -name "*.spec" ! -name "_service*" ! -name ".*" -exec cp {} rpmbuild/SOURCES/ \;
+        # Make %setup happy: spec extracts %{name}-%{version}, we want the unversioned dir.
+        - sed -i 's/%{name}-%{version}/%{name}/g' rpmbuild/SPECS/selinux-policy.spec
+        # Replace the source tarball with the current git state.
+        - tar -cJf rpmbuild/SOURCES/selinux-policy.tar.xz selinux-policy
+        # Generate a src.rpm so zypper can resolve BuildRequires (the spec uses
+        # %{python_module ...} which zypper can't grok straight from rpmspec).
+        - rpmbuild -bs rpmbuild/SPECS/selinux-policy.spec
+        - zypper -n source-install -d rpmbuild/SRPMS/selinux-policy-*.src.rpm
+        # Build binary RPMs and move them into the artifacts dir.
+        - rpmbuild -bb rpmbuild/SPECS/selinux-policy.spec
+        - mkdir selinux-policy/artifacts
+        - mv rpmbuild/RPMS/noarch/* selinux-policy/artifacts
+    artifacts:
+        paths:
+            - artifacts/
+
+# ---- Test (shared across all codestreams) ----
+# qemu/combustion boots whatever VM_IMAGE_URL the codestream points at; the
+# container runtime itself doesn't have to match the guest, so Tumbleweed is fine.
+.test-vm:
     stage: test
+    image: registry.opensuse.org/opensuse/tumbleweed:latest
     script:
         - set +e
-        - zypper --non-interactive --quiet install qemu-img qemu-x86 rpm-devel wget
+        - zypper --non-interactive --quiet install qemu-img qemu-x86 rpm-devel wget diffutils
         - bash test/test.sh
     allow_failure:
         exit_codes:
             - 100
+
+# ============================================================================
+# Concrete jobs — each = (codestream template) + (stage template).
+# ============================================================================
+
+# ---- Tumbleweed / factory ----
+build:
+    extends: [.factory, .factory-build]
+
+rpmbuild:
+    extends: [.factory, .factory-rpmbuild]
+
+test:
+    extends: [.factory, .test-vm]
+
+# ---- Leap 16.0 / slfo-1.2 (SLE 16.0 / SLFO 1.2) ----
+build-leap16.0:
+    extends: [.slfo-1.2, .leap-build]
+
+rpmbuild-leap16.0:
+    extends: [.slfo-1.2, .leap-rpmbuild]
+
+test-leap16.0:
+    extends: [.slfo-1.2, .test-vm]
