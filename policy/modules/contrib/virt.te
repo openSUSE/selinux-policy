@@ -28,7 +28,7 @@ gen_tunable(virt_use_execmem, false)
 
 ## <desc>
 ## <p>
-## Allow virtqemu driver to use executable memory and executable stack
+## [Obsolete]Allow virtqemu driver to use executable memory and executable stack
 ## </p>
 ## </desc>
 gen_tunable(virtqemud_use_execmem, true)
@@ -610,7 +610,8 @@ optional_policy(`
 # fsetid - for chmod'ing its runtime files
 allow virtd_t self:capability { chown dac_read_search fowner fsetid ipc_lock kill mknod net_admin net_raw setgid setpcap setuid sys_admin sys_nice sys_ptrace };
 #allow virtd_t self:capability2 compromise_kernel;
-allow virtd_t self:process { execmem getcap getsched setcap setexec setfscreate setsched setsockcreate sigkill signal signull };
+allow virtd_t self:process { getcap getsched setcap setexec setfscreate setsched setsockcreate sigkill signal signull };
+dontaudit virtd_t self:process execmem;
 ifdef(`hide_broken_symptoms',`
 	# caused by some bogus kernel code
 	dontaudit virtd_t self:capability { sys_module };
@@ -2365,10 +2366,6 @@ term_use_ptmx(virtqemud_t)
 
 udev_domtrans(virtqemud_t)
 
-tunable_policy(`virtqemud_use_execmem',`
-	allow virtqemud_t self:process { execmem execstack };
-')
-
 tunable_policy(`virt_use_nfs',`
 	fs_manage_nfs_dirs(virtqemud_t)
 	fs_manage_nfs_files(virtqemud_t)
@@ -2493,6 +2490,8 @@ allow virtstoraged_t self:capability { dac_override dac_read_search fsetid ipc_l
 
 allow virtstoraged_t self:process { setsched };
 
+dontaudit virtstoraged_t self:process execmem;
+
 files_tmp_filetrans(virtstoraged_t, virtstoraged_tmp_t, { file dir })
 
 manage_dirs_pattern(virtstoraged_t, virt_var_run_t, virt_var_run_t)
@@ -2531,6 +2530,7 @@ fs_getattr_configfs_dirs(virtstoraged_t)
 
 storage_raw_read_fixed_disk(virtstoraged_t)
 storage_raw_write_fixed_disk(virtstoraged_t)
+storage_setattr_fixed_disk_dev(virtstoraged_t)
 
 userdom_read_user_home_content_files(virtstoraged_t)
 

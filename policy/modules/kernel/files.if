@@ -1921,6 +1921,12 @@ interface(`files_mmap_exec_all_files',`
 	')
 
 	mmap_exec_files_pattern($1, { file_type $2 }, { file_type $2 })
+
+	# possible to reach these via access(2)
+	allow $1 { file_type $2 }:lnk_file execute;
+	allow $1 { file_type $2 }:chr_file execute;
+	allow $1 { file_type $2 }:blk_file execute;
+	allow $1 { file_type $2 }:fifo_file execute;
 ')
 
 ########################################
@@ -9291,6 +9297,24 @@ interface(`files_watch_var_run_path',`
 
 	files_watch_root_dirs($1)
 	files_watch_var_run_dirs($1)
+')
+
+#######################################
+## <summary>
+##      Mounton a /run directory.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`files_mounton_var_run_dirs',`
+        gen_require(`
+                type var_run_t;
+        ')
+
+	allow $1 var_run_t:dir mounton;
 ')
 
 ########################################
