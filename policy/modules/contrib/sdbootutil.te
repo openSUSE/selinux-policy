@@ -1,0 +1,4 @@
+policy_module(sdbootutil, 1.1.0)
+
+type sdbootutil_var_run_t;
+files_pid_file(sdbootutil_var_run_t)

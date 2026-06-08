@@ -189,6 +189,8 @@ optional_policy(`
 # for btrfs
 allow snapper_sdbootutil_plugin_t self:capability { linux_immutable sys_admin };
 allow snapper_sdbootutil_plugin_t self:process { setfscreate };
+# for logger
+allow snapper_sdbootutil_plugin_t self:unix_dgram_socket { connect create };
 
 # PCRE JIT for grep, not needed, has a fallback if it's denied
 dontaudit snapper_sdbootutil_plugin_t self:process execmem;
@@ -202,6 +204,8 @@ files_tmp_filetrans(snapper_sdbootutil_plugin_t, snapper_sdbootutil_plugin_tmp_t
 # grep /proc/stat
 kernel_read_proc_files(snapper_sdbootutil_plugin_t)
 kernel_view_key(snapper_sdbootutil_plugin_t)
+# logger
+kernel_dgram_send(snapper_sdbootutil_plugin_t)
 
 corecmd_exec_bin(snapper_sdbootutil_plugin_t)
 files_manage_isid_type_files(snapper_sdbootutil_plugin_t)
@@ -236,6 +240,9 @@ fs_manage_efivarfs_files(snapper_sdbootutil_plugin_t)
 fstools_domtrans(snapper_sdbootutil_plugin_t)
 
 init_read_state(snapper_sdbootutil_plugin_t)
+
+# logger
+logging_create_devlog_dev(snapper_sdbootutil_plugin_t)
 
 seutil_read_file_contexts(snapper_sdbootutil_plugin_t)
 
@@ -273,8 +280,14 @@ optional_policy(`
 ')
 
 optional_policy(`
+	sdbootutil_manage_pid_dir(snapper_sdbootutil_plugin_t)
+	sdbootutil_manage_pid_files(snapper_sdbootutil_plugin_t)
+')
+
+optional_policy(`
 	systemd_domtrans_pcrlock(snapper_sdbootutil_plugin_t)
 	systemd_manage_pcrlock_files(snapper_sdbootutil_plugin_t)
+	systemd_exec_systemctl(snapper_sdbootutil_plugin_t)
 ')
 
 optional_policy(`

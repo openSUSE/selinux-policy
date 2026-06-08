@@ -1,0 +1,38 @@
+## <summary>sdbootutil Interface definitions</summary>
+
+########################################
+## <summary>
+##	Allow managing sdbootutil pid directory.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed to transition.
+##	</summary>
+## </param>
+#
+interface(`sdbootutil_manage_pid_dir',`
+	gen_require(`
+		type sdbootutil_var_run_t;
+	')
+
+	manage_dirs_pattern($1, sdbootutil_var_run_t, sdbootutil_var_run_t)
+	files_pid_filetrans($1, sdbootutil_var_run_t, dir, "sdbootutil")
+')
+
+########################################
+## <summary>
+##	Allow managing sdbootutil pid files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed to transition.
+##	</summary>
+## </param>
+#
+interface(`sdbootutil_manage_pid_files',`
+	gen_require(`
+		type sdbootutil_var_run_t;
+	')
+
+	manage_files_pattern($1, sdbootutil_var_run_t, sdbootutil_var_run_t)
+')
