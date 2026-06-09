@@ -1,4 +1,115 @@
-policy_module(sdbootutil, 1.1.0)
+policy_module(sdbootutil, 0.0.1)
+
+type sdbootutil_t;
+type sdbootutil_exec_t;
+init_system_domain(sdbootutil_t, sdbootutil_exec_t)
 
 type sdbootutil_var_run_t;
 files_pid_file(sdbootutil_var_run_t)
+
+type sdbootutil_tmp_t;
+files_tmp_file(sdbootutil_tmp_t)
+
+permissive sdbootutil_t;
+
+# for btrfs
+allow sdbootutil_t self:capability { linux_immutable sys_admin };
+allow sdbootutil_t self:process { setfscreate };
+allow sdbootutil_t self:unix_dgram_socket { connect create getopt setopt };
+
+# PCRE JIT for grep, not needed, has a fallback if it's denied
+dontaudit sdbootutil_t self:process execmem;
+
+manage_dirs_pattern(sdbootutil_t, sdbootutil_tmp_t, sdbootutil_tmp_t)
+manage_files_pattern(sdbootutil_t, sdbootutil_tmp_t, sdbootutil_tmp_t)
+files_tmp_filetrans(sdbootutil_t, sdbootutil_tmp_t, { file dir })
+
+# logging
+kernel_dgram_send(sdbootutil_t)
+# grep /proc/stat
+kernel_read_proc_files(sdbootutil_t)
+kernel_view_key(sdbootutil_t)
+
+corecmd_exec_bin(sdbootutil_t)
+files_manage_isid_type_files(sdbootutil_t)
+files_manage_isid_type_dirs(sdbootutil_t)
+files_manage_isid_type_symlinks(sdbootutil_t)
+
+dev_getattr_loop_control(sdbootutil_t)
+dev_list_sysfs(sdbootutil_t)
+dev_read_sysfs(sdbootutil_t)
+dev_rw_tpm(sdbootutil_t)
+domain_read_view_all_domains_keyrings(sdbootutil_t)
+
+# to delete /etc/systemd/tpm2-pcr-signature.json,
+# maybe this should have its own label
+files_delete_etc_dir_entry(sdbootutil_t)
+files_delete_etc_files(sdbootutil_t)
+
+files_list_kernel_modules(sdbootutil_t)
+files_read_kernel_modules(sdbootutil_t)
+
+# grep through /var/lib/sdbootutil, maybe label it in the future
+# and then this would be better
+files_read_var_lib_files(sdbootutil_t)
+
+files_search_all(sdbootutil_t)
+
+fs_getattr_all_fs(sdbootutil_t)
+fs_getattr_all_files(sdbootutil_t)
+fs_manage_dos_dirs(sdbootutil_t)
+fs_manage_dos_files(sdbootutil_t)
+fs_manage_efivarfs_files(sdbootutil_t)
+fstools_domtrans(sdbootutil_t)
+
+init_read_state(sdbootutil_t)
+
+logging_write_syslog_pid_socket(sdbootutil_t)
+
+seutil_read_file_contexts(sdbootutil_t)
+
+storage_raw_read_fixed_disk_blk_device(sdbootutil_t)
+# for emmc devices, might be revisited though
+storage_raw_read_removable_device(sdbootutil_t)
+
+udev_read_db(sdbootutil_t)
+udev_search_pids(sdbootutil_t)
+
+userdom_view_all_users_keys(sdbootutil_t)
+
+optional_policy(`
+        auth_dontaudit_read_passwd_file(sdbootutil_t)
+')
+
+optional_policy(`
+	# to allow tpm2_getcap connect to system bus
+	dbus_send_system_bus(sdbootutil_t)
+	dbus_stream_connect_system_dbusd(sdbootutil_t)
+	dbus_write_pid_sock_files(sdbootutil_t)
+')
+
+optional_policy(`
+	init_view_key(sdbootutil_t)
+')
+
+optional_policy(`
+	# for cryptsetup
+	lvm_domtrans(sdbootutil_t)
+')
+
+optional_policy(`
+	snapper_read_config_files(sdbootutil_t)
+	snapper_read_data_files(sdbootutil_t)
+	snapper_select_boot_snapshot(sdbootutil_t)
+')
+
+optional_policy(`
+	systemd_domtrans_pcrlock(sdbootutil_t)
+	systemd_manage_pcrlock_files(sdbootutil_t)
+')
+
+optional_policy(`
+	# if tpm2.0-abrmd is installed, tpm2_getcap will use it
+	tabrmd_rw_unix_stream_sockets(sdbootutil_t)
+	tabrmd_dbus_chat(sdbootutil_t)
+')

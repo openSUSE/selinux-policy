@@ -200,8 +200,7 @@ template(`snapper_plugin_template',`
 
 #######################################
 ## <summary>
-##      Allow domain to manage snapper 
-##      sdbootutil plugin temporary files
+##      Allow domain to read snapper config files
 ## </summary>
 ## <param name="domain">
 ##      <summary>
@@ -209,18 +208,18 @@ template(`snapper_plugin_template',`
 ##      </summary>
 ## </param>
 #
-interface(`snapper_sdbootutil_plugin_manage_tmp_files',`
+interface(`snapper_read_config_files',`
     gen_require(`
-        type snapper_sdbootutil_plugin_tmp_t;
+        type snapperd_conf_t;
     ')
 
-    allow $1 snapper_sdbootutil_plugin_tmp_t:file manage_file_perms;
+    read_files_pattern($1, snapperd_conf_t, snapperd_conf_t)
 ')
+
 
 #######################################
 ## <summary>
-##      Allow domain to manage snapper 
-##      sdbootutil plugin temporary directories
+##      Allow domain to read snapper data files
 ## </summary>
 ## <param name="domain">
 ##      <summary>
@@ -228,10 +227,10 @@ interface(`snapper_sdbootutil_plugin_manage_tmp_files',`
 ##      </summary>
 ## </param>
 #
-interface(`snapper_sdbootutil_plugin_manage_tmp_dirs',`
+interface(`snapper_read_data_files',`
     gen_require(`
-        type snapper_sdbootutil_plugin_tmp_t;
+        type snapperd_conf_t;
     ')
 
-    allow $1 snapper_sdbootutil_plugin_tmp_t:dir manage_dir_perms;
+    read_files_pattern($1, snapperd_data_t, snapperd_data_t)
 ')

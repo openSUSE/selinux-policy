@@ -1,1 +1,2 @@
+/usr/bin/sdbootutil	--	gen_context(system_u:object_r:sdbootutil_exec_t,s0)
 /run/sdbootutil(/.*)?		gen_context(system_u:object_r:sdbootutil_var_run_t,s0)

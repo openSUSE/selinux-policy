@@ -2,6 +2,60 @@
 
 ########################################
 ## <summary>
+##      Execute a domain transition to run sdbootutil.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed to transition.
+##      </summary>
+## </param>
+#
+interface(`sdbootutil_domtrans',`
+        gen_require(`
+                type sdbootutil_t, sdbootutil_exec_t;
+        ')
+
+        domtrans_pattern($1, sdbootutil_exec_t, sdbootutil_t)
+')
+
+#######################################
+## <summary>
+##      Allow domain to manage sdbootutil plugin temporary files
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`sdbootutil_manage_tmp_files',`
+        gen_require(`
+            type sdbootutil_tmp_t;
+        ')
+
+        allow $1 sdbootutil_tmp_t:file manage_file_perms;
+')
+
+#######################################
+## <summary>
+##      Allow domain to manage sdbootutil temporary directories
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`sdbootutil_manage_tmp_dirs',`
+        gen_require(`
+            type sdbootutil_tmp_t;
+        ')
+    
+        allow $1 sdbootutil_tmp_t:dir manage_dir_perms;
+')
+
+########################################
+## <summary>
 ##	Allow managing sdbootutil pid directory.
 ## </summary>
 ## <param name="domain">
