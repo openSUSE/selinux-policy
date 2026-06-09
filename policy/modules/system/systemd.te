@@ -2253,6 +2253,8 @@ init_delete_pid_dir_entry(systemd_pcrlock_t)
 init_read_pid_files(systemd_pcrlock_t)
 manage_files_pattern(systemd_pcrlock_t, systemd_pcrlock_var_run_t, systemd_pcrlock_var_run_t)
 
+kernel_dgram_send(systemd_pcrlock_t)
+
 dev_list_sysfs(systemd_pcrlock_t)
 dev_read_sysfs(systemd_pcrlock_t)
 dev_rw_tpm(systemd_pcrlock_t)
