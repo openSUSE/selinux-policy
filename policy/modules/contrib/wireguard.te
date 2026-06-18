@@ -41,6 +41,33 @@ domain_use_interactive_fds(wireguard_t)
 
 files_read_etc_files(wireguard_t)
 
+# openSUSE only >>
+## DNS hatchet part
+allow wireguard_t self:capability sys_admin;
+
+sysnet_create_config(wireguard_t)
+sysnet_mount_file(wireguard_t)
+sysnet_write_config(wireguard_t)
+
+# DNS hatchet is creating a modified /dev/shm/resolv.conf and remounting to
+# /etc/resolv.conf, labels need to be corrected
+fs_tmpfs_filetrans(wireguard_t, net_conf_t, file, "resolv.conf")
+
+files_mounton_rootfs(wireguard_t)
+
+fs_all_mount_fs_perms_tmpfs(wireguard_t)
+fs_mounton_tmpfs(wireguard_t)
+fs_manage_tmpfs_files(wireguard_t)
+fs_search_cgroup_dirs(wireguard_t)
+storage_rw_fixed_disk_blk_dev(wireguard_t)
+
+optional_policy(`
+	mount_exec(wireguard_t)
+	mount_manage_pid_files(wireguard_t)
+')
+
+# openSUSE only <<
+
 optional_policy(`
 	auth_read_passwd(wireguard_t)
 ')
