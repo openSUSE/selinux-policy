@@ -201,6 +201,17 @@ optional_policy(`
 logging_create_devlog_dev(snapper_sdbootutil_plugin_t)
 
 optional_policy(`
+	# systemd-run (sdbootutil-update-predictions.service) 
+	dbus_system_domain(snapper_sdbootutil_plugin_t, snapper_sdbootutil_plugin_exec_t)
+')
+
+optional_policy(`
+	# systemd-run (sdbootutil-update-predictions.service) 
+	init_start(snapper_sdbootutil_plugin_t)
+	init_stop(snapper_sdbootutil_plugin_t)
+')
+
+optional_policy(`
 	sdbootutil_domtrans(snapper_sdbootutil_plugin_t)
 	sdbootutil_manage_pid_dir(snapper_sdbootutil_plugin_t)
 	sdbootutil_manage_pid_files(snapper_sdbootutil_plugin_t)
