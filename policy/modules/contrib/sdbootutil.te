@@ -113,3 +113,9 @@ optional_policy(`
 	tabrmd_rw_unix_stream_sockets(sdbootutil_t)
 	tabrmd_dbus_chat(sdbootutil_t)
 ')
+
+optional_policy(`
+	# bootctl (unconfined_t) accesses /proc/<pid>/comm
+	unconfined_list_dirs(sdbootutil_t)
+	unconfined_read_files(sdbootutil_t)
+')
