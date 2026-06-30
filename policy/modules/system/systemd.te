@@ -2253,6 +2253,8 @@ init_delete_pid_dir_entry(systemd_pcrlock_t)
 init_read_pid_files(systemd_pcrlock_t)
 manage_files_pattern(systemd_pcrlock_t, systemd_pcrlock_var_run_t, systemd_pcrlock_var_run_t)
 
+kernel_dgram_send(systemd_pcrlock_t)
+
 dev_list_sysfs(systemd_pcrlock_t)
 dev_read_sysfs(systemd_pcrlock_t)
 dev_rw_tpm(systemd_pcrlock_t)
@@ -2266,8 +2268,11 @@ storage_raw_read_fixed_disk_blk_device(systemd_pcrlock_t)
 udev_read_db(systemd_pcrlock_t)
 
 optional_policy(`
-    snapper_sdbootutil_plugin_manage_tmp_files(systemd_pcrlock_t)
-    snapper_sdbootutil_plugin_manage_tmp_dirs(systemd_pcrlock_t)
+    sdbootutil_manage_tmp_files(systemd_pcrlock_t)
+    sdbootutil_manage_tmp_dirs(systemd_pcrlock_t)
+')
+
+optional_policy(`
     snapper_write_inherited_pipe(systemd_pcrlock_t)
 ')
 # still keep it permissive for now. Failure to run can prevent booting
