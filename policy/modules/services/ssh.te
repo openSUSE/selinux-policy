@@ -76,7 +76,6 @@ ssh_server_template(sshd_session)
 #role system_r types sshd_session_t;
 type sshd_session_exec_t;
 corecmd_executable_file(sshd_session_exec_t)
-permissive sshd_session_t;
 domain_type(sshd_session_t);
 domain_entry_file(sshd_session_t, sshd_session_exec_t)
 domain_dyntrans_type(sshd_session_t)
@@ -134,6 +133,11 @@ optional_policy(`
 ')
 
 optional_policy(`
+	ftp_dyntrans_sftpd(sshd_session_t)
+	ftp_dyntrans_anon_sftpd(sshd_session_t)
+')
+
+optional_policy(`
 	ica_rw_map_tmpfs_files(sshd_session_t)
 ')
 
@@ -168,7 +172,6 @@ term_relabelto_all_ptys(sshd_session_t)
 type sshd_auth_t;
 role system_r types sshd_auth_t;
 type sshd_auth_exec_t;
-permissive sshd_auth_t;
 domain_type(sshd_auth_t);
 corecmd_executable_file(sshd_auth_exec_t)
 domain_entry_file(sshd_auth_t, sshd_auth_exec_t)
@@ -536,11 +539,6 @@ optional_policy(`
 
 optional_policy(`
 	daemontools_service_domain(sshd_t, sshd_exec_t)
-')
-
-optional_policy(`
-	ftp_dyntrans_sftpd(sshd_t)
-	ftp_dyntrans_anon_sftpd(sshd_t)
 ')
 
 optional_policy(`

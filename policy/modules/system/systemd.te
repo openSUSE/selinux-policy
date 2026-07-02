@@ -365,6 +365,7 @@ files_pid_file(systemd_varlink_registry_t)
 #  is for /run/user/$USER ($USER ownership is $USER:$USER)
 allow systemd_logind_t self:capability { chown kill dac_read_search dac_override fowner sys_tty_config sys_admin };
 allow systemd_logind_t self:capability2 block_suspend;
+allow systemd_logind_t self:cap_userns sys_ptrace;
 
 allow systemd_logind_t self:process getcap;
 allow systemd_logind_t self:netlink_kobject_uevent_socket create_socket_perms;
@@ -605,6 +606,7 @@ manage_lnk_files_pattern(systemd_machined_t, systemd_machined_var_run_t, systemd
 manage_sock_files_pattern(systemd_machined_t, systemd_machined_var_run_t, systemd_machined_var_run_t)
 init_pid_filetrans(systemd_machined_t, systemd_machined_var_run_t, dir, "machines")
 init_pid_filetrans(systemd_machined_t, systemd_machined_var_run_t, dir, "machine")
+init_pid_filetrans(systemd_machined_t, systemd_machined_var_run_t, dir, "nspawn")
 
 manage_dirs_pattern(systemd_machined_t, systemd_machined_var_lib_t, systemd_machined_var_lib_t)
 manage_files_pattern(systemd_machined_t, systemd_machined_var_lib_t, systemd_machined_var_lib_t)
@@ -1094,6 +1096,8 @@ manage_lnk_files_pattern(systemd_hostnamed_t, hostname_etc_t, hostname_etc_t)
 files_etc_filetrans(systemd_hostnamed_t, hostname_etc_t, file)
 init_pid_filetrans(systemd_hostnamed_t, hostname_etc_t, file )
 
+allow systemd_hostnamed_t systemd_hwdb_etc_t:file read;
+
 kernel_dgram_send(systemd_hostnamed_t)
 kernel_read_xen_state(systemd_hostnamed_t)
 kernel_read_sysctl(systemd_hostnamed_t)
@@ -1414,6 +1418,7 @@ fs_mounton_tmpfs(systemd_coredump_t)
 
 optional_policy(`
 	container_signull(systemd_coredump_t)
+	container_runtime_signull(systemd_coredump_t)
 ')
 
 optional_policy(`
@@ -2074,6 +2079,7 @@ systemd_read_efivarfs(systemd_userdbd_t)
 
 # systemd-sleep wants cap_sys_admin to check btrfs swapfile offset (https://github.com/systemd/systemd/pull/29382)
 allow systemd_sleep_t self:capability { linux_immutable sys_resource sys_admin };
+allow systemd_sleep_t self:capability2 { perfmon };
 # systemd-sleep needs to set timer for suspend-then-hibernate
 allow systemd_sleep_t self:capability2 wake_alarm;
 dontaudit systemd_sleep_t self:capability sys_ptrace;
@@ -2160,8 +2166,6 @@ allow systemd_mountfsd_t self:capability { sys_ptrace sys_resource };
 allow systemd_mountfsd_t self:capability2 { perfmon };
 allow systemd_mountfsd_t systemd_mountfsd_exec_t:file execute_no_trans;
 
-permissive systemd_mountfsd_t;
-
 kernel_dgram_send(systemd_mountfsd_t)
 
 ########################################
@@ -2194,8 +2198,6 @@ optional_policy(`
     dbus_watch_pid_dir_path(systemd_oomd_t)
     dbus_watch_pid_sock_files(systemd_oomd_t)
 ')
-
-permissive systemd_oomd_t;
 
 ########################################
 #
@@ -2282,8 +2284,6 @@ permissive systemd_pcrlock_t;
 #
 # systemd_user_runtimedir local policy
 #
-
-permissive systemd_user_runtimedir_t;
 
 allow systemd_user_runtimedir_t self:capability { dac_override dac_read_search fowner sys_admin };
 allow systemd_user_runtimedir_t self:netlink_selinux_socket create_socket_perms;
