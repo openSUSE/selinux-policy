@@ -229,7 +229,7 @@ interface(`snapper_read_config_files',`
 #
 interface(`snapper_read_data_files',`
     gen_require(`
-        type snapperd_conf_t;
+        type snapperd_data_t;
     ')
 
     read_files_pattern($1, snapperd_data_t, snapperd_data_t)
