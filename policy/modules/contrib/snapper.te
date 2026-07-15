@@ -219,4 +219,6 @@ optional_policy(`
 
 optional_policy(`
 	systemd_exec_systemctl(snapper_sdbootutil_plugin_t)
+	systemd_status_systemd_services(snapper_sdbootutil_plugin_t)
+	systemd_stop_systemd_services(snapper_sdbootutil_plugin_t)
 ')
