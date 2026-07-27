@@ -43,6 +43,8 @@ allow newidmapd_t self:cap_userns sys_admin;
 
 allow newidmapd_t self:unix_dgram_socket { create getopt setopt write };
 
+accountutils_pwaccessd_varlink_socket_connect(newidmapd_t)
+
 kernel_dgram_send(newidmapd_t)
 
 auth_read_passwd_file(newidmapd_t)
@@ -73,8 +75,8 @@ allow pwaccessd_t self:unix_dgram_socket { create getopt setopt write };
 
 kernel_dgram_send(pwaccessd_t)
 
-auth_read_passwd_file(pwaccessd_t)
 auth_read_shadow(pwaccessd_t)
+auth_use_nsswitch(pwaccessd_t)
 
 create_dirs_pattern(pwaccessd_t, accountutils_var_run_t, accountutils_var_run_t)
 rw_dirs_pattern(pwaccessd_t, accountutils_var_run_t, accountutils_var_run_t)
@@ -85,11 +87,6 @@ fs_getattr_pidfs(pwaccessd_t)
 
 logging_read_syslog_pid(pwaccessd_t)
 logging_write_syslog_pid_socket(pwaccessd_t)
-
-
-optional_policy(`
-	systemd_userdbd_stream_connect(pwaccessd_t)
-')
 
 permissive pwaccessd_t;
 
