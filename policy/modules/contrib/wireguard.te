@@ -41,6 +41,8 @@ domain_use_interactive_fds(wireguard_t)
 
 files_read_etc_files(wireguard_t)
 
+fs_read_cgroup_files(wireguard_t)
+
 # openSUSE only >>
 ## DNS hatchet part
 allow wireguard_t self:capability sys_admin;
