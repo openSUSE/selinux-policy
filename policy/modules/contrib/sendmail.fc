@@ -8,3 +8,7 @@
 /run/sendmail(/.*)?                 gen_context(system_u:object_r:sendmail_var_run_t,s0)
 /run/sm-client\.pid		--	gen_context(system_u:object_r:sendmail_var_run_t,s0)
 /run/smtpd\.sock		-s	gen_context(system_u:object_r:sendmail_var_run_t,s0)
+
+# (open)SUSE only
+/var/lib/sendmail(/.*)?               gen_context(system_u:object_r:sendmail_var_lib_t,s0)
+/var/spool/clientmqueue/sm-client\.pid  --  gen_context(system_u:object_r:sendmail_var_run_t,s0)
