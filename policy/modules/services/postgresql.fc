@@ -17,7 +17,7 @@
 
 /usr/lib/pgsql/test/regress(/.*)?	gen_context(system_u:object_r:postgresql_db_t,s0)
 /usr/lib/pgsql/test/regress/pg_regress -- gen_context(system_u:object_r:postgresql_exec_t,s0)
-/usr/lib/postgresql/bin/.*	--	gen_context(system_u:object_r:postgresql_exec_t,s0)
+/usr/lib/postgresql[0-9]*/bin/.*	--	gen_context(system_u:object_r:postgresql_exec_t,s0)
 
 /usr/lib/systemd/system/postgresql.*    --  gen_context(system_u:object_r:postgresql_unit_file_t,s0)
 
@@ -28,6 +28,9 @@ ifdef(`distro_debian', `
 ifdef(`distro_redhat', `
 /usr/share/jonas/pgsql(/.*)?		gen_context(system_u:object_r:postgresql_db_t,s0)
 ')
+
+# (open)SUSE only
+/usr/share/postgresql/postgresql-script	--	gen_context(system_u:object_r:postgresql_initrc_exec_t,s0)
 
 #
 # /var
