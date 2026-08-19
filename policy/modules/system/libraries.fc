@@ -30,6 +30,7 @@ ifdef(`distro_redhat',`
 #
 /etc/ld\.so\.cache			--	gen_context(system_u:object_r:ld_so_cache_t,s0)
 /etc/ld\.so\.cache~			--	gen_context(system_u:object_r:ld_so_cache_t,s0)
+/etc/ld\.so\.cache\.[^/]+		--	gen_context(system_u:object_r:ld_so_cache_t,s0)
 /etc/ld\.so\.preload			--	gen_context(system_u:object_r:ld_so_cache_t,s0)
 /etc/ld\.so\.preload~			--	gen_context(system_u:object_r:ld_so_cache_t,s0)
 
