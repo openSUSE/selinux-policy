@@ -533,8 +533,8 @@ optional_policy(`
 ')
 
 optional_policy(`
-    kandim_kanidm_sshkeys_transition(sshd_t)
-    kandim_kanidm_sshkeys_exec(sshd_t)
+    kandim_kanidm_sshkeys_transition(sshd_session_t)
+    kandim_kanidm_sshkeys_exec(sshd_session_t)
 ')
 
 optional_policy(`
