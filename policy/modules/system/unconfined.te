@@ -1,10 +1,5 @@
 policy_module(unconfined, 3.5.0)
 
-require {
-        type var_run_t;
-        type net_conf_t;
-}
-
 ########################################
 #
 # Declarations
@@ -34,8 +29,6 @@ corecmd_shell_entry_type(unconfined_service_t)
 
 init_use_notify(unconfined_service_t)
 usermanage_run_passwd(unconfined_service_t, system_r)
-
-filetrans_pattern(unconfined_service_t, var_run_t, net_conf_t, dir)
 
 optional_policy(`
 	rpm_transition_script(unconfined_service_t, system_r)
