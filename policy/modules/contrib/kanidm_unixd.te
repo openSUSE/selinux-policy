@@ -39,6 +39,8 @@ files_type(kanidm_sshkeys_direct_exec_t)
 
 type kanidm_sshkeys_t;
 domain_type(kanidm_sshkeys_t)
+role system_r types kanidm_sshkeys_t;
+
 type kanidm_sshkeys_direct_t;
 domain_type(kanidm_sshkeys_direct_t)
 
