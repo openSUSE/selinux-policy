@@ -247,6 +247,12 @@ optional_policy(`
 ')
 
 optional_policy(`
+	tunable_policy(`authlogin_pam_ssh_agent',`
+		ssh_read_user_home_files(policykit_auth_t)
+	')
+')
+
+optional_policy(`
     udev_read_db(policykit_auth_t)
 ')
 
