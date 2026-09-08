@@ -168,6 +168,9 @@ optional_policy(`
 #
 
 allow policykit_auth_t self:capability { sys_nice ipc_lock setgid setuid };
+tunable_policy(`authlogin_pam_ssh_agent',`
+	allow policykit_auth_t self:capability { dac_read_search dac_override };
+')
 dontaudit policykit_auth_t self:capability sys_tty_config;
 allow policykit_auth_t self:process { setsched getsched signal };
 
