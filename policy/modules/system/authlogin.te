@@ -7,6 +7,13 @@ policy_module(authlogin, 2.5.1)
 
 ## <desc>
 ## <p>
+## Allow pam_ssh_agent configure custom key location
+## </p>
+## </desc>
+gen_tunable(authlogin_pam_ssh_agent, false)
+
+## <desc>
+## <p>
 ## Allow users to login using a radius server
 ## </p>
 ## </desc>
