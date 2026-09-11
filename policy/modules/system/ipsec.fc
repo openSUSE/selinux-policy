@@ -41,6 +41,7 @@
 /usr/libexec/ipsec/_plutoload	-- 	gen_context(system_u:object_r:ipsec_mgmt_exec_t,s0)
 /usr/libexec/ipsec/_plutorun	--	gen_context(system_u:object_r:ipsec_mgmt_exec_t,s0)
 /usr/libexec/ipsec/charon	--	gen_context(system_u:object_r:ipsec_exec_t,s0)
+/usr/libexec/ipsec/charon-nm	--	gen_context(system_u:object_r:ipsec_exec_t,s0)
 /usr/libexec/ipsec/eroute	--	gen_context(system_u:object_r:ipsec_exec_t,s0)
 /usr/libexec/ipsec/klipsdebug	--	gen_context(system_u:object_r:ipsec_exec_t,s0)
 /usr/libexec/ipsec/pluto	--	gen_context(system_u:object_r:ipsec_exec_t,s0)
