@@ -59,6 +59,10 @@ optional_policy(`
 ')
 
 optional_policy(`
+    container_runtime_nnp_domtrans(unconfined_service_t)
+')
+
+optional_policy(`
 	tunable_policy(`unconfined_service_transition_to_unconfined_user',`
 		unconfined_domtrans(unconfined_service_t)
 	')
