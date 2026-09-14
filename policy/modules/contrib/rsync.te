@@ -131,6 +131,7 @@ dev_read_urand(rsync_t)
 fs_getattr_xattr_fs(rsync_t)
 fs_search_auto_mountpoints(rsync_t)
 
+files_list_var(rsync_t)
 files_search_home(rsync_t)
 
 auth_use_nsswitch(rsync_t)
@@ -179,6 +180,8 @@ tunable_policy(`rsync_export_all_ro',`
 	fs_read_nfs_files(rsync_t)
 	fs_read_fusefs_files(rsync_t)
 	fs_read_cifs_files(rsync_t)
+	files_getattr_non_auth_pipes(rsync_t)
+	files_getattr_non_auth_sockets(rsync_t)
 	files_list_non_auth_dirs(rsync_t)
 	files_read_non_auth_files(rsync_t)
 	files_read_non_auth_symlinks(rsync_t)

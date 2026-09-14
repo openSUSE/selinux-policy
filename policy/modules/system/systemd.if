@@ -523,6 +523,26 @@ interface(`systemd_ssh_issue_read_pid_files',`
 
 ######################################
 ## <summary>
+##	Manage systemd_ssh_issue PID files and dirs.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`systemd_ssh_issue_manage_pid_files',`
+	gen_require(`
+		type systemd_ssh_issue_var_run_t;
+	')
+
+	files_search_pids($1)
+	manage_dirs_pattern($1, systemd_ssh_issue_var_run_t, systemd_ssh_issue_var_run_t)
+	manage_files_pattern($1, systemd_ssh_issue_var_run_t, systemd_ssh_issue_var_run_t)
+')
+
+######################################
+## <summary>
 ##	Read systemd_login PID files.
 ## </summary>
 ## <param name="domain">
@@ -3282,6 +3302,25 @@ interface(`systemd_userdbd_stream_connect',`
 
 #######################################
 ## <summary>
+##	Read named sockets in userdbd runtime directory
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`systemd_read_userdbd_runtime_sock_files',`
+	gen_require(`
+		type systemd_userdbd_runtime_t;
+	')
+
+	files_search_pids($1)
+	read_sock_files_pattern($1, systemd_userdbd_runtime_t, systemd_userdbd_runtime_t)
+')
+
+#######################################
+## <summary>
 ##	Manage named sockets in userdbd runtime directory
 ## </summary>
 ## <param name="domain">
@@ -3295,6 +3334,7 @@ interface(`systemd_manage_userdbd_runtime_sock_files',`
         	type systemd_userdbd_runtime_t;
 	')
 
+	files_search_pids($1)
 	manage_sock_files_pattern($1, systemd_userdbd_runtime_t, systemd_userdbd_runtime_t)
 ')
 

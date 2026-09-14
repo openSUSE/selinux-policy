@@ -1321,6 +1321,24 @@ interface(`files_relabel_base_file_types',`
 
 ########################################
 ## <summary>
+##	Mounton all base file types.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_mounton_base_file_types',`
+	gen_require(`
+		attribute base_file_type;
+	')
+
+	allow $1 base_file_type:dir { search_dir_perms mounton };
+	allow $1 base_file_type:file { getattr mounton };
+')
+########################################
+## <summary>
 ##	Read all directories on the filesystem, except
 ##	the listed exceptions.
 ## </summary>
@@ -2158,6 +2176,42 @@ interface(`files_getattr_non_auth_dirs',`
 
 ########################################
 ## <summary>
+##     Get attributes of all non-authentication related pipes
+## </summary>
+## <param name="domain">
+##     <summary>
+##     Domain allowed access.
+##     </summary>
+## </param>
+#
+interface(`files_getattr_non_auth_pipes',`
+       gen_require(`
+               attribute non_auth_file_type;
+       ')
+
+       allow $1 non_auth_file_type:fifo_file getattr_fifo_file_perms;
+')
+
+########################################
+## <summary>
+##     Get attributes of all non-authentication related sockets
+## </summary>
+## <param name="domain">
+##     <summary>
+##     Domain allowed access.
+##     </summary>
+## </param>
+#
+interface(`files_getattr_non_auth_sockets',`
+       gen_require(`
+               attribute non_auth_file_type;
+       ')
+
+       allow $1 non_auth_file_type:sock_file getattr_sock_file_perms;
+')
+
+########################################
+## <summary>
 ##	Read all non-authentication related
 ##	directories.
 ## </summary>
@@ -2677,6 +2731,24 @@ interface(`files_dontaudit_unmount_all_mountpoints',`
 	')
 
 	dontaudit $1 mountpoint:filesystem unmount;
+')
+
+########################################
+## <summary>
+##	Mount, remount, unmount all mountpoint filesystems.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_all_mount_fs_perms_mountpoint_fs',`
+	gen_require(`
+		attribute mountpoint;
+	')
+
+	allow $1 mountpoint:filesystem mount_fs_perms;
 ')
 
 ########################################
@@ -6319,6 +6391,25 @@ interface(`files_read_system_conf_files',`
 
 #######################################
 ## <summary>
+##	Write manageable system configuration files in /etc
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_write_system_conf_files',`
+	gen_require(`
+		type etc_t, system_conf_t;
+	')
+
+	files_search_etc($1)
+	write_files_pattern($1, system_conf_t, system_conf_t)
+')
+
+#######################################
+## <summary>
 ##	Watch manageable system configuration dirs in /etc
 ## </summary>
 ## <param name="domain">
@@ -6446,6 +6537,28 @@ interface(`files_etc_filetrans_system_conf',`
     ')
 
     filetrans_pattern($1, etc_t, system_conf_t, file)
+')
+
+###################################
+## <summary>
+##  Create the sysctl.d directory in /run with the type used
+##  for the manageable system config files and manage config
+##  files in it.
+## </summary>
+## <param name="domain">
+##  <summary>
+##  The type of the process performing this action.
+##  </summary>
+## </param>
+#
+interface(`files_manage_pid_system_conf',`
+    gen_require(`
+        type var_run_t, system_conf_t;
+    ')
+
+    filetrans_pattern($1, var_run_t, system_conf_t, dir, "sysctl.d")
+    manage_dirs_pattern($1, var_run_t, system_conf_t)
+    manage_files_pattern($1, system_conf_t, system_conf_t)
 ')
 
 ######################################

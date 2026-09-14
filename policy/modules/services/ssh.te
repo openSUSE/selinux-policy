@@ -95,7 +95,7 @@ allow sshd_net_t sshd_session_t:fifo_file write;
 allow sshd_net_t sshd_session_t:unix_stream_socket { ioctl read write };
 allow sshd_session_t sshd_t:tcp_socket { getattr getopt read setopt write };
 allow sshd_session_t sshd_t:unix_stream_socket { getattr read write };
-allow sshd_session_t sshd_t:vsock_socket { getattr };
+allow sshd_session_t sshd_t:vsock_socket { getattr read write };
 
 allow sshd_session_t sshd_auth_t:process signal;
 
@@ -103,9 +103,22 @@ allow sshd_session_t ssh_home_t:dir relabelto;
 allow sshd_session_t ssh_home_t:file relabelto;
 manage_dirs_pattern(sshd_session_t, ssh_home_t, ssh_home_t)
 manage_files_pattern(sshd_session_t, ssh_home_t, ssh_home_t)
+manage_sock_files_pattern(sshd_session_t, ssh_home_t, ssh_home_t)
 
 kernel_stream_connect(sshd_session_t)
 kernel_read_net_sysctls(sshd_session_t)
+
+# -X/ForwardX11 yes
+corenet_tcp_bind_xserver_port(sshd_session_t)
+# gnome remote desktop
+corenet_tcp_connect_gnome_remote_desktop_port(sshd_session_t)
+# socks proxy
+corenet_tcp_connect_http_port(sshd_session_t)
+# ssh tunnel
+corenet_tcp_connect_generic_port(sshd_session_t)
+
+# TCP forwarding/ProxyJump
+corenet_tcp_connect_ssh_port(sshd_session_t)
 
 fs_getattr_all_fs(sshd_session_t)
 
@@ -130,6 +143,7 @@ optional_policy(`
 
 optional_policy(`
 	cockpit_read_pid_files(sshd_session_t)
+	cockpit_session_signull(sshd_session_t)
 ')
 
 optional_policy(`
@@ -185,7 +199,7 @@ allow sshd_auth_t self:unix_dgram_socket { create ioctl };
 
 allow sshd_auth_t sshd_t:tcp_socket { getattr read write getopt setopt };
 allow sshd_auth_t sshd_t:unix_stream_socket getattr;
-allow sshd_auth_t sshd_t:vsock_socket getattr;
+allow sshd_auth_t sshd_t:vsock_socket { getattr read write };
 
 allow sshd_auth_t sshd_session_t:unix_stream_socket { read write };
 
@@ -542,7 +556,7 @@ optional_policy(`
 ')
 
 optional_policy(`
-	gitosis_manage_lib_files(sshd_t)
+	gitosis_manage_lib_files(sshd_session_t)
 ')
 
 optional_policy(`
@@ -886,6 +900,9 @@ allow ssh_agent_type self:capability setgid;
 manage_dirs_pattern(ssh_agent_type, ssh_agent_tmp_t, ssh_agent_tmp_t)
 manage_sock_files_pattern(ssh_agent_type, ssh_agent_tmp_t, ssh_agent_tmp_t)
 files_tmp_filetrans(ssh_agent_type, ssh_agent_tmp_t, { dir sock_file })
+
+manage_files_pattern(ssh_agent_type, ssh_home_t, ssh_home_t)
+manage_sock_files_pattern(ssh_agent_type, ssh_home_t, ssh_home_t)
 
 kernel_read_kernel_sysctls(ssh_agent_type)
 

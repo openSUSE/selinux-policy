@@ -1532,16 +1532,24 @@ optional_policy(`
 optional_policy(`
 	ssh_basic_client_template(virsh, virsh_t, system_r)
 
+	allow virsh_t virsh_ssh_t:process signal;
+	dontaudit virsh_ssh_t virsh_transition_domain:fifo_file rw_inherited_fifo_file_perms;
+
 	kernel_read_xen_state(virsh_ssh_t)
 	kernel_write_xen_state(virsh_ssh_t)
 
-	dontaudit virsh_ssh_t virsh_transition_domain:fifo_file rw_inherited_fifo_file_perms;
 	files_search_tmp(virsh_ssh_t)
 
 	fs_manage_xenfs_dirs(virsh_ssh_t)
 	fs_manage_xenfs_files(virsh_ssh_t)
 
-	userdom_search_admin_dir(virsh_ssh_t)
+	optional_policy(`
+		kerberos_search_keytab(virsh_ssh_t)
+	')
+
+	optional_policy(`
+		userdom_search_admin_dir(virsh_ssh_t)
+	')
 ')
 
 optional_policy(`
@@ -2177,6 +2185,10 @@ optional_policy(`
 	dnsmasq_filetrans_named_content_fromdir(virtproxyd_t, virtproxyd_var_run_t)
 ')
 
+optional_policy(`
+	systemd_homed_stream_connect(virtproxyd_t)
+')
+
 #######################################
 #
 # virtqemud local policy
@@ -2229,6 +2241,7 @@ delete_lnk_files_pattern(virtqemud_t, virt_etc_rw_t, virt_etc_rw_t)
 manage_files_pattern(virtqemud_t, virtqemud_lock_t, virtqemud_lock_t)
 files_lock_filetrans(virtqemud_t, virtqemud_lock_t, file)
 
+allow virtqemud_t self:fifo_file relabelfrom;
 allow virtqemud_t virtqemud_var_run_t:dir relabelfrom;
 allow virtqemud_t virtqemud_var_run_t:sock_file relabelfrom;
 allow virtqemud_t virt_log_t:file relabel_file_perms;
@@ -2452,6 +2465,10 @@ optional_policy(`
 ')
 
 optional_policy(`
+	udev_domtrans(virtqemud_t)
+')
+
+optional_policy(`
         unconfined_server_read_state(virtqemud_t)
 ')
 
@@ -2540,6 +2557,10 @@ optional_policy(`
 
 optional_policy(`
 	fstools_domtrans(virtstoraged_t)
+')
+
+optional_policy(`
+	iscsid_domtrans(virtstoraged_t)
 ')
 
 optional_policy(`

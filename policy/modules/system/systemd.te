@@ -69,6 +69,9 @@ files_tmpfs_file(systemd_coredump_tmpfs_t)
 type systemd_coredump_var_lib_t;
 files_type(systemd_coredump_var_lib_t)
 
+type systemd_coredump_var_run_t;
+files_pid_file(systemd_coredump_var_run_t)
+
 systemd_domain_template(systemd_hibernate_resume)
 
 systemd_domain_template(systemd_hwdb)
@@ -1355,6 +1358,8 @@ kernel_read_security_state(systemd_sysctl_t)
 kernel_write_security_state(systemd_sysctl_t)
 
 files_read_system_conf_files(systemd_sysctl_t)
+# create /run/sysctl.d and config files in it
+files_manage_pid_system_conf(systemd_sysctl_t)
 
 # fs.binfmt_misc.status
 fs_register_binary_executable_type(systemd_sysctl_t)
@@ -1397,6 +1402,9 @@ manage_dirs_pattern(systemd_coredump_t, systemd_coredump_var_lib_t, systemd_core
 manage_files_pattern(systemd_coredump_t, systemd_coredump_var_lib_t, systemd_coredump_var_lib_t)
 mmap_files_pattern(systemd_coredump_t, systemd_coredump_var_lib_t, systemd_coredump_var_lib_t)
 init_var_lib_filetrans(systemd_coredump_t, systemd_coredump_var_lib_t, dir, "coredump")
+
+# /run/systemd/coredumpd/kernel socket
+allow systemd_coredump_t systemd_coredump_var_run_t:sock_file manage_sock_file_perms;
 
 kernel_rw_usermodehelper_state(systemd_coredump_t)
 
@@ -2206,19 +2214,23 @@ optional_policy(`
 #
 
 allow systemd_nsresourced_t self:bpf { map_create map_read map_write prog_load prog_run };
-allow systemd_nsresourced_t self:capability sys_resource;
+allow systemd_nsresourced_t self:capability { setgid setuid sys_resource };
 allow systemd_nsresourced_t self:capability2 { bpf perfmon };
+allow systemd_nsresourced_t self:cap_userns sys_admin;
 allow systemd_nsresourced_t self:perf_event manage_perf_event_perms;
 allow systemd_nsresourced_t systemd_nsresourced_exec_t:file execute_no_trans;
 
 #read_files_pattern(systemd_nsresourced_t, systemd_nsresourced_runtime_t, systemd_nsresourced_runtime_t)
+manage_files_pattern(systemd_nsresourced_t, systemd_nsresourced_runtime_t, systemd_nsresourced_runtime_t)
 manage_dirs_pattern(systemd_nsresourced_t, systemd_nsresourced_runtime_t, systemd_nsresourced_runtime_t)
 
 kernel_dgram_send(systemd_nsresourced_t)
+kernel_read_psi(systemd_nsresourced_t)
 
 dev_read_sysfs(systemd_nsresourced_t)
 
 fs_cgroup_write_memory_pressure(systemd_nsresourced_t)
+fs_read_nsfs_files(systemd_nsresourced_t)
 fs_manage_bpf_dirs(systemd_nsresourced_t)
 fs_manage_bpf_files(systemd_nsresourced_t)
 
