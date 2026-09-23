@@ -288,6 +288,12 @@ ifdef(`distro_gentoo',`
 # also covers /usr/lib64/libexec due to equivalency rule '/usr/lib64 /usr/lib'
 /usr/lib/libexec(/.*)?			gen_context(system_u:object_r:bin_t,s0)
 
+# (open)SUSE only for certification-sles-eal4
+/usr/lib/common-criteria/apply	--	gen_context(system_u:object_r:bin_t,s0)
+/usr/lib/common-criteria/check	--	gen_context(system_u:object_r:bin_t,s0)
+/usr/lib/common-criteria/render-banner	--	gen_context(system_u:object_r:bin_t,s0)
+/usr/lib/common-criteria/scripts(/.*)?		gen_context(system_u:object_r:bin_t,s0)
+
 /usr/libexec/git-core/git-shell	--	gen_context(system_u:object_r:shell_exec_t,s0)
 /usr/libexec/cockpit-agent      --  gen_context(system_u:object_r:shell_exec_t,s0)
 /usr/bin/cockpit-bridge         -- gen_context(system_u:object_r:shell_exec_t,s0)
