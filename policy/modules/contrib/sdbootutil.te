@@ -108,6 +108,7 @@ optional_policy(`
 optional_policy(`
 	systemd_domtrans_pcrlock(sdbootutil_t)
 	systemd_manage_pcrlock_files(sdbootutil_t)
+        filetrans_pattern(sdbootutil_t, systemd_pcrlock_var_lib_t, systemd_pcrlock_var_lib_t, file)
 ')
 
 optional_policy(`
