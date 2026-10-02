@@ -23,7 +23,7 @@ files_pid_file(sysstat_var_run_t)
 # Local policy
 #
 
-allow sysstat_t self:capability { dac_read_search  sys_admin sys_resource sys_tty_config };
+allow sysstat_t self:capability { dac_read_search sys_admin sys_resource sys_tty_config };
 allow sysstat_t self:fifo_file rw_fifo_file_perms;
 
 manage_dirs_pattern(sysstat_t,sysstat_log_t,sysstat_log_t)
