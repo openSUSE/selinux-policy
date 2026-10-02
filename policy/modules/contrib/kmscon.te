@@ -66,7 +66,13 @@ dev_rw_input_dev(kmscon_t)
 # Get allowed path length for directory with modules
 fs_getattr_xattr_fs(kmscon_t)
 
+init_signal(kmscon_t)
+
 locallogin_domtrans(kmscon_t)
+# kmscon executes login, and informs pam_systemd about the seat and VT number in
+# $XDG_SEAT and $XDG_VTNR. pam_systemd uses secure_getenv(), which doesn't work
+# when AT_SECURE is set (https://bugzilla.redhat.com/show_bug.cgi?id=2533000).
+locallogin_noatsecure(kmscon_t)
 
 miscfiles_read_fonts(kmscon_t)
 miscfiles_manage_fonts_cache(kmscon_t)
@@ -83,39 +89,41 @@ optional_policy(`
 ')
 
 optional_policy(`
-    # Allow domtrans to agetty using --login
-    # see https://github.com/Aetf/kmscon/commit/21cf668c58867a100272adea6f323cd56fc73e78
-    getty_domtrans(kmscon_t)
-    getty_systemctl(kmscon_t)
+	dbus_system_bus_client(kmscon_t)
+	init_dbus_chat(kmscon_t)
+
+	optional_policy(`
+		systemd_dbus_chat_localed(kmscon_t)
+		systemd_dbus_chat_logind(kmscon_t)
+	')
 ')
 
 optional_policy(`
-    # Learn about the input devices
-    udev_read_db(kmscon_t)
+	# Allow domtrans to agetty using --login
+	# see https://github.com/Aetf/kmscon/commit/21cf668c58867a100272adea6f323cd56fc73e78
+	getty_domtrans(kmscon_t)
+	getty_systemctl(kmscon_t)
 ')
 
 optional_policy(`
-    # Fontconfig and Pango configuration
-    gnome_read_home_config(kmscon_t)
+	# Learn about the input devices
+	udev_read_db(kmscon_t)
 ')
 
 optional_policy(`
-    dbus_system_bus_client(kmscon_t)
-    init_dbus_chat(kmscon_t)
+	# Fontconfig and Pango configuration
+	gnome_read_home_config(kmscon_t)
+')
 
-    optional_policy(`
-	systemd_dbus_chat_localed(kmscon_t)
-        systemd_dbus_chat_logind(kmscon_t)
+optional_policy(`
+	systemd_ssh_issue_read_pid_files(kmscon_t)
 
-        # List seats
-        systemd_login_list_pid_dirs(kmscon_t)
-        systemd_login_read_pid_files(kmscon_t)
+	# List seats
+	systemd_login_list_pid_dirs(kmscon_t)
+	systemd_login_read_pid_files(kmscon_t)
 	# Watch seat dirs /run/systemd/seats
 	systemd_login_watch_pid_dirs(kmscon_t)
 	# Watch and read /run/systemd/sessions
 	systemd_read_logind_sessions_files(kmscon_t)
 	systemd_login_watch_session_dirs(kmscon_t)
-
-        kmscon_systemctl(systemd_logind_t)
-    ')
 ')

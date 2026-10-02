@@ -55,7 +55,7 @@ init_system_domain(ntpd_t, ntpdate_exec_t)
 # Local policy
 #
 
-allow ntpd_t self:capability { chown dac_read_search  kill setgid setuid sys_time ipc_lock ipc_owner sys_chroot sys_nice sys_resource };
+allow ntpd_t self:capability { chown dac_read_search kill setgid setuid sys_time ipc_lock ipc_owner sys_chroot sys_nice sys_resource };
 dontaudit ntpd_t self:capability { net_admin sys_tty_config fsetid sys_nice };
 # remove once 1207577 is done
 allow ntpd_t self:capability dac_override;
@@ -145,7 +145,7 @@ userdom_dontaudit_use_unpriv_user_fds(ntpd_t)
 userdom_list_user_home_dirs(ntpd_t)
 
 optional_policy(`
-    clock_domtrans(ntpd_t)
+	clock_domtrans(ntpd_t)
 ')
 
 optional_policy(`
@@ -167,7 +167,7 @@ optional_policy(`
 ')
 
 optional_policy(`
-    ptp4l_rw_shm(ntpd_t)
+	ptp4l_rw_shm(ntpd_t)
 ')
 
 optional_policy(`
@@ -188,8 +188,8 @@ optional_policy(`
 ')
 
 optional_policy(`
-    timemaster_read_pid_files(ntpd_t)
-    timemaster_rw_shm(ntpd_t)
+	timemaster_read_pid_files(ntpd_t)
+	timemaster_rw_shm(ntpd_t)
 ')
 
 optional_policy(`

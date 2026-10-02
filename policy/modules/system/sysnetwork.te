@@ -6,9 +6,9 @@ policy_module(sysnetwork, 1.15.4)
 #
 
 ## <desc>
-## <p>
-## Allow dhcpc client applications to execute iptables commands
-## </p>
+##	<p>
+##	Allow dhcpc client applications to execute iptables commands
+##	</p>
 ## </desc>
 gen_tunable(dhcpc_exec_iptables, false)
 
@@ -151,7 +151,6 @@ dev_read_sysfs(dhcpc_t)
 dev_read_urand(dhcpc_t)
 dev_read_rand(dhcpc_t)
 
-
 domain_obj_id_change_exemption(dhcpc_t)
 domain_use_interactive_fds(dhcpc_t)
 domain_dontaudit_read_all_domains_state(dhcpc_t)
@@ -249,7 +248,7 @@ optional_policy(`
 	networkmanager_domtrans(dhcpc_t)
 	networkmanager_manage_pid_files(dhcpc_t)
 	networkmanager_manage_lib(dhcpc_t)
-    networkmanager_stream_connect(dhcpc_t)
+	networkmanager_stream_connect(dhcpc_t)
 ')
 
 optional_policy(`
@@ -332,7 +331,10 @@ files_pid_filetrans(dhcpc_hook_t, dhcpc_var_run_t, { file dir sock_file })
 
 corecmd_exec_bin(dhcpc_hook_t)
 corecmd_exec_shell(dhcpc_hook_t)
+
 files_rw_etc_files(dhcpc_hook_t)
+
+init_status(dhcpc_hook_t)
 
 optional_policy(`
 	auth_read_passwd_file(dhcpc_hook_t)
@@ -534,7 +536,7 @@ ifdef(`hide_broken_symptoms',`
 ')
 
 optional_policy(`
-    dnsmasq_domtrans(ifconfig_t)
+	dnsmasq_domtrans(ifconfig_t)
 ')
 
 optional_policy(`
@@ -549,11 +551,11 @@ optional_policy(`
 
 optional_policy(`
 	kdump_dontaudit_read_config(ifconfig_t)
-    kdump_rw_inherited_kdumpctl_tmp_pipes(ifconfig_t)
+	kdump_rw_inherited_kdumpctl_tmp_pipes(ifconfig_t)
 ')
 
 optional_policy(`
-    libs_exec_ldconfig(ifconfig_t)
+	libs_exec_ldconfig(ifconfig_t)
 ')
 
 optional_policy(`
@@ -561,7 +563,7 @@ optional_policy(`
 ')
 
 optional_policy(`
-    mysql_dontaudit_rw_db(ifconfig_t)
+	mysql_dontaudit_rw_db(ifconfig_t)
 ')
 
 optional_policy(`
@@ -588,11 +590,11 @@ optional_policy(`
 ')
 
 optional_policy(`
-    iptables_domtrans(ifconfig_t)
+	iptables_domtrans(ifconfig_t)
 ')
 
 optional_policy(`
-    tlp_manage_pid_files(ifconfig_t)
+	tlp_manage_pid_files(ifconfig_t)
 ')
 
 optional_policy(`
