@@ -48,6 +48,17 @@ stages:
         - if: $CI_PIPELINE_SOURCE == 'web' &&
               $CI_COMMIT_REF_NAME == 'slfo-1.2'
 
+.slfo-1.3:
+    variables:
+        SLFO_BRANCH: slfo-1.3
+        LEAP_VERSION: "16.1"
+        VM_IMAGE_URL: https://download.opensuse.org/distribution/leap/16.1/appliances/Leap-16.1-Minimal-VM.x86_64-kvm-and-xen.qcow2
+    rules:
+        - if: $CI_PIPELINE_SOURCE == 'merge_request_event' &&
+              $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'slfo-1.3'
+        - if: $CI_PIPELINE_SOURCE == 'web' &&
+              $CI_COMMIT_REF_NAME == 'slfo-1.3'
+
 # ============================================================================
 # Stage templates — codestream-agnostic; reference $SLFO_BRANCH / $LEAP_VERSION.
 # ============================================================================
@@ -179,3 +190,13 @@ rpmbuild-leap16.0:
 
 test-leap16.0:
     extends: [.slfo-1.2, .test-vm]
+
+# ---- Leap 16.1 / slfo-1.3 (SLE 16.1 / SLFO 1.3) ----
+build-leap16.1:
+    extends: [.slfo-1.3, .leap-build]
+
+rpmbuild-leap16.1:
+    extends: [.slfo-1.3, .leap-rpmbuild]
+
+test-leap16.1:
+    extends: [.slfo-1.3, .test-vm]
