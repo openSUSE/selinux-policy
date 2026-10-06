@@ -18,6 +18,10 @@ attribute screen_domain;
 type screen_exec_t;
 application_executable_file(screen_exec_t)
 
+# screen started by systemd, e.g. cscreend.service
+type unconfined_screen_t;
+init_system_domain(unconfined_screen_t, screen_exec_t)
+
 type screen_home_t;
 typealias screen_home_t alias { user_screen_home_t staff_screen_home_t sysadm_screen_home_t };
 typealias screen_home_t alias { auditadm_screen_home_t secadm_screen_home_t };
@@ -107,4 +111,14 @@ userdom_setattr_user_ttys(screen_domain)
 
 tunable_policy(`screen_allow_session_sharing',`
 	allow screen_domain self:capability { fsetid setgid setuid };
+')
+
+
+########################################
+#
+# unconfined_screen_t local policy
+#
+
+optional_policy(`
+       unconfined_domain(unconfined_screen_t)
 ')
