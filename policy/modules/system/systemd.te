@@ -2307,6 +2307,10 @@ corenet_tcp_connect_http_port(systemd_report_t)
 
 init_list_pid_dirs(systemd_report_t)
 
+optional_policy(`
+	rebootmgr_varlink_chat(systemd_report_t)
+')
+
 permissive systemd_report_t;
 
 #######################################
