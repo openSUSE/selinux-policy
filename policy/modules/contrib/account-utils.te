@@ -41,7 +41,7 @@ files_pid_file(pwupd_var_run_t)
 allow newidmapd_t self:capability { dac_override setgid setuid };
 allow newidmapd_t self:cap_userns sys_admin;
 
-allow newidmapd_t self:unix_dgram_socket { create getopt setopt write };
+allow newidmapd_t self:unix_dgram_socket create_socket_perms;
 
 accountutils_pwaccessd_varlink_socket_connect(newidmapd_t)
 
@@ -71,7 +71,7 @@ permissive newidmapd_t;
 # pwaccessd local policy
 #
 
-allow pwaccessd_t self:unix_dgram_socket { create getopt setopt write };
+allow pwaccessd_t self:unix_dgram_socket create_socket_perms;
 
 kernel_dgram_send(pwaccessd_t)
 
@@ -101,7 +101,7 @@ allow pwupdd_t self:capability chown;
 allow pwupdd_t self:capability setuid;
 
 allow pwupdd_t self:process setfscreate;
-allow pwupdd_t self:unix_dgram_socket { create connect getopt setopt write };
+allow pwupdd_t self:unix_dgram_socket create_socket_perms;
 
 kernel_dgram_send(pwupdd_t)
 
