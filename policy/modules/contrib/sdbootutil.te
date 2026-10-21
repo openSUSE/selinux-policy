@@ -10,6 +10,9 @@ files_pid_file(sdbootutil_var_run_t)
 type sdbootutil_tmp_t;
 files_tmp_file(sdbootutil_tmp_t)
 
+type sdbootutil_var_lib_t;
+files_type(sdbootutil_var_lib_t)
+
 permissive sdbootutil_t;
 
 # for btrfs
@@ -23,6 +26,10 @@ dontaudit sdbootutil_t self:process execmem;
 manage_dirs_pattern(sdbootutil_t, sdbootutil_tmp_t, sdbootutil_tmp_t)
 manage_files_pattern(sdbootutil_t, sdbootutil_tmp_t, sdbootutil_tmp_t)
 files_tmp_filetrans(sdbootutil_t, sdbootutil_tmp_t, { file dir })
+
+manage_dirs_pattern(sdbootutil_t, sdbootutil_var_lib_t, sdbootutil_var_lib_t)
+manage_files_pattern(sdbootutil_t, sdbootutil_var_lib_t, sdbootutil_var_lib_t)
+files_var_lib_filetrans(sdbootutil_t, sdbootutil_var_lib_t, { dir file }, "sdbootutil")
 
 # logging
 kernel_dgram_send(sdbootutil_t)
