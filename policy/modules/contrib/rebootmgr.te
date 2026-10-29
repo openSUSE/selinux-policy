@@ -31,8 +31,6 @@ files_etc_filetrans(rebootmgr_t, rebootmgr_conf_t, dir, "rebootmgr")
 
 domain_use_interactive_fds(rebootmgr_t)
 
-init_reboot(rebootmgr_t)
-
 logging_send_syslog_msg(rebootmgr_t)
 
 miscfiles_read_localization(rebootmgr_t)
