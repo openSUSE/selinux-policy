@@ -38,6 +38,7 @@ miscfiles_read_localization(rebootmgr_t)
 systemd_start_power_services(rebootmgr_t)
 
 systemd_dbus_chat_logind(rebootmgr_t)
+systemd_logind_stream_connect(rebootmgr_t)
 
 kernel_read_system_state(rebootmgr_t)
 
