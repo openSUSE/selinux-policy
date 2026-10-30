@@ -729,6 +729,7 @@ interface(`miscfiles_watch_localization_files',`
 		type locale_t;
 	')
 
+	allow $1 locale_t:lnk_file read_lnk_file_perms;
 	watch_files_pattern($1, locale_t, locale_t)
 ')
 
@@ -1051,6 +1052,26 @@ interface(`miscfiles_read_public_files',`
 	allow $1 { public_content_t public_content_rw_t }:file map;
 	read_files_pattern($1, { public_content_t public_content_rw_t }, { public_content_t public_content_rw_t })
 	read_lnk_files_pattern($1, { public_content_t public_content_rw_t }, { public_content_t public_content_rw_t })
+')
+
+########################################
+## <summary>
+##	Watch public directories used for file
+##	transfer services.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+## <rolecap/>
+#
+interface(`miscfiles_watch_public_dirs',`
+	gen_require(`
+		type public_content_t, public_content_rw_t;
+	')
+
+	allow $1 { public_content_t public_content_rw_t }:dir watch_dir_perms;
 ')
 
 ########################################
