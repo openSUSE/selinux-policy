@@ -123,6 +123,9 @@ corenet_tcp_connect_vnc_port(sshd_session_t)
 
 fs_getattr_all_fs(sshd_session_t)
 
+# connect to a forwarded container runtime socket (e.g. podman.sock)
+files_write_generic_pid_sockets(sshd_session_t)
+
 tunable_policy(`ssh_sysadm_login',`
 	# Relabel and access ptys created by sshd
 	# ioctl is necessary for logout() processing for utmp entry and for w to
@@ -148,6 +151,10 @@ optional_policy(`
 ')
 
 optional_policy(`
+	container_stream_connect(sshd_session_t)
+')
+
+optional_policy(`
 	ftp_dyntrans_sftpd(sshd_session_t)
 	ftp_dyntrans_anon_sftpd(sshd_session_t)
 ')
@@ -158,6 +165,7 @@ optional_policy(`
 
 optional_policy(`
 	systemd_dbus_chat_hostnamed(sshd_session_t)
+	systemd_read_nsresourced_sock_files(sshd_session_t)
 	systemd_userdbd_stream_connect(sshd_session_t)
 ')
 
