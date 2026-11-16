@@ -781,3 +781,22 @@ interface(`networkmanager_dispatcher_custom_dgram_send',`
 
         allow $1 NetworkManager_dispatcher_custom_t:unix_dgram_socket sendto;
 ')
+
+########################################
+## <summary>
+##	Read NetworkManager-dispatcher-console PID files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`networkmanager_dispatcher_console_read_pid_files',`
+	gen_require(`
+		type NetworkManager_dispatcher_console_var_run_t;
+	')
+
+	files_search_pids($1)
+	read_files_pattern($1, NetworkManager_dispatcher_console_var_run_t, NetworkManager_dispatcher_console_var_run_t)
+')
